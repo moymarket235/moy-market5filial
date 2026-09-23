@@ -1,24 +1,207 @@
 <!doctype html>
-<html lang="ky"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Мой Маркет</title><link rel="stylesheet" href="style.css"></head>
+<html lang="ky">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#05080d">
+<title>Мой Маркет — интернет-дүкөн</title>
+<link rel="stylesheet" href="style.css">
+</head>
 <body>
-<header class="top"><div class="brand"><div class="logo">М</div><div><b>МОЙ МАРКЕТ</b><small>Көргөндө алгың келет!</small></div></div>
-<a class="admin-link" href="admin.html">Admin</a></header>
-<section class="hero"><h1>Мой Маркет</h1><p>Үйүңүзгө керектүү товарлар — бир жерде.</p><div class="search"><input id="search" placeholder="Товар издөө..."><button onclick="openCart()">🛒 <span id="cartCount">0</span></button></div></section>
-<nav id="cats" class="cats"></nav><main><div id="grid" class="grid"></div><div id="empty" class="empty">Товар азырынча кошула элек.</div></main>
-<div id="drawer" class="drawer"><div class="drawer-box"><button class="close" onclick="closeCart()">×</button><h2>🛒 Себет</h2><div id="cart"></div><div id="total"></div><button class="wa" onclick="order()">WhatsApp аркылуу заказ берүү</button></div></div>
+
+<header class="top">
+  <a class="brand" href="#">
+    <div class="logo"><img src="assets/brand-logo.webp" alt="Мой Маркет"></div>
+    <div class="brand-text">
+      <b>МОЙ МАРКЕТ</b>
+      <small>Көргөндө алгың келет!</small>
+    </div>
+  </a>
+  <nav class="desktop-nav">
+    <a class="active" href="#home">Башкы бет</a>
+    <a href="#catalog">Каталог</a>
+    <a href="#promo">Акциялар</a>
+    <a href="#delivery">Жеткирүү</a>
+    <a href="#addresses">Даректер</a>
+    <a href="#contacts">Байланыш</a>
+  </nav>
+  <div class="top-actions">
+    <button class="icon-btn" onclick="document.getElementById('search').focus()" aria-label="Издөө">⌕</button>
+    <button class="cart-btn" onclick="openCart()">🛒 <span id="cartCount">0</span></button>
+    <a class="admin-link" href="admin.html">Admin</a>
+  </div>
+</header>
+
+<main id="home">
+<section class="hero">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-logo"><img src="assets/brand-logo.webp" alt="Мой Маркет"></div>
+    <div class="hero-copy">
+      <h1>ҮЙҮҢҮЗГӨ КЕРЕКТҮҮ<br><span>ТОВАРЛАР — БИР ЖЕРДЕ!</span></h1>
+      <p>Идиш-аяк, турмуш-тиричилик техникасы, казан-кастрюля жана үйгө керектүү башка товарлар.</p>
+    </div>
+    <div class="search-wrap">
+      <span>⌕</span>
+      <input id="search" placeholder="Товар издөө..." autocomplete="off">
+      <button onclick="openCart()">🛒 <span id="cartCountHero">0</span></button>
+    </div>
+  </div>
+</section>
+
+<section class="category-section" id="catalog">
+  <div id="cats" class="cats"></div>
+</section>
+
+<section class="benefits" id="delivery">
+  <div><strong>🚚 Ыкчам жеткирүү</strong><small>Тез жана ишенимдүү</small></div>
+  <div><strong>🛡 Сапаттуу товарлар</strong><small>Текшерилген бренддер</small></div>
+  <div><strong>％ Жеткиликтүү баалар</strong><small>Ар дайым пайдалуу</small></div>
+  <div><strong>🎧 Кеңеш жана колдоо</strong><small>Биз ар дайым байланыштaбыз</small></div>
+</section>
+
+<section class="promo-grid" id="promo">
+  <article class="promo-card dishes">
+    <div>
+      <span>ИДИШ-АЯК</span>
+      <h2>Үйүңүздүн кооздугу<br>ушул жерден!</h2>
+      <button onclick="filterCategory('dishes')">Көрүү →</button>
+    </div>
+  </article>
+  <article class="promo-card appliances">
+    <div>
+      <span>ТУРМУШ-ТИРИЧИЛИК<br>ТЕХНИКАСЫ</span>
+      <h2>Ыңгайлуулук жана заманбап<br>чечимдер!</h2>
+      <button onclick="filterCategory('appliances')">Көрүү →</button>
+    </div>
+  </article>
+</section>
+
+<section class="products-section">
+  <div class="section-head">
+    <h2>🔥 Популярдуу товарлар</h2>
+    <button onclick="filterCategory('all')">Баардык товарлар →</button>
+  </div>
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty">Товар азырынча кошула элек.</div>
+</section>
+
+<section class="info-strip" id="addresses">
+  <div>
+    <h3>Мой Маркет</h3>
+    <p>Сизге жакын филиалдан керектүү товарыңызды тандаңыз.</p>
+  </div>
+  <div class="addresses">
+    <span>Жибек-Жолу 235</span>
+    <span>Жибек-Жолу 227</span>
+    <span>Ауэзова 17</span>
+    <span>Бейшеналиева 20</span>
+    <span>Токтогула 259/10</span>
+  </div>
+</section>
+</main>
+
+<footer id="contacts">
+  <div class="footer-brand">МОЙ МАРКЕТ</div>
+  <p>Үйүңүзгө керектүү товарлар — бир жерде.</p>
+  <a href="https://wa.me/996507668866">WhatsApp: +996 507 66 88 66</a>
+</footer>
+
+<div id="drawer" class="drawer">
+  <div class="drawer-box">
+    <button class="close" onclick="closeCart()">×</button>
+    <h2>🛒 Себет</h2>
+    <div id="cart"></div>
+    <div id="total"></div>
+    <button class="wa" onclick="order()">WhatsApp аркылуу заказ берүү</button>
+  </div>
+</div>
+
 <script>
-const PHONE="996507668866"; let products=[], cats=[], cart=JSON.parse(localStorage.getItem("mm_cart")||"[]"), active="all";
-const money=n=>new Intl.NumberFormat("ru-RU").format(n)+" сом";
-async function init(){try{products=await (await fetch("products.json")).json();cats=await (await fetch("categories.json")).json()}catch(e){} renderCats();render()}
-function renderCats(){catsEl.innerHTML='<button class="chip active" data-id="all">Баары</button>'+cats.map(c=>`<button class="chip" data-id="${c.id}">${c.name}</button>`).join("");document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{active=b.dataset.id;document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));b.classList.add("active");render()})}
+const PHONE="996507668866";
+let products=[], cats=[], cart=JSON.parse(localStorage.getItem("mm_cart")||"[]"), active="all";
+const money=n=>new Intl.NumberFormat("ru-RU").format(Number(n)||0)+" сом";
 const catsEl=document.getElementById("cats");
-function render(){let q=document.getElementById("search").value.toLowerCase();let a=products.filter(p=>(active==="all"||p.category===active)&&((p.name||"")+" "+(p.description||"")).toLowerCase().includes(q));grid.innerHTML=a.map((p,i)=>`<article class="card"><div class="pic"><img src="${p.image||'assets/products/placeholder.svg'}" alt=""></div><div class="cardbody"><span>${p.categoryName||""}</span><h3>${p.name}</h3><p>${p.description||""}</p><strong>${money(p.price)}</strong><button onclick="add(${i},'${p.id}')">Онлайн заказ</button></div></article>`).join("");empty.style.display=a.length?"none":"block"}
-function add(_,id){let p=products.find(x=>x.id===id);let x=cart.find(x=>x.id===id);x?x.qty++:cart.push({...p,qty:1});save();openCart()}
-function save(){localStorage.setItem("mm_cart",JSON.stringify(cart));cartCount.textContent=cart.reduce((s,x)=>s+x.qty,0)}
-function openCart(){drawer.classList.add("show");renderCart()} function closeCart(){drawer.classList.remove("show")}
-function renderCart(){cart.innerHTML=cart.length?cart.map(x=>`<div class="row"><div><b>${x.name}</b><small>${x.qty} × ${money(x.price)}</small></div><div><button onclick="chg('${x.id}',-1)">−</button><button onclick="chg('${x.id}',1)">+</button></div></div>`).join(""):"<p>Себет бош.</p>";let t=cart.reduce((s,x)=>s+x.price*x.qty,0);total.innerHTML=cart.length?`<h3>Жалпы: ${money(t)}</h3>`:""}
-function chg(id,d){let x=cart.find(x=>x.id===id);if(!x)return;x.qty+=d;if(x.qty<=0)cart=cart.filter(y=>y.id!==id);save();renderCart()}
-function order(){if(!cart.length)return;let t=cart.reduce((s,x)=>s+x.price*x.qty,0);let msg="Саламатсызбы! Мой Маркеттен онлайн заказ:%0A"+cart.map(x=>`• ${x.name} — ${x.qty} даана × ${x.price} сом = ${x.price*x.qty} сом`).join("%0A")+`%0A%0AЖалпы: ${t} сом`;location.href=`https://wa.me/${PHONE}?text=${msg}`}
-search.oninput=render;init();save();
-</script></body></html>
+async function init(){
+  try{
+    products=await (await fetch("products.json")).json();
+    cats=await (await fetch("categories.json")).json();
+  }catch(e){products=[];cats=[]}
+  renderCats(); render(); save();
+}
+function renderCats(){
+  catsEl.innerHTML='<button class="chip active" data-id="all">Баары</button>'+
+    cats.map(c=>`<button class="chip" data-id="${c.id}">${c.name}</button>`).join("");
+  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{
+    active=b.dataset.id;
+    document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active"); render();
+    document.getElementById("catalog").scrollIntoView({behavior:"smooth",block:"start"});
+  });
+}
+function filterCategory(id){
+  active=id;
+  document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x.dataset.id===id));
+  render();
+  document.querySelector(".products-section").scrollIntoView({behavior:"smooth"});
+}
+function render(){
+  const q=(document.getElementById("search").value||"").toLowerCase();
+  const a=products.filter(p=>
+    (active==="all"||p.category===active) &&
+    (((p.name||"")+" "+(p.description||"")+" "+(p.categoryName||"")).toLowerCase().includes(q))
+  );
+  document.getElementById("grid").innerHTML=a.map(p=>`
+    <article class="card">
+      <div class="pic"><img src="${p.image||'assets/products/placeholder.svg'}" alt="${(p.name||'Товар').replace(/"/g,'&quot;')}"></div>
+      <div class="cardbody">
+        <span>${p.categoryName||""}</span>
+        <h3>${p.name||"Товар"}</h3>
+        <p>${p.description||""}</p>
+        <strong>${money(p.price)}</strong>
+        <button onclick="add('${String(p.id).replace(/'/g,"\\'")}')">Онлайн заказ</button>
+      </div>
+    </article>`).join("");
+  document.getElementById("empty").style.display=a.length?"none":"block";
+}
+function add(id){
+  const p=products.find(x=>x.id===id); if(!p)return;
+  const x=cart.find(x=>x.id===id); x?x.qty++:cart.push({...p,qty:1});
+  save(); openCart();
+}
+function save(){
+  localStorage.setItem("mm_cart",JSON.stringify(cart));
+  const n=cart.reduce((s,x)=>s+x.qty,0);
+  document.getElementById("cartCount").textContent=n;
+  document.getElementById("cartCountHero").textContent=n;
+}
+function openCart(){document.getElementById("drawer").classList.add("show");renderCart()}
+function closeCart(){document.getElementById("drawer").classList.remove("show")}
+function renderCart(){
+  const el=document.getElementById("cart");
+  el.innerHTML=cart.length?cart.map(x=>`
+    <div class="row">
+      <div><b>${x.name}</b><small>${x.qty} × ${money(x.price)}</small></div>
+      <div><button onclick="chg('${x.id}',-1)">−</button><button onclick="chg('${x.id}',1)">+</button></div>
+    </div>`).join(""):"<p>Себет бош.</p>";
+  const t=cart.reduce((s,x)=>s+x.price*x.qty,0);
+  document.getElementById("total").innerHTML=cart.length?`<h3>Жалпы: ${money(t)}</h3>`:"";
+}
+function chg(id,d){
+  const x=cart.find(x=>x.id===id); if(!x)return;
+  x.qty+=d; if(x.qty<=0)cart=cart.filter(y=>y.id!==id);
+  save(); renderCart();
+}
+function order(){
+  if(!cart.length)return;
+  const t=cart.reduce((s,x)=>s+x.price*x.qty,0);
+  const msg="Саламатсызбы! Мой Маркеттен онлайн заказ:%0A"+
+    cart.map(x=>`• ${x.name} — ${x.qty} даана × ${x.price} сом = ${x.price*x.qty} сом`).join("%0A")+
+    `%0A%0AЖалпы: ${t} сом`;
+  location.href=`https://wa.me/${PHONE}?text=${msg}`;
+}
+document.getElementById("search").oninput=render;
+init();
+</script>
+</body>
+</html>
