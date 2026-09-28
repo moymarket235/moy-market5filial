@@ -41,7 +41,14 @@
     <div><span class="eyebrow dark" data-i18n="selectedSections">ТАНДАЛГАН БӨЛҮМДӨР</span><h2 data-i18n="catalog">Каталог</h2></div>
     <button class="ghost" id="allBtn" data-i18n="viewAll">Баарын көрүү →</button>
   </div>
-  <div class="categories" id="categories"></div>
+  <div class="categories" id="categories">
+  <button class="cat active" data-cat="all"><span class="ico">🛍️</span><b>Баары</b><span class="arrow">→</span></button>
+  <button class="cat" data-cat="dishes"><span class="ico">🍽️</span><b>Идиш-аяк</b><span class="arrow">→</span></button>
+  <button class="cat" data-cat="appliances"><span class="ico">⚡</span><b>Бытовая техника</b><span class="arrow">→</span></button>
+  <button class="cat" data-cat="cookware"><span class="ico">🍳</span><b>Казан & Ашкана</b><span class="arrow">→</span></button>
+  <button class="cat" data-cat="sets"><span class="ico">🎁</span><b>Наборлор</b><span class="arrow">→</span></button>
+  <button class="cat" data-cat="sale"><span class="ico">🔥</span><b>Акциялар</b><span class="arrow">→</span></button>
+</div>
   <div class="subcategories" id="subcategories"></div>
 </section>
 
@@ -54,7 +61,7 @@
     <span>⌕</span><input id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Товар издеңиз..." autocomplete="off">
     <button id="clearSearch">×</button>
   </div>
-  <div class="products" id="products"></div>
+  <div class="products" id="products"><div class="loading">Жүктөлүүдө...</div></div>
   <div class="empty" id="empty" hidden><div>🛍️</div><h3 data-i18n="notFound">Товар табылган жок</h3><p data-i18n="tryAnother">Башка ат менен издеп көрүңүз.</p></div>
 </section>
 </main>
