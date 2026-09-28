@@ -7,9 +7,10 @@
     "category": "appliances",
     "categoryName": "Бытовая техника",
     "categoryNameRu": "Бытовая техника",
-    "subcategoryName": "Микроволновые печи",
+    "subcategory": "microwave",
+    "subcategoryName": "Микроволновкалар",
     "subcategoryNameRu": "Микроволновые печи",
-    "description": "Midea микроволновая печь. 700 Вт, объём 20 л.",
+    "description": "Midea микроволновкасы. 700 Вт, көлөмү 20 л.",
     "descriptionRu": "Микроволновая печь Midea. 700 Вт, объём 20 л.",
     "image": "assets/products/Midea-microwave-5800.png"
   },
@@ -21,9 +22,10 @@
     "category": "appliances",
     "categoryName": "Бытовая техника",
     "categoryNameRu": "Бытовая техника",
-    "subcategoryName": "Микроволновые печи",
+    "subcategory": "microwave",
+    "subcategoryName": "Микроволновкалар",
     "subcategoryNameRu": "Микроволновые печи",
-    "description": "ТЕХНОМИР микроволновая печь. 700 Вт, объём 20 л.",
+    "description": "ТЕХНОМИР микроволновкасы. 700 Вт, көлөмү 20 л.",
     "descriptionRu": "Микроволновая печь ТЕХНОМИР. 700 Вт, объём 20 л.",
     "image": "assets/products/TEHNOMIR-microwave-5800.png"
   }
