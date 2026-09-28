@@ -1,207 +1,43 @@
 <!doctype html>
 <html lang="ky">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#05080d">
-<title>Мой Маркет — интернет-дүкөн</title>
-<link rel="stylesheet" href="style.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080d1d"><meta name="description" content="Мой Маркет — онлайн каталог жана заказ">
+<title>Мой Маркет</title><link rel="icon" href="assets/logo.webp"><link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<header class="top">
-  <a class="brand" href="#">
-    <div class="logo"><img src="assets/brand-logo.webp" alt="Мой Маркет"></div>
-    <div class="brand-text">
-      <b>МОЙ МАРКЕТ</b>
-      <small>Көргөндө алгың келет!</small>
-    </div>
-  </a>
-  <nav class="desktop-nav">
-    <a class="active" href="#home">Башкы бет</a>
-    <a href="#catalog">Каталог</a>
-    <a href="#promo">Акциялар</a>
-    <a href="#delivery">Жеткирүү</a>
-    <a href="#addresses">Даректер</a>
-    <a href="#contacts">Байланыш</a>
-  </nav>
-  <div class="top-actions">
-    <button class="icon-btn" onclick="document.getElementById('search').focus()" aria-label="Издөө">⌕</button>
-    <button class="cart-btn" onclick="openCart()">🛒 <span id="cartCount">0</span></button>
-    <a class="admin-link" href="admin.html">Admin</a>
-  </div>
+<header class="topbar">
+  <a class="brand" href="#"><img src="assets/logo.webp" alt="Мой Маркет"><b>МОЙ МАРКЕТ</b></a>
+  <div class="actions"><button id="calcBtn" class="round">🧮</button><button id="cartBtn" class="cart">🛒 <b id="cartCount">0</b></button></div>
 </header>
-
-<main id="home">
-<section class="hero">
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <div class="hero-logo"><img src="assets/brand-logo.webp" alt="Мой Маркет"></div>
-    <div class="hero-copy">
-      <h1>ҮЙҮҢҮЗГӨ КЕРЕКТҮҮ<br><span>ТОВАРЛАР — БИР ЖЕРДЕ!</span></h1>
-      <p>Идиш-аяк, турмуш-тиричилик техникасы, казан-кастрюля жана үйгө керектүү башка товарлар.</p>
-    </div>
-    <div class="search-wrap">
-      <span>⌕</span>
-      <input id="search" placeholder="Товар издөө..." autocomplete="off">
-      <button onclick="openCart()">🛒 <span id="cartCountHero">0</span></button>
-    </div>
-  </div>
-</section>
-
-<section class="category-section" id="catalog">
-  <div id="cats" class="cats"></div>
-</section>
-
-<section class="benefits" id="delivery">
-  <div><strong>🚚 Ыкчам жеткирүү</strong><small>Тез жана ишенимдүү</small></div>
-  <div><strong>🛡 Сапаттуу товарлар</strong><small>Текшерилген бренддер</small></div>
-  <div><strong>％ Жеткиликтүү баалар</strong><small>Ар дайым пайдалуу</small></div>
-  <div><strong>🎧 Кеңеш жана колдоо</strong><small>Биз ар дайым байланыштaбыз</small></div>
-</section>
-
-<section class="promo-grid" id="promo">
-  <article class="promo-card dishes">
-    <div>
-      <span>ИДИШ-АЯК</span>
-      <h2>Үйүңүздүн кооздугу<br>ушул жерден!</h2>
-      <button onclick="filterCategory('dishes')">Көрүү →</button>
-    </div>
-  </article>
-  <article class="promo-card appliances">
-    <div>
-      <span>ТУРМУШ-ТИРИЧИЛИК<br>ТЕХНИКАСЫ</span>
-      <h2>Ыңгайлуулук жана заманбап<br>чечимдер!</h2>
-      <button onclick="filterCategory('appliances')">Көрүү →</button>
-    </div>
-  </article>
-</section>
-
-<section class="products-section">
-  <div class="section-head">
-    <h2>🔥 Популярдуу товарлар</h2>
-    <button onclick="filterCategory('all')">Баардык товарлар →</button>
-  </div>
-  <div id="grid" class="grid"></div>
-  <div id="empty" class="empty">Товар азырынча кошула элек.</div>
-</section>
-
-<section class="info-strip" id="addresses">
-  <div>
-    <h3>Мой Маркет</h3>
-    <p>Сизге жакын филиалдан керектүү товарыңызды тандаңыз.</p>
-  </div>
-  <div class="addresses">
-    <span>Жибек-Жолу 235</span>
-    <span>Жибек-Жолу 227</span>
-    <span>Ауэзова 17</span>
-    <span>Бейшеналиева 20</span>
-    <span>Токтогула 259/10</span>
-  </div>
-</section>
-</main>
-
-<footer id="contacts">
-  <div class="footer-brand">МОЙ МАРКЕТ</div>
-  <p>Үйүңүзгө керектүү товарлар — бир жерде.</p>
-  <a href="https://wa.me/996507668866">WhatsApp: +996 507 66 88 66</a>
-</footer>
-
-<div id="drawer" class="drawer">
-  <div class="drawer-box">
-    <button class="close" onclick="closeCart()">×</button>
-    <h2>🛒 Себет</h2>
-    <div id="cart"></div>
-    <div id="total"></div>
-    <button class="wa" onclick="order()">WhatsApp аркылуу заказ берүү</button>
-  </div>
-</div>
-
+<section class="hero"><div><span class="eyebrow">ОНЛАЙН-КАТАЛОГ</span><h1>Көргөндө<br><em>алгың келет!</em></h1><p>Товарды категориясы боюнча тандаңыз, сүрөтүн толук көрүңүз, корзинага кошуңуз жана WhatsApp аркылуу заказ бериңиз.</p><a class="hero-btn" href="#catalog">Каталогду ачуу ↓</a></div><img class="hero-logo" src="assets/logo.webp" alt="Мой Маркет"></section>
+<section class="catalog-bar" id="catalog"><div class="search"><span>⌕</span><input id="search" type="search" placeholder="Товар издөө..." autocomplete="off"></div><div class="chips" id="chips"></div></section>
+<main class="feed"><div class="section-title"><h2>Товарлар</h2><span id="resultCount"></span></div><div class="grid" id="grid"></div></main>
+<button class="floating-cart" id="floatingCart">🛒 <span>Корзина</span> <b id="floatCount">0</b></button>
+<div class="modal" id="cartModal"><div class="shade" data-close="cartModal"></div><section class="panel"><button class="close" data-close="cartModal">×</button><h2>Корзина</h2><div id="cartItems"></div><div class="total"><span>Жалпы сумма</span><strong id="cartTotal">0 сом</strong></div><button class="whatsapp" id="whatsapp">🟢 WhatsApp аркылуу онлайн заказ</button><p class="phone">+996 507 66 88 66</p><p class="small">Сүрөттөр сайтта көрсөтүлөт. WhatsApp'тын кадимки шилтемеси сүрөт файлдарын чатка автоматтык тиркей албайт.</p></section></div>
+<div class="modal" id="calcModal"><div class="shade" data-close="calcModal"></div><section class="panel calculator"><button class="close" data-close="calcModal">×</button><h2>🧮 Товар эсептегич</h2><label>Баасы (сом)<input id="priceInput" type="number" min="0" value="0"></label><label>Саны<input id="qtyInput" type="number" min="1" value="1"></label><div class="calc-total"><span>Жыйынтык</span><strong id="calcTotal">0 сом</strong></div></section></div>
+<footer><img src="assets/logo.webp" alt=""><div><b>МОЙ МАРКЕТ</b><br>Онлайн заказ: +996 507 66 88 66</div><a href="admin.html" class="admin-link">Admin</a></footer>
 <script>
-const PHONE="996507668866";
-let products=[], cats=[], cart=JSON.parse(localStorage.getItem("mm_cart")||"[]"), active="all";
+const PHONE="996507668866";let products=[],categories=[],cart=JSON.parse(localStorage.getItem("moy-market-cart-v3")||"[]"),active="all";
 const money=n=>new Intl.NumberFormat("ru-RU").format(Number(n)||0)+" сом";
-const catsEl=document.getElementById("cats");
-async function init(){
-  try{
-    products=await (await fetch("products.json")).json();
-    cats=await (await fetch("categories.json")).json();
-  }catch(e){products=[];cats=[]}
-  renderCats(); render(); save();
-}
-function renderCats(){
-  catsEl.innerHTML='<button class="chip active" data-id="all">Баары</button>'+
-    cats.map(c=>`<button class="chip" data-id="${c.id}">${c.name}</button>`).join("");
-  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{
-    active=b.dataset.id;
-    document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active"); render();
-    document.getElementById("catalog").scrollIntoView({behavior:"smooth",block:"start"});
-  });
-}
-function filterCategory(id){
-  active=id;
-  document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x.dataset.id===id));
-  render();
-  document.querySelector(".products-section").scrollIntoView({behavior:"smooth"});
-}
-function render(){
-  const q=(document.getElementById("search").value||"").toLowerCase();
-  const a=products.filter(p=>
-    (active==="all"||p.category===active) &&
-    (((p.name||"")+" "+(p.description||"")+" "+(p.categoryName||"")).toLowerCase().includes(q))
-  );
-  document.getElementById("grid").innerHTML=a.map(p=>`
-    <article class="card">
-      <div class="pic"><img src="${p.image||'assets/products/placeholder.svg'}" alt="${(p.name||'Товар').replace(/"/g,'&quot;')}"></div>
-      <div class="cardbody">
-        <span>${p.categoryName||""}</span>
-        <h3>${p.name||"Товар"}</h3>
-        <p>${p.description||""}</p>
-        <strong>${money(p.price)}</strong>
-        <button onclick="add('${String(p.id).replace(/'/g,"\\'")}')">Онлайн заказ</button>
-      </div>
-    </article>`).join("");
-  document.getElementById("empty").style.display=a.length?"none":"block";
-}
-function add(id){
-  const p=products.find(x=>x.id===id); if(!p)return;
-  const x=cart.find(x=>x.id===id); x?x.qty++:cart.push({...p,qty:1});
-  save(); openCart();
-}
-function save(){
-  localStorage.setItem("mm_cart",JSON.stringify(cart));
-  const n=cart.reduce((s,x)=>s+x.qty,0);
-  document.getElementById("cartCount").textContent=n;
-  document.getElementById("cartCountHero").textContent=n;
-}
-function openCart(){document.getElementById("drawer").classList.add("show");renderCart()}
-function closeCart(){document.getElementById("drawer").classList.remove("show")}
-function renderCart(){
-  const el=document.getElementById("cart");
-  el.innerHTML=cart.length?cart.map(x=>`
-    <div class="row">
-      <div><b>${x.name}</b><small>${x.qty} × ${money(x.price)}</small></div>
-      <div><button onclick="chg('${x.id}',-1)">−</button><button onclick="chg('${x.id}',1)">+</button></div>
-    </div>`).join(""):"<p>Себет бош.</p>";
-  const t=cart.reduce((s,x)=>s+x.price*x.qty,0);
-  document.getElementById("total").innerHTML=cart.length?`<h3>Жалпы: ${money(t)}</h3>`:"";
-}
-function chg(id,d){
-  const x=cart.find(x=>x.id===id); if(!x)return;
-  x.qty+=d; if(x.qty<=0)cart=cart.filter(y=>y.id!==id);
-  save(); renderCart();
-}
-function order(){
-  if(!cart.length)return;
-  const t=cart.reduce((s,x)=>s+x.price*x.qty,0);
-  const msg="Саламатсызбы! Мой Маркеттен онлайн заказ:%0A"+
-    cart.map(x=>`• ${x.name} — ${x.qty} даана × ${x.price} сом = ${x.price*x.qty} сом`).join("%0A")+
-    `%0A%0AЖалпы: ${t} сом`;
-  location.href=`https://wa.me/${PHONE}?text=${msg}`;
-}
-document.getElementById("search").oninput=render;
-init();
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+async function init(){[products,categories]=await Promise.all([fetch("products.json",{cache:"no-store"}).then(r=>r.json()),fetch("categories.json",{cache:"no-store"}).then(r=>r.json())]);renderCategories();render();renderCart()}
+function renderCategories(){document.querySelector("#chips").innerHTML='<button class="chip active" data-cat="all">Баары</button>'+categories.map(c=>`<button class="chip" data-cat="${esc(c.id)}">${esc(c.name)}</button>`).join("")}
+function render(){const q=document.querySelector("#search").value.trim().toLowerCase();const list=products.filter(p=>(active==="all"||p.category===active)&&((p.name+" "+(p.description||"")+" "+(p.categoryName||"")+" "+(p.subcategoryName||"")).toLowerCase().includes(q)));document.querySelector("#resultCount").textContent=list.length+" товар";document.querySelector("#grid").innerHTML=list.length?list.map(p=>`<article class="card"><div class="photo"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" decoding="async"></div><div class="info"><span class="tag">${esc(p.subcategoryName||p.categoryName||"Мой Маркет")}</span><h3>${esc(p.name)}</h3><p>${esc(p.description||"")}</p><div class="bottom"><strong>${money(p.price)}</strong><button onclick="add(${p.id})">+ Корзина</button></div><button class="order" onclick="quickOrder(${p.id})">🟢 Онлайн заказ · WhatsApp</button></div></article>`).join(""):'<div class="empty">Бул категорияда товар жок.</div>'}
+function save(){localStorage.setItem("moy-market-cart-v3",JSON.stringify(cart))}
+function add(id){const x=cart.find(a=>a.id===id);x?x.qty++:cart.push({id,qty:1});save();renderCart();toast("Корзинага кошулду")}
+function change(id,d){const x=cart.find(a=>a.id===id);if(!x)return;x.qty+=d;if(x.qty<1)cart=cart.filter(a=>a.id!==id);save();renderCart()}
+function data(){return cart.map(x=>{const p=products.find(a=>a.id===x.id);return p?{...p,qty:x.qty,sum:(Number(p.price)||0)*x.qty}:null}).filter(Boolean)}
+function renderCart(){const a=data(),count=a.reduce((s,x)=>s+x.qty,0),total=a.reduce((s,x)=>s+x.sum,0);document.querySelector("#cartCount").textContent=count;document.querySelector("#floatCount").textContent=count;document.querySelector("#cartTotal").textContent=money(total);document.querySelector("#cartItems").innerHTML=a.length?a.map(x=>`<div class="cart-item"><img src="${esc(x.image)}" alt=""><div><b>${esc(x.name)}</b><small>${money(x.price)} × ${x.qty}</small><div class="qty"><button onclick="change(${x.id},-1)">−</button><b>${x.qty}</b><button onclick="change(${x.id},1)">+</button></div></div><strong>${money(x.sum)}</strong><button class="remove" onclick="removeItem(${x.id})">×</button></div>`).join(""):'<div class="empty">Корзина бош.</div>'}
+function removeItem(id){cart=cart.filter(x=>x.id!==id);save();renderCart()}
+function message(singleId=null){const a=singleId?[{id:singleId,qty:1}]:cart;let total=0,lines=[];a.forEach((x,i)=>{const p=products.find(y=>y.id===x.id);if(p){const sum=(Number(p.price)||0)*x.qty;total+=sum;lines.push(`${i+1}. ${p.name} — ${x.qty} даана — ${money(sum)}`)}});return encodeURIComponent("Саламатсызбы! Мой Маркеттен онлайн заказ берейин.\n\n"+lines.join("\n")+"\n\nЖалпы сумма: "+money(total))}
+function quickOrder(id){window.open("https://wa.me/"+PHONE+"?text="+message(id),"_blank","noopener")}
+document.querySelector("#whatsapp").onclick=()=>{if(!cart.length)return toast("Адегенде товар кошуңуз");window.open("https://wa.me/"+PHONE+"?text="+message()," _blank".trim(),"noopener")}
+document.querySelector("#search").oninput=render;document.querySelector("#chips").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));b.classList.add("active");active=b.dataset.cat;render()}
+function openModal(id){document.getElementById(id).classList.add("show")}function closeModal(id){document.getElementById(id).classList.remove("show")}
+document.querySelector("#cartBtn").onclick=()=>openModal("cartModal");document.querySelector("#floatingCart").onclick=()=>openModal("cartModal");document.querySelector("#calcBtn").onclick=()=>openModal("calcModal");document.addEventListener("click",e=>{if(e.target.dataset.close)closeModal(e.target.dataset.close)});
+function calc(){const p=Number(document.querySelector("#priceInput").value)||0,q=Math.max(1,Number(document.querySelector("#qtyInput").value)||1);document.querySelector("#calcTotal").textContent=money(p*q)}document.querySelector("#priceInput").oninput=calc;document.querySelector("#qtyInput").oninput=calc;
+function toast(s){const t=document.createElement("div");t.className="toast";t.textContent=s;document.body.appendChild(t);requestAnimationFrame(()=>t.classList.add("show"));setTimeout(()=>{t.classList.remove("show");setTimeout(()=>t.remove(),200)},1400)}
+init().catch(()=>document.querySelector("#grid").innerHTML='<div class="empty">Каталог жүктөлбөй калды. products.json жана categories.json файлдарын текшериңиз.</div>');
 </script>
-</body>
-</html>
+</body></html>
