@@ -2,26 +2,31 @@
   {
     "id": "dishes",
     "name": "Идиш-аяк",
+    "nameRu": "Посуда",
     "icon": "🍽️"
   },
   {
     "id": "appliances",
-    "name": "Техника",
+    "name": "Бытовая техника",
+    "nameRu": "Бытовая техника",
     "icon": "⚡"
   },
   {
     "id": "cookware",
     "name": "Казан & Ашкана",
+    "nameRu": "Казаны и кухня",
     "icon": "🍳"
   },
   {
     "id": "sets",
     "name": "Наборлор",
+    "nameRu": "Наборы",
     "icon": "🎁"
   },
   {
     "id": "sale",
     "name": "Акциялар",
+    "nameRu": "Акции",
     "icon": "🔥"
   }
 ]

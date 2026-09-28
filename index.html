@@ -13,7 +13,7 @@
 <header class="topbar">
   <div class="brand"><img src="assets/logo.webp" alt="Мой Маркет"></div>
   <div class="top-actions">
-    <button class="icon-btn" id="searchBtn" aria-label="Издөө">⌕</button>
+    <button class="lang-switch" id="langSwitch" aria-label="Тилди алмаштыруу">KG / RU</button><button class="icon-btn" id="searchBtn" aria-label="Издөө">⌕</button>
     <button class="icon-btn cart-mini" id="cartBtn" aria-label="Корзина">🛒<b id="cartCount">0</b></button>
   </div>
 </header>
@@ -22,59 +22,85 @@
 <section class="hero">
   <div class="hero-bg"></div><div class="hero-shade"></div>
   <div class="hero-content">
-    <span class="eyebrow">БИШКЕК • КҮН САЙЫН 09:00–21:00</span>
-    <h1>Үйүңүзгө керектүүнүн<br><em>баары бир жерде.</em></h1>
-    <p>Идиш-аяк, техника, казан, наборлор жана күнүмдүк керектүү товарлар.</p>
-    <button class="primary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">Каталогду көрүү <span>→</span></button>
+    <span class="eyebrow"><span data-i18n="heroEyebrow">БИШКЕК • КҮН САЙЫН 09:00–21:00</span></span>
+    <h1><span data-i18n-html="heroTitle">Үйүңүзгө керектүүнүн<br><em>баары бир жерде.</em></span></h1>
+    <p><span data-i18n="heroText">Идиш-аяк, техника, казан, наборлор жана күнүмдүк керектүү товарлар.</span></p>
+    <button class="primary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})"><span data-i18n="heroButton">Каталогду көрүү</span> <span>→</span></button>
   </div>
   <div class="hero-glow"></div>
 </section>
 
 <section class="quick-strip">
-  <div><strong>🚚</strong><span>Жеткирүү бар</span></div>
-  <div><strong>💬</strong><span>WhatsApp заказ</span></div>
-  <div><strong>💳</strong><span>Ыңгайлуу төлөм</span></div>
+  <div><strong>🚚</strong><span><span data-i18n="delivery">Жеткирүү бар</span></span></div>
+  <div><strong>💬</strong><span><span data-i18n="waOrder">WhatsApp заказ</span></span></div>
+  <div><strong>💳</strong><span><span data-i18n="payment">Ыңгайлуу төлөм</span></span></div>
 </section>
 
 <section class="section" id="catalog">
   <div class="section-head">
-    <div><span class="eyebrow dark">ТАНДАЛГАН БӨЛҮМДӨР</span><h2>Каталог</h2></div>
-    <button class="ghost" id="allBtn">Баарын көрүү →</button>
+    <div><span class="eyebrow dark"><span data-i18n="selectedSections">ТАНДАЛГАН БӨЛҮМДӨР</span></span><h2 data-i18n="catalog">Каталог</h2></div>
+    <button class="ghost" id="allBtn"><span data-i18n="viewAll">Баарын көрүү</span> →</button>
   </div>
   <div class="categories" id="categories"></div>
 </section>
 
 <section class="section products-section">
   <div class="section-head">
-    <div><span class="eyebrow dark">ЖАҢЫ ТОВАРЛАР</span><h2>Сизге жаккан нерселер</h2></div>
+    <div><span class="eyebrow dark"><span data-i18n="newProducts">ЖАҢЫ ТОВАРЛАР</span></span><h2 data-i18n="liked">Сизге жаккан нерселер</h2></div>
     <span class="result-count" id="resultCount"></span>
   </div>
   <div class="searchbox" id="searchbox">
-    <span>⌕</span><input id="searchInput" placeholder="Товар издеңиз..." autocomplete="off"><button id="clearSearch">×</button>
+    <span>⌕</span><input id="searchInput" placeholder="Товар издеңиз..." data-i18n-placeholder="searchPlaceholder" autocomplete="off"><button id="clearSearch">×</button>
   </div>
   <div class="products" id="products"></div>
-  <div class="empty" id="empty" hidden><div>🛍️</div><h3>Товар табылган жок</h3><p>Башка ат менен издеп көрүңүз.</p></div>
+  <div class="empty" id="empty" hidden><div>🛍️</div><h3 data-i18n="notFound">Товар табылган жок</h3><p data-i18n="tryAnother">Башка ат менен издеп көрүңүз.</p></div>
 </section>
 </main>
 
+
+<section class="delivery-info">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow" data-i18n="deliveryEyebrow">Жеткирүү</span>
+      <h2 data-i18n="deliveryTitle">Сизге ыңгайлуу жеткирүү</h2>
+    </div>
+  </div>
+  <div class="delivery-grid">
+    <div class="delivery-card">
+      <div class="delivery-icon">🚕</div>
+      <div>
+        <strong data-i18n="deliveryYandex">Бишкек — Яндекс Go</strong>
+        <span data-i18n="deliveryPaid">Төлөмдүү жеткирүү</span>
+      </div>
+    </div>
+    <div class="delivery-card">
+      <div class="delivery-icon">🚚</div>
+      <div>
+        <strong data-i18n="deliveryYldam">Региондор — Ылдам Экспресс</strong>
+        <span data-i18n="deliveryPaid">Төлөмдүү жеткирүү</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer>
-  <div class="footer-brand"><img src="assets/logo.webp" alt=""><p>Үйгө керектүүнүн баары — бир жерде.</p></div>
-  <div><b>Даректер</b><p>Жибек-Жолу 235<br>Жибек-Жолу 227<br>Ауэзова 17<br>Бейшеналиева 20<br>Токтогул 259/10</p></div>
-  <div><b>Байланыш</b><p>WhatsApp: +996 507 66 88 66<br>Күн сайын 09:00–21:00</p></div>
+  <div class="footer-brand"><img src="assets/logo.webp" alt=""><p data-i18n="footerText">Үйгө керектүүнүн баары — бир жерде.</p></div>
+  <div><b data-i18n="addresses">Даректер</b><p>Жибек-Жолу 235<br>Жибек-Жолу 227<br>Ауэзова 17<br>Бейшеналиева 20<br>Токтогул 259/10</p></div>
+  <div><b data-i18n="contacts">Байланыш</b><p>WhatsApp: +996 507 66 88 66<br><span data-i18n="dailyHours">Күн сайын 09:00–21:00</span></p></div>
 </footer>
 
 <nav class="mobile-nav">
- <button onclick="scrollTo({top:0,behavior:'smooth'})">⌂<small>Башкы</small></button>
- <button onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">▦<small>Каталог</small></button>
- <button id="mobileSearch">⌕<small>Издөө</small></button>
- <button id="mobileCart">🛒<small>Корзина <b id="mobileCartCount">0</b></small></button>
+ <button onclick="scrollTo({top:0,behavior:'smooth'})">⌂<small data-i18n="home">Башкы</small></button>
+ <button onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">▦<small data-i18n="catalog">Каталог</small></button>
+ <button id="mobileSearch">⌕<small data-i18n="search">Издөө</small></button>
+ <button id="mobileCart">🛒<small><span data-i18n="cart">Корзина</span> <b id="mobileCartCount">0</b></small></button>
 </nav>
 
 <div class="drawer-backdrop" id="backdrop"></div>
 <aside class="cart-drawer" id="cartDrawer">
- <div class="drawer-head"><h3>Корзина</h3><button id="closeCart">×</button></div>
+ <div class="drawer-head"><h3 data-i18n="cart">Корзина</h3><button id="closeCart">×</button></div>
  <div id="cartItems" class="cart-items"></div>
- <div class="cart-bottom"><div><span>Жалпы:</span><strong id="cartTotal">0 сом</strong></div><button class="primary full" id="orderBtn">WhatsApp аркылуу заказ</button></div>
+ <div class="cart-bottom"><div><span data-i18n="total">Жалпы:</span><strong id="cartTotal">0 сом</strong></div><button class="primary full" id="orderBtn"><span data-i18n="waOrderButton">WhatsApp аркылуу заказ</span></button></div>
 </aside>
 
 <script src="app.js"></script>
