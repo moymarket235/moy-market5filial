@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "id": "midea-microwave-5800",
+    "name": "Midea — Микроволновая печь",
+    "price": 5800,
+    "category": "appliances",
+    "categoryName": "Бытовая техника",
+    "subcategoryName": "Микроволновые печи",
+    "description": "Midea микроволновая печь. 700 Вт, объём 20 л.",
+    "image": "assets/products/midea-microwave-5800.png"
+  },
+  {
+    "id": "technomir-microwave-5800",
+    "name": "ТЕХНОМИР — Микроволновая печь",
+    "price": 5800,
+    "category": "appliances",
+    "categoryName": "Бытовая техника",
+    "subcategoryName": "Микроволновые печи",
+    "description": "ТЕХНОМИР микроволновая печь. 700 Вт, объём 20 л.",
+    "image": "assets/products/technomir-microwave-5800.png"
+  }
+]
