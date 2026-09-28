@@ -1,43 +1,82 @@
 <!doctype html>
 <html lang="ky">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#080d1d"><meta name="description" content="Мой Маркет — онлайн каталог жана заказ">
-<title>Мой Маркет</title><link rel="icon" href="assets/logo.webp"><link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07111f">
+<title>Мой Маркет — Бишкек</title>
+<meta name="description" content="Мой Маркет — идиш-аяк, үй техникасы, казан жана ашкана товарлары.">
+<link rel="preload" as="image" href="assets/hero.webp">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="#"><img src="assets/logo.webp" alt="Мой Маркет"><b>МОЙ МАРКЕТ</b></a>
-  <div class="actions"><button id="calcBtn" class="round">🧮</button><button id="cartBtn" class="cart">🛒 <b id="cartCount">0</b></button></div>
+  <div class="brand"><img src="assets/logo.webp" alt="Мой Маркет"></div>
+  <div class="top-actions">
+    <button class="icon-btn" id="searchBtn" aria-label="Издөө">⌕</button>
+    <button class="icon-btn cart-mini" id="cartBtn" aria-label="Корзина">🛒<b id="cartCount">0</b></button>
+  </div>
 </header>
-<section class="hero"><div><span class="eyebrow">ОНЛАЙН-КАТАЛОГ</span><h1>Көргөндө<br><em>алгың келет!</em></h1><p>Товарды категориясы боюнча тандаңыз, сүрөтүн толук көрүңүз, корзинага кошуңуз жана WhatsApp аркылуу заказ бериңиз.</p><a class="hero-btn" href="#catalog">Каталогду ачуу ↓</a></div><img class="hero-logo" src="assets/logo.webp" alt="Мой Маркет"></section>
-<section class="catalog-bar" id="catalog"><div class="search"><span>⌕</span><input id="search" type="search" placeholder="Товар издөө..." autocomplete="off"></div><div class="chips" id="chips"></div></section>
-<main class="feed"><div class="section-title"><h2>Товарлар</h2><span id="resultCount"></span></div><div class="grid" id="grid"></div></main>
-<button class="floating-cart" id="floatingCart">🛒 <span>Корзина</span> <b id="floatCount">0</b></button>
-<div class="modal" id="cartModal"><div class="shade" data-close="cartModal"></div><section class="panel"><button class="close" data-close="cartModal">×</button><h2>Корзина</h2><div id="cartItems"></div><div class="total"><span>Жалпы сумма</span><strong id="cartTotal">0 сом</strong></div><button class="whatsapp" id="whatsapp">🟢 WhatsApp аркылуу онлайн заказ</button><p class="phone">+996 507 66 88 66</p><p class="small">Сүрөттөр сайтта көрсөтүлөт. WhatsApp'тын кадимки шилтемеси сүрөт файлдарын чатка автоматтык тиркей албайт.</p></section></div>
-<div class="modal" id="calcModal"><div class="shade" data-close="calcModal"></div><section class="panel calculator"><button class="close" data-close="calcModal">×</button><h2>🧮 Товар эсептегич</h2><label>Баасы (сом)<input id="priceInput" type="number" min="0" value="0"></label><label>Саны<input id="qtyInput" type="number" min="1" value="1"></label><div class="calc-total"><span>Жыйынтык</span><strong id="calcTotal">0 сом</strong></div></section></div>
-<footer><img src="assets/logo.webp" alt=""><div><b>МОЙ МАРКЕТ</b><br>Онлайн заказ: +996 507 66 88 66</div><a href="admin.html" class="admin-link">Admin</a></footer>
-<script>
-const PHONE="996507668866";let products=[],categories=[],cart=JSON.parse(localStorage.getItem("moy-market-cart-v3")||"[]"),active="all";
-const money=n=>new Intl.NumberFormat("ru-RU").format(Number(n)||0)+" сом";
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-async function init(){[products,categories]=await Promise.all([fetch("products.json",{cache:"no-store"}).then(r=>r.json()),fetch("categories.json",{cache:"no-store"}).then(r=>r.json())]);renderCategories();render();renderCart()}
-function renderCategories(){document.querySelector("#chips").innerHTML='<button class="chip active" data-cat="all">Баары</button>'+categories.map(c=>`<button class="chip" data-cat="${esc(c.id)}">${esc(c.name)}</button>`).join("")}
-function render(){const q=document.querySelector("#search").value.trim().toLowerCase();const list=products.filter(p=>(active==="all"||p.category===active)&&((p.name+" "+(p.description||"")+" "+(p.categoryName||"")+" "+(p.subcategoryName||"")).toLowerCase().includes(q)));document.querySelector("#resultCount").textContent=list.length+" товар";document.querySelector("#grid").innerHTML=list.length?list.map(p=>`<article class="card"><div class="photo"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" decoding="async"></div><div class="info"><span class="tag">${esc(p.subcategoryName||p.categoryName||"Мой Маркет")}</span><h3>${esc(p.name)}</h3><p>${esc(p.description||"")}</p><div class="bottom"><strong>${money(p.price)}</strong><button onclick="add(${p.id})">+ Корзина</button></div><button class="order" onclick="quickOrder(${p.id})">🟢 Онлайн заказ · WhatsApp</button></div></article>`).join(""):'<div class="empty">Бул категорияда товар жок.</div>'}
-function save(){localStorage.setItem("moy-market-cart-v3",JSON.stringify(cart))}
-function add(id){const x=cart.find(a=>a.id===id);x?x.qty++:cart.push({id,qty:1});save();renderCart();toast("Корзинага кошулду")}
-function change(id,d){const x=cart.find(a=>a.id===id);if(!x)return;x.qty+=d;if(x.qty<1)cart=cart.filter(a=>a.id!==id);save();renderCart()}
-function data(){return cart.map(x=>{const p=products.find(a=>a.id===x.id);return p?{...p,qty:x.qty,sum:(Number(p.price)||0)*x.qty}:null}).filter(Boolean)}
-function renderCart(){const a=data(),count=a.reduce((s,x)=>s+x.qty,0),total=a.reduce((s,x)=>s+x.sum,0);document.querySelector("#cartCount").textContent=count;document.querySelector("#floatCount").textContent=count;document.querySelector("#cartTotal").textContent=money(total);document.querySelector("#cartItems").innerHTML=a.length?a.map(x=>`<div class="cart-item"><img src="${esc(x.image)}" alt=""><div><b>${esc(x.name)}</b><small>${money(x.price)} × ${x.qty}</small><div class="qty"><button onclick="change(${x.id},-1)">−</button><b>${x.qty}</b><button onclick="change(${x.id},1)">+</button></div></div><strong>${money(x.sum)}</strong><button class="remove" onclick="removeItem(${x.id})">×</button></div>`).join(""):'<div class="empty">Корзина бош.</div>'}
-function removeItem(id){cart=cart.filter(x=>x.id!==id);save();renderCart()}
-function message(singleId=null){const a=singleId?[{id:singleId,qty:1}]:cart;let total=0,lines=[];a.forEach((x,i)=>{const p=products.find(y=>y.id===x.id);if(p){const sum=(Number(p.price)||0)*x.qty;total+=sum;lines.push(`${i+1}. ${p.name} — ${x.qty} даана — ${money(sum)}`)}});return encodeURIComponent("Саламатсызбы! Мой Маркеттен онлайн заказ берейин.\n\n"+lines.join("\n")+"\n\nЖалпы сумма: "+money(total))}
-function quickOrder(id){window.open("https://wa.me/"+PHONE+"?text="+message(id),"_blank","noopener")}
-document.querySelector("#whatsapp").onclick=()=>{if(!cart.length)return toast("Адегенде товар кошуңуз");window.open("https://wa.me/"+PHONE+"?text="+message()," _blank".trim(),"noopener")}
-document.querySelector("#search").oninput=render;document.querySelector("#chips").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));b.classList.add("active");active=b.dataset.cat;render()}
-function openModal(id){document.getElementById(id).classList.add("show")}function closeModal(id){document.getElementById(id).classList.remove("show")}
-document.querySelector("#cartBtn").onclick=()=>openModal("cartModal");document.querySelector("#floatingCart").onclick=()=>openModal("cartModal");document.querySelector("#calcBtn").onclick=()=>openModal("calcModal");document.addEventListener("click",e=>{if(e.target.dataset.close)closeModal(e.target.dataset.close)});
-function calc(){const p=Number(document.querySelector("#priceInput").value)||0,q=Math.max(1,Number(document.querySelector("#qtyInput").value)||1);document.querySelector("#calcTotal").textContent=money(p*q)}document.querySelector("#priceInput").oninput=calc;document.querySelector("#qtyInput").oninput=calc;
-function toast(s){const t=document.createElement("div");t.className="toast";t.textContent=s;document.body.appendChild(t);requestAnimationFrame(()=>t.classList.add("show"));setTimeout(()=>{t.classList.remove("show");setTimeout(()=>t.remove(),200)},1400)}
-init().catch(()=>document.querySelector("#grid").innerHTML='<div class="empty">Каталог жүктөлбөй калды. products.json жана categories.json файлдарын текшериңиз.</div>');
-</script>
-</body></html>
+
+<main>
+<section class="hero">
+  <div class="hero-bg"></div><div class="hero-shade"></div>
+  <div class="hero-content">
+    <span class="eyebrow">БИШКЕК • КҮН САЙЫН 09:00–21:00</span>
+    <h1>Үйүңүзгө керектүүнүн<br><em>баары бир жерде.</em></h1>
+    <p>Идиш-аяк, техника, казан, наборлор жана күнүмдүк керектүү товарлар.</p>
+    <button class="primary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">Каталогду көрүү <span>→</span></button>
+  </div>
+  <div class="hero-glow"></div>
+</section>
+
+<section class="quick-strip">
+  <div><strong>🚚</strong><span>Жеткирүү бар</span></div>
+  <div><strong>💬</strong><span>WhatsApp заказ</span></div>
+  <div><strong>💳</strong><span>Ыңгайлуу төлөм</span></div>
+</section>
+
+<section class="section" id="catalog">
+  <div class="section-head">
+    <div><span class="eyebrow dark">ТАНДАЛГАН БӨЛҮМДӨР</span><h2>Каталог</h2></div>
+    <button class="ghost" id="allBtn">Баарын көрүү →</button>
+  </div>
+  <div class="categories" id="categories"></div>
+</section>
+
+<section class="section products-section">
+  <div class="section-head">
+    <div><span class="eyebrow dark">ЖАҢЫ ТОВАРЛАР</span><h2>Сизге жаккан нерселер</h2></div>
+    <span class="result-count" id="resultCount"></span>
+  </div>
+  <div class="searchbox" id="searchbox">
+    <span>⌕</span><input id="searchInput" placeholder="Товар издеңиз..." autocomplete="off"><button id="clearSearch">×</button>
+  </div>
+  <div class="products" id="products"></div>
+  <div class="empty" id="empty" hidden><div>🛍️</div><h3>Товар табылган жок</h3><p>Башка ат менен издеп көрүңүз.</p></div>
+</section>
+</main>
+
+<footer>
+  <div class="footer-brand"><img src="assets/logo.webp" alt=""><p>Үйгө керектүүнүн баары — бир жерде.</p></div>
+  <div><b>Даректер</b><p>Жибек-Жолу 235<br>Жибек-Жолу 227<br>Ауэзова 17<br>Бейшеналиева 20<br>Токтогул 259/10</p></div>
+  <div><b>Байланыш</b><p>WhatsApp: +996 507 66 88 66<br>Күн сайын 09:00–21:00</p></div>
+</footer>
+
+<nav class="mobile-nav">
+ <button onclick="scrollTo({top:0,behavior:'smooth'})">⌂<small>Башкы</small></button>
+ <button onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">▦<small>Каталог</small></button>
+ <button id="mobileSearch">⌕<small>Издөө</small></button>
+ <button id="mobileCart">🛒<small>Корзина <b id="mobileCartCount">0</b></small></button>
+</nav>
+
+<div class="drawer-backdrop" id="backdrop"></div>
+<aside class="cart-drawer" id="cartDrawer">
+ <div class="drawer-head"><h3>Корзина</h3><button id="closeCart">×</button></div>
+ <div id="cartItems" class="cart-items"></div>
+ <div class="cart-bottom"><div><span>Жалпы:</span><strong id="cartTotal">0 сом</strong></div><button class="primary full" id="orderBtn">WhatsApp аркылуу заказ</button></div>
+</aside>
+
+<script src="app.js"></script>
+</body>
+</html>
