@@ -39,7 +39,7 @@ function renderProducts(){
  const card=p=>{
   const specs=lang==="ru"?(p.characteristicsRu||p.characteristics||[]):(p.characteristics||[]);
   // The description is shown only for products without a specifications list.
-  return `<article class="product"><div class="photo"><img src="${esc(p.image||"assets/products/placeholder.svg")}" alt="${esc(nameOf(p))}" loading="lazy" onerror="this.onerror=null;this.src='assets/products/placeholder.svg'"></div><div class="pbody"><div class="pname">${esc(nameOf(p))}</div>${specs.length?"":`<div class="desc">${esc(descOf(p))}</div>`}<div class="price">${money(p.price)}</div>${specs.length?`<div class="specs"><b>${tr("characteristics")}</b><ul>${specs.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}<button class="buy" onclick="addToCart('${esc(p.id)}')">🛒 ${tr("addCart")}</button></div></article>`;
+  return `<article class="product"><div class="photo" data-product-id="${esc(p.id)}"><img src="${esc(p.image||"assets/products/placeholder.svg")}" alt="${esc(nameOf(p))}" loading="lazy" onerror="this.onerror=null;this.src='assets/products/placeholder.svg'"></div><div class="pbody"><div class="pname">${esc(nameOf(p))}</div>${specs.length?"":`<div class="desc">${esc(descOf(p))}</div>`}<div class="price">${money(p.price)}</div>${specs.length?`<div class="specs"><b>${tr("characteristics")}</b><ul>${specs.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}<button class="buy" onclick="addToCart('${esc(p.id)}')">🛒 ${tr("addCart")}</button></div></article>`;
  };
  const sections=[
   {key:"vacuum",ky:"Пылесостор",ru:"Пылесосы"},
@@ -66,6 +66,31 @@ function renderProducts(){
  }else{$("#products").classList.remove("grouped");$("#products").innerHTML=list.map(card).join("");}
 }
 
+function brandOf(p){
+ const n=(p.name||p.nameRu||"").trim();
+ return (n.split(/\s+/)[0]||"Мой Маркет").replace(/[—–-].*$/,"" ).trim() || "Мой Маркет";
+}
+function openProductPreview(id){
+ const p=products.find(x=>x.id===id); if(!p)return;
+ const modal=$("#productPreview");
+ $("#previewBrand").textContent=brandOf(p);
+ $("#previewImg").src=p.image||"assets/products/placeholder.svg";
+ $("#previewImg").alt=nameOf(p);
+ $("#previewName").textContent=nameOf(p);
+ $("#previewPrice").textContent=money(p.price);
+ modal.classList.remove("brand-phase"); modal.classList.add("open");
+ document.body.classList.add("preview-open");
+ requestAnimationFrame(()=>modal.classList.add("brand-phase"));
+ clearTimeout(window.__previewTimer);
+ window.__previewTimer=setTimeout(()=>modal.classList.add("show-image"),1100);
+}
+function closeProductPreview(){
+ const modal=$("#productPreview"); if(!modal)return;
+ modal.classList.remove("open","brand-phase","show-image");
+ document.body.classList.remove("preview-open");
+ clearTimeout(window.__previewTimer);
+}
+
 function save(){localStorage.setItem("moyCart",JSON.stringify(cart))}
 function productImageUrl(p){try{return new URL(p.image||"assets/products/placeholder.svg",document.baseURI).href}catch(e){return p.image||""}}
 function showToast(message){let t=$("#cartToast");if(!t){t=document.createElement("div");t.id="cartToast";t.className="cart-toast";document.body.appendChild(t)}t.textContent="🛒  "+message;t.classList.add("show");clearTimeout(window.__cartToastTimer);window.__cartToastTimer=setTimeout(()=>t.classList.remove("show"),1800)}
@@ -77,6 +102,7 @@ function closeCart(){$("#cartDrawer").classList.remove("open");$("#backdrop").cl
 function order(){if(!cart.length)return;let total=0,msg=lang==="ru"?"Здравствуйте! Хочу оформить заказ в Мой Маркет:":"Салам! Мой Маркеттен заказ бергим келет:";cart.forEach(x=>{const p=products.find(a=>a.id===x.id);if(!p)return;const sub=p.price*x.qty;total+=sub;msg+=`\n\n• ${nameOf(p)}\n${tr("qty")}: ${x.qty}\n${tr("price")}: ${p.price} сом\n${tr("subtotal")}: ${sub} сом\n🖼️ ${lang==="ru"?"Ссылка на фото":"Сүрөттүн шилтемеси"}: ${productImageUrl(p)}`});const d=document.querySelector('input[name="deliveryChoice"]:checked')?.value||"yandex";msg+=`\n\n🚚 ${lang==="ru"?"Доставка":"Жеткирүү"}: ${d==="yldam"?"Ылдам Экспресс":"Яндекс Go"}`;const a=$("#deliveryAddress").value.trim(),ph=$("#deliveryPhone").value.trim();if(a)msg+=`\n📍 ${lang==="ru"?"Адрес":"Дарек"}: ${a}`;if(ph)msg+=`\n📞 Телефон: ${ph}`;msg+=`\n\n${tr("total")} ${total} сом`;location.href=`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`}
 async function load(){products=FALLBACK_PRODUCTS;categories=FALLBACK_CATEGORIES;try{const b=location.href.substring(0,location.href.lastIndexOf("/")+1);const [p,c]=await Promise.all([fetch(b+"products.json?v=29",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_PRODUCTS).catch(()=>FALLBACK_PRODUCTS),fetch(b+"categories.json?v=29",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_CATEGORIES).catch(()=>FALLBACK_CATEGORIES)]);if(Array.isArray(p)&&p.length)products=p;if(Array.isArray(c)&&c.length)categories=c}catch(e){console.log("fallback",e)}applyText();renderCats();renderSubcats();renderProducts();renderCart()}
 $("#langSwitch").onclick=()=>{lang=lang==="ky"?"ru":"ky";localStorage.setItem("moyLang",lang);applyText();renderCats();renderSubcats();renderProducts();renderCart()};
+document.addEventListener("click",e=>{const photo=e.target.closest(".photo[data-product-id]");if(photo)openProductPreview(photo.dataset.productId);if(e.target.closest("#previewClose")||e.target.id==="previewBackdrop")closeProductPreview()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProductPreview()});
 $("#searchBtn").onclick=()=>{document.querySelector("#searchbox").scrollIntoView({behavior:"smooth"});setTimeout(()=>$("#searchInput").focus(),300)};
 $("#mobileSearch").onclick=()=>$("#searchBtn").click();$("#cartBtn").onclick=openCart;$("#mobileCart").onclick=openCart;$("#closeCart").onclick=closeCart;$("#backdrop").onclick=closeCart;$("#orderBtn").onclick=order;$("#heroCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileHome").onclick=()=>scrollTo({top:0,behavior:"smooth"});$("#allBtn").onclick=()=>{activeCat="all";activeSub="all";renderCats();renderSubcats();renderProducts()};$("#searchInput").oninput=renderProducts;$("#clearSearch").onclick=()=>{$("#searchInput").value="";renderProducts()};
 load();

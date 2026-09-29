@@ -89,6 +89,15 @@
 
 <div class="drawer-backdrop" id="backdrop"></div>
 <div class="cart-toast" id="cartToast" aria-live="polite"></div>
+<div class="product-preview" id="productPreview" aria-hidden="true">
+  <div class="preview-backdrop" id="previewBackdrop"></div>
+  <button class="preview-close" id="previewClose" aria-label="Close">×</button>
+  <div class="preview-brand" id="previewBrand"></div>
+  <div class="preview-stage">
+    <img class="preview-img" id="previewImg" src="assets/products/placeholder.svg" alt="">
+    <div class="preview-info"><span class="preview-name" id="previewName"></span><span class="preview-price" id="previewPrice"></span></div>
+  </div>
+</div>
 <aside class="cart-drawer" id="cartDrawer">
  <div class="drawer-head"><h3 data-i18n="cart">Корзина</h3><button id="closeCart">×</button></div>
  <div id="cartItems" class="cart-items"></div>
@@ -105,6 +114,6 @@
  </div>
 </aside>
 
-<script src="app.js?v=3.0"></script>
+<script src="app.js?v=3.1"></script>
 </body>
 </html>
