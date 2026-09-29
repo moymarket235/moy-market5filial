@@ -70,56 +70,52 @@ function brandOf(p){
  const n=(p.name||p.nameRu||"").trim();
  return (n.split(/\s+/)[0]||"Мой Маркет").replace(/[—–-].*$/,"" ).trim() || "Мой Маркет";
 }
-function chooseVoice(){
+const nameOfLang=(p,l)=>l==="ru"?(p.nameRu||p.name||""):(p.name||p.nameRu||"");
+const descOfLang=(p,l)=>l==="ru"?(p.descriptionRu||p.description||""):(p.description||p.descriptionRu||"");
+function detectQueryLang(text){
+ const x=String(text||"").toLowerCase();
+ if(/[өүң]/.test(x))return "ky";
+ if(/[ыэъё]/.test(x))return "ru";
+ const kyWords=['барбы','канча','баасы','баа','кайда','кандай','жана','үчүн','менен','берчи','көрсөт','товар','блендер','пылесос','жеткирүү','шаар','регион','сом','суроо','сурасам','керек','алсам','алуу','заказ кыл'];
+ const ruWords=['есть','цена','сколько','где','какой','какая','какие','товар','блендер','пылесос','доставка','город','регион','руб','заказ','нужен','нужна','можно','покажи','характеристик','стоимость'];
+ let ky=0,ru=0;kyWords.forEach(w=>{if(x.includes(w))ky++});ruWords.forEach(w=>{if(x.includes(w))ru++});
+ return ky>ru?'ky':ru>ky?'ru':lang;
+}
+function chooseVoice(targetLang){
  try{
   const voices=window.speechSynthesis?.getVoices?.()||[];
-  const target=lang==='ru'?'ru':'ky';
-  const prefs=target==='ru'?['ru-RU','ru']:[ 'ky-KG','ky','kk-KZ','kk','ru-RU','ru'];
+  const target=targetLang==='ru'?'ru':'ky';
+  const prefs=target==='ru'?['ru-RU','ru-RU-x-rudf','ru']:[ 'ky-KG','ky','kk-KZ','kk' ];
   for(const code of prefs){const exact=voices.find(v=>(v.lang||'').toLowerCase()===code.toLowerCase());if(exact)return exact}
-  const natural=voices.find(v=>{const l=(v.lang||'').toLowerCase();const n=(v.name||'').toLowerCase();return (l.startsWith(target)||(target==='ky'&&l.startsWith('kk')))&&/(natural|google|yandex|premium|enhanced|neural|online)/.test(n)});
-  if(natural)return natural;
-  return voices.find(v=>{const l=(v.lang||'').toLowerCase();return l.startsWith(target)||(target==='ky'&&l.startsWith('kk'))})||voices.find(v=>(v.lang||'').toLowerCase().startsWith('ru'))||null;
+  const natural=voices.find(v=>{const l=(v.lang||'').toLowerCase();const n=(v.name||'').toLowerCase();return (target==='ru'?l.startsWith('ru'):(l.startsWith('ky')||l.startsWith('kk')))&&/(natural|google|yandex|premium|enhanced|neural|online)/.test(n)});
+  return natural||voices.find(v=>{const l=(v.lang||'').toLowerCase();return target==='ru'?l.startsWith('ru'):(l.startsWith('ky')||l.startsWith('kk'))})||null;
  }catch(e){return null}
 }
-function cleanSpeechText(text){return String(text||'').replace(/https?:\/\/\S+/g,'').replace(/[🔥🚕📦💬🔎🛒🌐👋😊⭐️✨]/g,'').replace(/\s+/g,' ').trim()}
-function speakText(text){
+function cleanSpeechText(text,targetLang){
+ let s=String(text||'').replace(/https?:\/\/\S+/g,'').replace(/[🔥🚕📦💬🔎🛒🌐👋😊⭐️✨]/g,'').replace(/\b(HEPA|Turbo Cyclone System|WhatsApp|Wi-Fi|Bluetooth)\b/gi,m=>({HEPA:'ХЕПА','Turbo Cyclone System':'турбо циклон систем','WhatsApp':'Ватсап','Wi-Fi':'вай фай','Bluetooth':'блютуз'}[m]||m));
+ if(targetLang==='ru')s=s.replace(/\bсом\b/gi,'сом');
+ return s.replace(/\s+/g,' ').trim();
+}
+function speakText(text,targetLang=lang){
  try{
   if(!('speechSynthesis' in window))return false;
   window.speechSynthesis.cancel();
-  const speech=cleanSpeechText(text); if(!speech)return false; const u=new SpeechSynthesisUtterance(speech);
-  const voice=chooseVoice();
-  const target=lang==='ru'?'ru-RU':'ky-KG';
-  u.voice=voice||null;
-  u.lang=voice?.lang||target;
-  u.rate=.92;
-  u.pitch=1.0;
-  u.volume=1;
-  window.speechSynthesis.speak(u);
-  return true;
+  const speech=cleanSpeechText(text,targetLang);if(!speech)return false;
+  const u=new SpeechSynthesisUtterance(speech),voice=chooseVoice(targetLang);
+  u.voice=voice||null;u.lang=voice?.lang||(targetLang==='ru'?'ru-RU':'ky-KG');u.rate=.88;u.pitch=.98;u.volume=1;
+  u.onstart=()=>document.body.classList.add('robot-speaking');u.onend=u.onerror=()=>document.body.classList.remove('robot-speaking');
+  window.speechSynthesis.speak(u);return true;
  }catch(e){return false}
 }
 if('speechSynthesis' in window){window.speechSynthesis.onvoiceschanged=()=>{window.__moyVoices=window.speechSynthesis.getVoices()}}
-function productSpeech(p){const specs=(lang==='ru'?(p.characteristicsRu||[]):(p.characteristics||[]));const parts=[nameOf(p),`${lang==='ru'?'Цена':'Баасы'} ${money(p.price)}`];if(specs.length)parts.push((lang==='ru'?'Характеристики: ':'Характеристикалары: ')+specs.join(', '));return parts.join('. ')}
+function productSpeech(p,targetLang){const specs=(targetLang==='ru'?(p.characteristicsRu||[]):(p.characteristics||[]));const parts=[nameOfLang(p,targetLang),`${targetLang==='ru'?'Цена':'Баасы'} ${money(p.price)}`];if(specs.length)parts.push((targetLang==='ru'?'Характеристики: ':'Характеристикалары: ')+specs.join(', '));return parts.join('. ')}
 function openProductPreview(id){
  const p=products.find(x=>x.id===id); if(!p)return;
  const modal=$("#productPreview");
- $("#previewBrand").textContent=brandOf(p);
- $("#previewImg").src=p.image||"assets/products/placeholder.svg";
- $("#previewImg").alt=nameOf(p);
- $("#previewName").textContent=nameOf(p);
- $("#previewPrice").textContent=money(p.price);
- modal.classList.remove("brand-phase"); modal.classList.add("open");
- document.body.classList.add("preview-open");
- requestAnimationFrame(()=>modal.classList.add("brand-phase"));
- clearTimeout(window.__previewTimer);
- window.__previewTimer=setTimeout(()=>{modal.classList.add("show-image");speakText(productSpeech(p));},1100);
+ $("#previewBrand").textContent=brandOf(p);$("#previewImg").src=p.image||"assets/products/placeholder.svg";$("#previewImg").alt=nameOfLang(p,lang);$("#previewName").textContent=nameOfLang(p,lang);$("#previewPrice").textContent=money(p.price);
+ modal.classList.remove("brand-phase");modal.classList.add("open");document.body.classList.add("preview-open");requestAnimationFrame(()=>modal.classList.add("brand-phase"));clearTimeout(window.__previewTimer);window.__previewTimer=setTimeout(()=>{modal.classList.add("show-image");speakText(productSpeech(p,lang),lang)},1100);
 }
-function closeProductPreview(){
- const modal=$("#productPreview"); if(!modal)return;
- modal.classList.remove("open","brand-phase","show-image");
- document.body.classList.remove("preview-open");
- clearTimeout(window.__previewTimer);
-}
+function closeProductPreview(){const modal=$("#productPreview");if(!modal)return;modal.classList.remove("open","brand-phase","show-image");document.body.classList.remove("preview-open");clearTimeout(window.__previewTimer)}
 
 function save(){localStorage.setItem("moyCart",JSON.stringify(cart))}
 function productImageUrl(p){try{return new URL(p.image||"assets/products/placeholder.svg",document.baseURI).href}catch(e){return p.image||""}}
@@ -130,39 +126,22 @@ function renderCart(){const rows=cart.map(x=>{const p=products.find(a=>a.id===x.
 function openCart(){$("#cartDrawer").classList.add("open");$("#backdrop").classList.add("open")}
 function closeCart(){$("#cartDrawer").classList.remove("open");$("#backdrop").classList.remove("open")}
 function order(){if(!cart.length)return;let total=0,msg=lang==="ru"?"Здравствуйте! Хочу оформить заказ в Мой Маркет:":"Салам! Мой Маркеттен заказ бергим келет:";cart.forEach(x=>{const p=products.find(a=>a.id===x.id);if(!p)return;const sub=p.price*x.qty;total+=sub;msg+=`\n\n• ${nameOf(p)}\n${tr("qty")}: ${x.qty}\n${tr("price")}: ${p.price} сом\n${tr("subtotal")}: ${sub} сом\n🖼️ ${lang==="ru"?"Ссылка на фото":"Сүрөттүн шилтемеси"}: ${productImageUrl(p)}`});const d=document.querySelector('input[name="deliveryChoice"]:checked')?.value||"yandex";msg+=`\n\n🚚 ${lang==="ru"?"Доставка":"Жеткирүү"}: ${d==="yldam"?"Ылдам Экспресс":"Яндекс Go"}`;const a=$("#deliveryAddress").value.trim(),ph=$("#deliveryPhone").value.trim();if(a)msg+=`\n📍 ${lang==="ru"?"Адрес":"Дарек"}: ${a}`;if(ph)msg+=`\n📞 Телефон: ${ph}`;msg+=`\n\n${tr("total")} ${total} сом`;location.href=`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`}
-async function load(){products=FALLBACK_PRODUCTS;categories=FALLBACK_CATEGORIES;try{const b=location.href.substring(0,location.href.lastIndexOf("/")+1);const [p,c]=await Promise.all([fetch(b+"products.json?v=37",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_PRODUCTS).catch(()=>FALLBACK_PRODUCTS),fetch(b+"categories.json?v=37",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_CATEGORIES).catch(()=>FALLBACK_CATEGORIES)]);if(Array.isArray(p)&&p.length)products=p;if(Array.isArray(c)&&c.length)categories=c}catch(e){console.log("fallback",e)}applyText();renderCats();renderSubcats();renderProducts();renderCart()}
+async function load(){products=FALLBACK_PRODUCTS;categories=FALLBACK_CATEGORIES;try{const b=location.href.substring(0,location.href.lastIndexOf("/")+1);const [p,c]=await Promise.all([fetch(b+"products.json?v=39",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_PRODUCTS).catch(()=>FALLBACK_PRODUCTS),fetch(b+"categories.json?v=39",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_CATEGORIES).catch(()=>FALLBACK_CATEGORIES)]);if(Array.isArray(p)&&p.length)products=p;if(Array.isArray(c)&&c.length)categories=c}catch(e){console.log("fallback",e)}applyText();renderCats();renderSubcats();renderProducts();renderCart()}
 $("#langSwitch").onclick=()=>{lang=lang==="ky"?"ru":"ky";localStorage.setItem("moyLang",lang);applyText();renderCats();renderSubcats();renderProducts();renderCart()};
 document.addEventListener("click",e=>{const photo=e.target.closest(".photo[data-product-id]");if(photo)openProductPreview(photo.dataset.productId);if(e.target.closest("#previewClose")||e.target.id==="previewBackdrop")closeProductPreview()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProductPreview()});
 $("#searchBtn").onclick=()=>{document.querySelector("#searchbox").scrollIntoView({behavior:"smooth"});setTimeout(()=>$("#searchInput").focus(),300)};
-function robotSpeak(text){const ok=speakText(text);const box=$("#robotReply");if(box&&!ok){box.hidden=false;box.textContent=tr("robotVoiceOff")}}
-function normalizeQuery(s){return (s||"").toLowerCase().replace(/ё/g,"е").replace(/[^\p{L}\p{N}\s]/gu," ").replace(/\s+/g," ").trim()}
-function robotFindProducts(q){
- const x=normalizeQuery(q); if(!x)return [];
- const aliases={
-  "блендер":"blender","блендерлер":"blender","блендеры":"blender","блендерди":"blender","блендерге":"blender","блендерлерди":"blender",
-  "пылесос":"vacuum","пылесостор":"vacuum","пылесосы":"vacuum","пылесосту":"vacuum","пылесоско":"vacuum","чаң соргуч":"vacuum","чаң соргучтар":"vacuum",
-  "микроволновка":"microwave","микроволновкалар":"microwave","микроволновые печи":"microwave","микроволновая печь":"microwave","микроволновую":"microwave","микроволновке":"microwave","микроволновканы":"microwave",
-  "утюг":"iron","үтүк":"iron","үтүктөр":"iron","чайник":"kettle","чайники":"kettle","чайникти":"kettle"
- };
- const key=Object.keys(aliases).find(a=>x.includes(a));
- if(key){const list=products.filter(p=>p.subcategory===aliases[key]);if(list.length)return list.slice(0,8)}
- const tokens=x.split(" ").filter(w=>w.length>2);
- return products.map(p=>{const name=normalizeQuery([p.name,p.nameRu].join(" "));const hay=normalizeQuery([p.name,p.nameRu,p.description,p.descriptionRu,p.categoryName,p.categoryNameRu,p.subcategoryName,p.subcategoryNameRu,p.id].join(" "));let score=0;tokens.forEach(t=>{if(name.includes(t))score+=4;else if(hay.includes(t))score+=1});return {p,score}}).filter(a=>a.score>0).sort((a,b)=>b.score-a.score||a.p.price-b.p.price).slice(0,8).map(a=>a.p);
-}
-function robotFindProductByName(q){
- const x=normalizeQuery(q);if(!x)return null;let best=null,score=0;
- products.forEach(p=>{let s=0;[p.name,p.nameRu,p.id].map(normalizeQuery).forEach(n=>{if(n&&x.includes(n))s=Math.max(s,n.length+20);else s=Math.max(s,n.split(" ").filter(t=>t.length>2).reduce((v,t)=>v+(x.includes(t)?2:0),0))});if(s>score){score=s;best=p}});
- return score>=3?best:null;
-}
-function robotCatalogAnswer(list,mode){
- if(!list.length)return "";const shown=list.slice(0,6);
- if(mode==='specs'&&shown.length===1){const p=shown[0],specs=lang==='ru'?(p.characteristicsRu||[]):(p.characteristics||[]);return specs.length?`${nameOf(p)}. ${lang==='ru'?'Цена':'Баасы'} ${money(p.price)}. ${lang==='ru'?'Характеристики: ':'Характеристикалары: '}${specs.join(', ')}.`:`${nameOf(p)}. ${money(p.price)}. ${descOf(p)}`}
- if(mode==='price')return shown.map(p=>`${nameOf(p)} — ${money(p.price)}`).join('. ')+'.';
- return (lang==='ru'?'Да, в каталоге есть: ':'Ооба, каталогдо бар: ')+shown.map(p=>`${nameOf(p)} — ${money(p.price)}`).join('; ')+'.';
-}
+function robotBubble(text,type='bot',speechLang=null){const chat=$("#robotChat");if(!chat)return;const b=document.createElement('div');b.className=`robot-bubble ${type}`;if(type==='bot'){const btn=document.createElement('button');btn.className='robot-speaker';btn.type='button';btn.textContent='🔊';btn.title=speechLang==='ru'?'Озвучить':'Угуп көрүү';btn.onclick=()=>speakText(text,speechLang||lang);b.appendChild(btn)}b.appendChild(document.createTextNode(text));chat.appendChild(b);chat.scrollTop=chat.scrollHeight}
+function robotSpeak(text,targetLang=lang){const ok=speakText(text,targetLang);const box=$("#robotReply");if(box&&!ok){box.hidden=false;box.textContent=targetLang==='ru'?"Звук на этом устройстве недоступен.":"Бул түзмөктө үн жеткиликтүү эмес."}}
+function normalizeQuery(s){return (s||'').toLowerCase().replace(/ё/g,'е').replace(/[^\p{L}\p{N}\s]/gu,' ').replace(/\s+/g,' ').trim()}
+function robotFindProducts(q){const x=normalizeQuery(q);if(!x)return[];const aliases={"блендер":"blender","блендерлер":"blender","блендеры":"blender","блендерди":"blender","блендерге":"blender","блендерлерди":"blender","пылесос":"vacuum","пылесостор":"vacuum","пылесосы":"vacuum","пылесосту":"vacuum","пылесоско":"vacuum","чаң соргуч":"vacuum","чаң соргучтар":"vacuum","микроволновка":"microwave","микроволновкалар":"microwave","микроволновые печи":"microwave","микроволновая печь":"microwave","микроволновую":"microwave","микроволновке":"microwave","микроволновканы":"microwave","утюг":"iron","үтүк":"iron","үтүктөр":"iron","чайник":"kettle","чайники":"kettle","чайникти":"kettle"};const key=Object.keys(aliases).find(a=>x.includes(a));if(key){const list=products.filter(p=>p.subcategory===aliases[key]);if(list.length)return list.slice(0,8)}const tokens=x.split(' ').filter(w=>w.length>2);return products.map(p=>{const name=normalizeQuery([p.name,p.nameRu].join(' '));const hay=normalizeQuery([p.name,p.nameRu,p.description,p.descriptionRu,p.categoryName,p.categoryNameRu,p.subcategoryName,p.subcategoryNameRu,p.id].join(' '));let score=0;tokens.forEach(t=>{if(name.includes(t))score+=4;else if(hay.includes(t))score+=1});return{p,score}}).filter(a=>a.score>0).sort((a,b)=>b.score-a.score||a.p.price-b.p.price).slice(0,8).map(a=>a.p)}
+function robotFindProductByName(q){const x=normalizeQuery(q);if(!x)return null;let best=null,score=0;products.forEach(p=>{let s=0;[p.name,p.nameRu,p.id].map(normalizeQuery).forEach(n=>{if(n&&x.includes(n))s=Math.max(s,n.length+20);else s=Math.max(s,n.split(' ').filter(t=>t.length>2).reduce((v,t)=>v+(x.includes(t)?2:0),0))});if(s>score){score=s;best=p}});return score>=3?best:null}
+function robotCatalogAnswer(list,mode,responseLang){if(!list.length)return'';const shown=list.slice(0,6);if(mode==='specs'&&shown.length===1){const p=shown[0],specs=responseLang==='ru'?(p.characteristicsRu||[]):(p.characteristics||[]);return specs.length?`${nameOfLang(p,responseLang)}. ${responseLang==='ru'?'Цена':'Баасы'} ${money(p.price)}. ${responseLang==='ru'?'Характеристики: ':'Характеристикалары: '}${specs.join(', ')}.`:`${nameOfLang(p,responseLang)}. ${money(p.price)}. ${descOfLang(p,responseLang)}`}if(mode==='price')return shown.map(p=>`${nameOfLang(p,responseLang)} — ${money(p.price)}`).join('. ')+'.';return(responseLang==='ru'?'Да, в каталоге есть: ':'Ооба, каталогдо бар: ')+shown.map(p=>`${nameOfLang(p,responseLang)} — ${money(p.price)}`).join('; ')+'.'}
 function answerRobotQuestion(q){
- const raw=(q||'').trim();if(!raw)return;const x=normalizeQuery(raw);let answer='';
+ const raw=(q||'').trim();if(!raw)return;const responseLang=detectQueryLang(raw),x=normalizeQuery(raw);let answer='';
  const direct=robotFindProductByName(raw),found=robotFindProducts(raw);
+ const isGreeting=/^(салам|саламатсызбы|саламдашуу|hello|hi|здравствуйте|здравствуй|привет|добрый день|добрый вечер|доброе утро)\b/.test(x);
+ const isThanks=/рахмат|спасибо|благодар/.test(x);
+ const isWho=/сен ким|кимсиң|кто ты|кто вы|что ты умеешь|эмне кыла аласың/.test(x);
  const isDelivery=/жеткир|доставка|доставк|канча убакыт|сколько времени|когда приед|сколько едет/.test(x);
  const isAddress=/дарек|адрес|филиал|филиалы|кайда жайгаш|где находит/.test(x);
  const isHours=/саат|время работы|работаете|открыт|закрыт|график|когда откры/.test(x);
@@ -173,26 +152,28 @@ function answerRobotQuestion(q){
  const asksSpecs=/характерист|сипат|кубат|мощност|литр|модель|специфика|өзгөчөлүк/.test(x);
  const asksStock=/барбы|бар бекен|есть ли|налич|имеется|имеются|эмне бар|что есть|покажи|көрсөт|изде|найти/.test(x);
  const isCategories=/категор|бөлүм|раздел|что продаете|эмнелер бар|кандай товар/.test(x);
- const isLanguage=/тил|язык|рус|кыргыз|кыргызча/.test(x);
- if(isDelivery)answer=lang==='ru'?'По Бишкеку доставка Яндекс Go — в течение 2 часов. В регионы через Ылдам Экспресс — в течение 1–2 дней. Доставка платная.':'Бишкек шаар ичинде Яндекс Go аркылуу 2 сааттын ичинде жеткиребиз. Региондорго Ылдам Экспресс аркылуу 1–2 күндүн ичинде жеткиребиз. Жеткирүү төлөмдүү.';
- else if(isAddress)answer=lang==='ru'?'Наши филиалы: Жибек-Жолу 235; Жибек-Жолу 227; Ауэзова 17; Бейшеналиева 20; Токтогул 259/10.':'Биздин филиалдар: Жибек-Жолу 235; Жибек-Жолу 227; Ауэзова 17; Бейшеналиева 20; Токтогул 259/10.';
- else if(isHours)answer=lang==='ru'?'Мы работаем ежедневно с 09:00 до 21:00.':'Биз күн сайын 09:00дөн 21:00гө чейин иштейбиз.';
- else if(isContact)answer=lang==='ru'?'WhatsApp: плюс 996 507 66 88 66. Заказ можно отправить прямо из корзины.':'WhatsApp: плюс 996 507 66 88 66. Заказды түз эле корзинадан жөнөтсөңүз болот.';
- else if(isPayment)answer=lang==='ru'?'Оплата и доставка уточняются при оформлении заказа. Стоимость доставки зависит от выбранного способа.':'Төлөм жана жеткирүү заказ учурунда такталат. Жеткирүүнүн баасы тандалган ыкмага жараша болот.';
- else if(isLanguage)answer=lang==='ru'?'Сайт работает на русском и кыргызском языках. Я отвечаю на языке вашего сообщения.':'Сайт кыргызча жана орусча иштейт. Мен сиз кайсы тилде сурасаңыз, ошол тилде жооп берем.';
- else if(isCategories)answer=lang==='ru'?'В каталоге есть посуда, бытовая техника, казаны и кухонные товары, наборы и акционные товары.':'Каталогдо идиш-аяк, тиричилик техникасы, казан жана ашкана товарлары, наборлор жана акциядагы товарлар бар.';
- else if(direct)answer=robotCatalogAnswer([direct],asksSpecs?'specs':asksPrice?'price':'stock');
- else if(found.length)answer=robotCatalogAnswer(found,asksSpecs?'specs':asksPrice?'price':'stock');
- else if(isCart)answer=tr('robotCartText');
- else answer=lang==='ru'?'Я проверил каталог и функции сайта. Здесь можно получить информацию о товарах, ценах, наличии, характеристиках, доставке, филиалах и заказе. По этому вопросу отдельной информации в каталоге нет.':'Каталогду жана сайттагы маалыматты текшердим. Бул жерде товарлар, баалар, бар-жогу, характеристикасы, жеткирүү, филиалдар жана заказ боюнча маалымат бере алам. Бул суроо боюнча каталогдо өзүнчө маалымат жок.';
- const box=$('#robotReply');if(box){box.hidden=false;box.textContent=answer}robotSpeak(answer);
+ if(isGreeting)answer=responseLang==='ru'?'Здравствуйте! Я помощник Мой Маркет. Помогу найти товар, узнать цену и характеристики, рассказать о доставке и помочь с заказом.':'Саламатсызбы! Мен Мой Маркеттин жардамчысымын. Товарды таап, баасын жана мүнөздөмөлөрүн айтып, жеткирүү жана заказ боюнча жардам берем.';
+ else if(isThanks)answer=responseLang==='ru'?'Пожалуйста! Рад помочь.':'Ар дайым жардам берүүгө даярмын!';
+ else if(isWho)answer=responseLang==='ru'?'Я виртуальный консультант Мой Маркет. Я помогаю с товарами, ценами, характеристиками, доставкой, филиалами и заказами.':'Мен Мой Маркеттин виртуалдык консультант роботумун. Товарлар, баалар, мүнөздөмөлөр, жеткирүү, филиалдар жана заказдар боюнча жардам берем.';
+ else if(isDelivery)answer=responseLang==='ru'?'По Бишкеку доставка Яндекс Go — в течение 2 часов. В регионы через Ылдам Экспресс — в течение 1–2 дней. Доставка платная.':'Бишкек шаар ичинде Яндекс Go аркылуу 2 сааттын ичинде жеткиребиз. Региондорго Ылдам Экспресс аркылуу 1–2 күндүн ичинде жеткиребиз. Жеткирүү төлөмдүү.';
+ else if(isAddress)answer=responseLang==='ru'?'Наши филиалы: Жибек-Жолу 235; Жибек-Жолу 227; Ауэзова 17; Бейшеналиева 20; Токтогул 259/10.':'Биздин филиалдар: Жибек-Жолу 235; Жибек-Жолу 227; Ауэзова 17; Бейшеналиева 20; Токтогул 259/10.';
+ else if(isHours)answer=responseLang==='ru'?'Мы работаем ежедневно с 09:00 до 21:00.':'Биз күн сайын 09:00дөн 21:00гө чейин иштейбиз.';
+ else if(isContact)answer=responseLang==='ru'?'WhatsApp: плюс 996 507 66 88 66. Заказ можно отправить прямо из корзины.':'WhatsApp: плюс 996 507 66 88 66. Заказды түз эле корзинадан жөнөтсөңүз болот.';
+ else if(isPayment)answer=responseLang==='ru'?'Оплата и доставка уточняются при оформлении заказа. Стоимость доставки зависит от выбранного способа.':'Төлөм жана жеткирүү заказ учурунда такталат. Жеткирүүнүн баасы тандалган ыкмага жараша болот.';
+ else if(isCategories)answer=responseLang==='ru'?'В каталоге есть посуда, бытовая техника, казаны и кухонные товары, наборы и акционные товары.':'Каталогдо идиш-аяк, тиричилик техникасы, казан жана ашкана товарлары, наборлор жана акциядагы товарлар бар.';
+ else if(direct)answer=robotCatalogAnswer([direct],asksSpecs?'specs':asksPrice?'price':'stock',responseLang);
+ else if(found.length)answer=robotCatalogAnswer(found,asksSpecs?'specs':asksPrice?'price':'stock',responseLang);
+ else if(isCart)answer=responseLang==='ru'?'Корзина открывается кнопкой корзины. Добавьте нужные товары, проверьте количество и сумму, затем отправьте заказ в WhatsApp.':'Корзинаны корзина баскычы аркылуу ачыңыз. Каалаган товарларды кошуп, санын жана жалпы суммасын текшерип, андан кийин WhatsApp аркылуу заказ жөнөтө аласыз.';
+ else answer=responseLang==='ru'?'Я не буду просить вас повторять вопрос. По каталогу Мой Маркет сейчас могу точно подсказать товары, цены, характеристики, наличие, доставку, филиалы и оформление заказа. По этой теме в данных сайта отдельной информации нет.':'Сурооңузду кайра берүүнү суранбайм. Мой Маркеттин каталогундагы товарлар, баалар, мүнөздөмөлөр, бар-жогу, жеткирүү, филиалдар жана заказ боюнча так маалымат бере алам. Бул тема боюнча сайттын маалыматында өзүнчө маалымат жок.';
+ robotBubble(raw,'user',responseLang);robotBubble(answer,'bot',responseLang);robotSpeak(answer,responseLang);
+ const box=$('#robotReply');if(box){box.hidden=true;box.textContent=''}
 }
-function robotReply(key){const box=$("#robotReply"); if(!box)return; box.hidden=false; box.textContent=tr(key);}
-function openRobot(){$("#robotPanel").classList.add("open");$("#robotPanel").setAttribute("aria-hidden","false");clearTimeout(window.__robotGreetingTimer);window.__robotGreetingTimer=setTimeout(()=>robotSpeak(tr("robotGreeting")),180)}
+function robotReply(key){const box=$("#robotReply"); if(box){box.hidden=true;box.textContent=""} const text=tr(key);robotBubble(text,"bot",lang);robotSpeak(text,lang);}
+function openRobot(){$("#robotPanel").classList.add("open");$("#robotPanel").setAttribute("aria-hidden","false");clearTimeout(window.__robotGreetingTimer);if(!$("#robotChat")?.children.length)window.__robotGreetingTimer=setTimeout(()=>{const t=tr("robotGreeting");robotBubble(t,"bot",lang);robotSpeak(t,lang)},180)}
 function closeRobot(){$("#robotPanel").classList.remove("open");$("#robotPanel").setAttribute("aria-hidden","true");}
 $("#robotFab").onclick=()=>{if($("#robotPanel").classList.contains("open"))closeRobot();else openRobot()};
 $("#robotClose").onclick=closeRobot;
-document.querySelectorAll("[data-robot-action]").forEach(btn=>btn.onclick=()=>{const a=btn.dataset.robotAction;if(a==="search"){robotReply("robotSearchText");robotSpeak(tr("robotSearchText"));closeRobot();$("#searchBtn").click();}else if(a==="cart"){robotReply("robotCartText");robotSpeak(tr("robotCartText"));openCart();}else if(a==="delivery"){robotReply("robotDeliveryText");robotSpeak(tr("robotDeliveryText"));document.querySelector(".delivery-info")?.scrollIntoView({behavior:"smooth"});}else if(a==="sale"){robotReply("robotSaleText");robotSpeak(tr("robotSaleText"));activeCat="sale";activeSub="all";renderCats();renderSubcats();renderProducts();document.querySelector("#catalog")?.scrollIntoView({behavior:"smooth"});}else if(a==="order"){robotReply("robotOrderText");robotSpeak(tr("robotOrderText"));openCart();}else if(a==="language"){lang=lang==="ky"?"ru":"ky";localStorage.setItem("moyLang",lang);applyText();renderCats();renderSubcats();renderProducts();renderCart();robotReply("robotLanguageText");robotSpeak(tr("robotLanguageText"));}});
+document.querySelectorAll("[data-robot-action]").forEach(btn=>btn.onclick=()=>{const a=btn.dataset.robotAction;if(a==="search"){robotReply("robotSearchText");closeRobot();$("#searchBtn").click();}else if(a==="cart"){robotReply("robotCartText");openCart();}else if(a==="delivery"){robotReply("robotDeliveryText");document.querySelector(".delivery-info")?.scrollIntoView({behavior:"smooth"});}else if(a==="sale"){robotReply("robotSaleText");activeCat="sale";activeSub="all";renderCats();renderSubcats();renderProducts();document.querySelector("#catalog")?.scrollIntoView({behavior:"smooth"});}else if(a==="order"){robotReply("robotOrderText");openCart();}else if(a==="language"){lang=lang==="ky"?"ru":"ky";localStorage.setItem("moyLang",lang);applyText();renderCats();renderSubcats();renderProducts();renderCart();robotReply("robotLanguageText");}});
 const robotQuestion=$("#robotQuestion"),robotAsk=$("#robotAsk"),robotMic=$("#robotMic");robotAsk?.addEventListener("click",()=>answerRobotQuestion(robotQuestion?.value));robotQuestion?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();answerRobotQuestion(robotQuestion.value)}});robotMic?.addEventListener("click",()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){const box=$("#robotReply");box.hidden=false;box.textContent=tr("robotVoiceOff");return}const rec=new SR();rec.lang=lang==='ru'?'ru-RU':'ky-KG';rec.interimResults=false;rec.maxAlternatives=1;rec.onresult=e=>{const q=e.results?.[0]?.[0]?.transcript||"";if(robotQuestion)robotQuestion.value=q;answerRobotQuestion(q)};rec.onerror=()=>{const box=$("#robotReply");box.hidden=false;box.textContent=tr("robotVoiceOff")};rec.start()});
 $("#mobileSearch").onclick=()=>$("#searchBtn").click();$("#cartBtn").onclick=openCart;$("#mobileCart").onclick=openCart;$("#closeCart").onclick=closeCart;$("#backdrop").onclick=closeCart;$("#orderBtn").onclick=order;$("#heroCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileHome").onclick=()=>scrollTo({top:0,behavior:"smooth"});$("#allBtn").onclick=()=>{activeCat="all";activeSub="all";renderCats();renderSubcats();renderProducts()};$("#searchInput").oninput=renderProducts;$("#clearSearch").onclick=()=>{$("#searchInput").value="";renderProducts()};
 load();

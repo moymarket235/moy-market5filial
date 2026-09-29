@@ -104,3 +104,19 @@ body.preview-open{overflow:hidden}
 .robot-question button{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);color:#fff}
 .robot-question #robotAsk{background:#ff7800;border-color:#ff7800;color:#fff}
 .robot-head small:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#19d38a;margin-right:5px;box-shadow:0 0 8px rgba(25,211,138,.7)}
+
+/* v3.9 PRO ROBOT — transparent full mascot + language-safe chat */
+.market-robot{right:14px;bottom:86px;z-index:600}
+.robot-fab{width:86px;height:104px;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;padding:0;overflow:visible;animation:robotFloat 3.2s ease-in-out infinite;display:grid;place-items:center}
+.robot-fab img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 10px 14px rgba(0,0,0,.28))}
+.robot-fab:after{display:none!important}
+.robot-panel{width:min(380px,calc(100vw - 24px));max-height:min(650px,calc(100vh - 120px));overflow:auto;border-radius:24px;background:linear-gradient(180deg,#071321,#0b1929);border:1px solid rgba(71,190,255,.22);padding:14px;box-shadow:0 24px 80px rgba(0,0,0,.45)}
+.robot-head{position:sticky;top:0;background:linear-gradient(180deg,#071321 88%,rgba(7,19,33,0));z-index:2;padding-bottom:12px}
+.robot-avatar{background:transparent;border-radius:12px}.robot-avatar img{object-fit:contain}
+.robot-chat{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.robot-bubble{max-width:88%;padding:10px 12px;border-radius:15px;font-size:13px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.robot-bubble.user{align-self:flex-end;background:#1478ff;color:#fff;border-bottom-right-radius:5px}
+.robot-bubble.bot{align-self:flex-start;background:rgba(255,255,255,.075);color:#f7f9fc;border:1px solid rgba(255,255,255,.07);border-bottom-left-radius:5px}
+.robot-bubble.bot .robot-speaker{float:right;border:0;background:transparent;color:#9edfff;cursor:pointer;font-size:15px;margin-left:8px}
+.robot-reply{display:none!important}
+@media(max-width:520px){.market-robot{right:8px;bottom:76px}.robot-fab{width:74px;height:92px}.robot-panel{width:calc(100vw - 16px);max-height:calc(100vh - 96px);right:-2px}}
