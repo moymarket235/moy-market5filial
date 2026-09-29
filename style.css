@@ -33,3 +33,9 @@
 .buy{margin-top:auto;background:#ff7800}
 .photo{background:#fff}.photo img{padding:8px;object-fit:contain}
 @media(max-width:520px){.pname{font-size:14px}.price{font-size:20px;margin-bottom:5px}.specs{font-size:11px;margin-bottom:9px}.group-products{gap:12px}.photo{height:180px}}
+
+
+/* v3.0 cart UX */
+.cart-toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,18px);background:#0b1422;color:#fff;padding:13px 18px;border-radius:14px;font-weight:800;font-size:14px;box-shadow:0 12px 35px rgba(0,0,0,.22);opacity:0;pointer-events:none;z-index:120;transition:opacity .2s ease,transform .2s ease;white-space:nowrap}
+.cart-toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:520px){.cart-toast{bottom:82px;max-width:calc(100% - 28px);white-space:normal;text-align:center}}
