@@ -8,8 +8,6 @@
 .specs li{margin:2px 0}
 @media(max-width:520px){.specs{font-size:11px;min-height:105px}.specs>b{font-size:12px}}
 
-/* FINAL SPACING FIX: keep price and characteristics close when description is empty */
-.desc:has(> .desc:empty){display:none}
-.desc:empty{display:none}
-.price{margin-bottom:8px}
-.specs{margin-top:0}
+/* FINAL VACUUM GAP FIX: hide the empty description wrapper only */
+.pbody > .desc:has(.desc:empty){display:none !important;}
+.pbody > .desc:has(.desc:empty) + .price{margin-top:0 !important;}
