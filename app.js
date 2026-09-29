@@ -150,63 +150,94 @@ $("#robotClose").onclick=closeRobot;
 document.querySelectorAll("[data-robot-action]").forEach(btn=>btn.onclick=()=>{const a=btn.dataset.robotAction;if(a==="search"){robotReply("robotSearchText");closeRobot();$("#searchBtn").click();}else if(a==="cart"){robotReply("robotCartText");openCart();}else if(a==="delivery"){robotReply("robotDeliveryText");document.querySelector(".delivery-info")?.scrollIntoView({behavior:"smooth"});}else if(a==="sale"){robotReply("robotSaleText");activeCat="sale";activeSub="all";renderCats();renderSubcats();renderProducts();document.querySelector("#catalog")?.scrollIntoView({behavior:"smooth"});}else if(a==="order"){robotReply("robotOrderText");openCart();}else if(a==="language"){lang=lang==="ky"?"ru":"ky";localStorage.setItem("moyLang",lang);applyText();renderCats();renderSubcats();renderProducts();renderCart();robotReply("robotLanguageText");}});
 const robotQuestion=$("#robotQuestion"),robotAsk=$("#robotAsk");robotAsk?.addEventListener("click",()=>answerRobotQuestion(robotQuestion?.value));robotQuestion?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();answerRobotQuestion(robotQuestion.value)}});
 
-// v3.17 REAL ROBOT MOTION: the mascot changes its own pose while walking, waving and dancing.
+// v3.17 CHAT ROBOT MOTION: subtle idle movement for the floating chat button.
 (function initRealRobotMotion(){
-  const fab=document.querySelector("#robotFab");
-  const img=fab?.querySelector("img");
+  const fab=document.querySelector('#robotFab');
+  const img=fab?.querySelector('img');
   if(!fab||!img)return;
-  const frames=[1,2,3,2,1,4,5,8,5,1,6,7,6,7,6,5,4,8,4,1].map(n=>`assets/robot-frames/robot-${n}.png`);
-  const cache=frames.map(src=>{const im=new Image();im.src=src;return im});
-  let start=performance.now();
-  let lastFrame=-1;
-  function setFrame(index){
-    index=Math.max(0,Math.min(frames.length-1,index));
-    if(index!==lastFrame){img.src=frames[index];lastFrame=index;}
-  }
+  const frames=['assets/robot-frames/robot-1.png','assets/robot-frames/robot-4.png','assets/robot-frames/robot-5.png','assets/robot-frames/robot-1.png'];
+  frames.forEach(src=>{const im=new Image();im.src=src});
+  let i=0,last=performance.now();
   function tick(now){
-    const t=(now-start)%9600;
-    let x=0,y=0,rot=0,frame=0;
-    if(t<3600){
-      const p=t/3600;
-      // Walk left, with two clear walking poses.
-      x=-96*Math.sin(p*Math.PI/2);
-      y=-2+2*Math.abs(Math.sin(p*8*Math.PI));
-      rot=2*Math.sin(p*8*Math.PI);
-      const walk=[1,2,3,2];
-      frame=walk[Math.floor(t/180)%walk.length];
-    }else if(t<5200){
-      // Dance in place: side-to-side, head tilt and happy poses.
-      const p=(t-3600)/1600;
-      x=-96+96*(0.5-0.5*Math.cos(p*Math.PI));
-      const dance=[10,11,12,13,14,15,16,17];
-      frame=dance[Math.floor((t-3600)/190)%dance.length];
-      y=-4-4*Math.abs(Math.sin(p*3*Math.PI));
-      rot=9*Math.sin(p*4*Math.PI);
-    }else if(t<8600){
-      const p=(t-5200)/3400;
-      // Walk back toward the original position.
-      x=-96*(1-(0.5-0.5*Math.cos(p*Math.PI)));
-      y=-2+2*Math.abs(Math.sin(p*8*Math.PI));
-      rot=2*Math.sin(p*8*Math.PI);
-      const walk=[3,2,3,2];
-      frame=walk[Math.floor((t-5200)/180)%walk.length];
-    }else{
-      // Friendly wave at the end of the route.
-      const p=(t-8600)/1000;
-      x=-8*Math.sin(p*Math.PI);
-      y=-3*Math.abs(Math.sin(p*2*Math.PI));
-      rot=3*Math.sin(p*2*Math.PI);
-      const wave=[4,5,8,5];
-      frame=wave[Math.floor((t-8600)/230)%wave.length];
-    }
-    fab.style.transform=`translate3d(${x}px,${y}px,0) rotate(${rot}deg)`;
-    setFrame(frame);
+    if(now-last>1200){i=(i+1)%frames.length;img.src=frames[i];last=now}
+    const bob=Math.sin(now/700)*2;
+    fab.style.transform=`translate3d(0,${bob}px,0)`;
     requestAnimationFrame(tick);
   }
-  // Start immediately with the branded idle pose, then animate continuously.
-  setFrame(0);
   requestAnimationFrame(tick);
-})();
+})();;
 
 $("#mobileSearch").onclick=()=>$("#searchBtn").click();$("#cartBtn").onclick=openCart;$("#mobileCart").onclick=openCart;$("#closeCart").onclick=closeCart;$("#backdrop").onclick=closeCart;$("#orderBtn").onclick=order;$("#heroCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileHome").onclick=()=>scrollTo({top:0,behavior:"smooth"});$("#allBtn").onclick=()=>{activeCat="all";activeSub="all";renderCats();renderSubcats();renderProducts()};$("#searchInput").oninput=renderProducts;$("#clearSearch").onclick=()=>{$("#searchInput").value="";renderProducts()};
 load();
+
+// v3.18 HERO ROBOT: the mascot physically travels across the hero, changes poses,
+// waves and dances in the middle instead of running inside a fixed frame.
+(function initHeroRobotMotion(){
+  const stage=document.querySelector('#heroRobotStage');
+  const bot=document.querySelector('#heroRobot');
+  const img=document.querySelector('#heroRobotImg');
+  const glow=document.querySelector('.hero-robot-glow');
+  const bubble=document.querySelector('#heroRobotBubble');
+  const fx=document.querySelector('#heroRobotFx');
+  if(!stage||!bot||!img)return;
+  const frames={idle:'assets/robot-frames/robot-1.png',walkA:'assets/robot-frames/robot-2.png',walkB:'assets/robot-frames/robot-3.png',wave:'assets/robot-frames/robot-4.png',happy:'assets/robot-frames/robot-5.png',danceA:'assets/robot-frames/robot-6.png',danceB:'assets/robot-frames/robot-7.png',point:'assets/robot-frames/robot-8.png'};
+  Object.values(frames).forEach(src=>{const im=new Image();im.src=src});
+  const script=[
+    {dur:600,pose:'idle',say:'Салам! 👋'},
+    {dur:2800,pose:'walk',say:'МОЙ МАРКЕТ! 🚶'},
+    {dur:900,pose:'wave',say:'Кош келиңиз! 👋'},
+    {dur:2200,pose:'walk',say:'Товар издеп жатам… 🔎'},
+    {dur:2600,pose:'dance',say:'Маанай сонун! 💃'},
+    {dur:1800,pose:'walkBack',say:'Дагы көрүшөбүз! 👋'},
+    {dur:900,pose:'point',say:'Каталог ушул жакта →'},
+    {dur:1100,pose:'idle',say:'Сизге жардам берем 🤖'}
+  ];
+  const total=12800;
+  let start=performance.now(),lastPose='',lastFrame='';
+  function setPose(src,pose){
+    if(src!==lastFrame){img.src=src;lastFrame=src}
+    stage.classList.toggle('dancing',pose==='dance');
+    stage.classList.toggle('waving',pose==='wave');
+    if(bubble && (pose==='dance'||pose==='wave'||pose==='point'||pose==='idle')) bubble.textContent=currentSay||'';
+  }
+  function setPosition(px,angle=0,bob=0){
+    bot.style.left=px+'px'; bot.style.transform=`translate3d(0,${bob}px,0) rotate(${angle}deg)`;
+    if(glow){glow.style.left=Math.max(0,px+6)+'px';glow.style.transform='translateX(0)'}
+    if(bubble){bubble.style.left=Math.max(0,px+10)+'px'}
+    if(fx){fx.style.left=Math.max(0,px)+'px'}
+  }
+  let currentSay='';
+  function tick(now){
+    const stageW=stage.clientWidth, botW=bot.offsetWidth||120;
+    const minX=Math.max(6,stageW*.04), maxX=Math.max(minX+20,stageW-botW-stageW*.04), travel=maxX-minX;
+    let t=(now-start)%total, acc=0, seg=script[0];
+    for(const s of script){if(t<acc+s.dur){seg=s;break}acc+=s.dur}
+    const local=t-acc, p=Math.min(1,local/seg.dur);
+    let x=minX,angle=0,bob=0,pose=seg.pose;
+    if(seg.pose==='walk'){
+      const ease=p*p*(3-2*p); x=minX+travel*ease; const step=Math.sin(local/115*Math.PI); bob=-Math.abs(step)*3; angle=step*2.2;
+      setPose((Math.floor(local/130)%2===0)?frames.walkA:frames.walkB,pose);
+    } else if(seg.pose==='wave'){
+      x=minX+travel*.28; angle=Math.sin(local/120*Math.PI)*3; bob=-Math.abs(Math.sin(local/150*Math.PI))*2; setPose(frames.wave,pose);
+    } else if(seg.pose==='dance'){
+      x=minX+travel*.53 + Math.sin(local/240*Math.PI)*Math.min(34,travel*.045); bob=-Math.abs(Math.sin(local/150*Math.PI))*9; angle=Math.sin(local/180*Math.PI)*8; setPose((Math.floor(local/170)%2===0)?frames.danceA:frames.danceB,pose);
+    } else if(seg.pose==='walkBack'){
+      const ease=p*p*(3-2*p); x=minX+travel*(1-ease); const step=Math.sin(local/115*Math.PI); bob=-Math.abs(step)*3; angle=step*2.2; setPose((Math.floor(local/130)%2===0)?frames.walkB:frames.walkA,pose);
+    } else if(seg.pose==='point'){
+      x=minX+travel*.13; angle=-2; bob=-2; setPose(frames.point,pose);
+    } else {
+      x=minX+travel*.07; bob=-2; setPose(frames.idle,pose);
+    }
+    if(currentSay!==seg.say){currentSay=seg.say;if(bubble)bubble.textContent=currentSay}
+    setPosition(x,angle,bob);
+    requestAnimationFrame(tick);
+  }
+  bot.addEventListener('click',()=>{
+    const fab=document.querySelector('#robotFab'); if(fab) fab.click();
+  });
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    setPose(frames.idle,'idle');setPosition(24,0,0);
+  }else{
+    requestAnimationFrame(tick);
+  }
+})();
