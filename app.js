@@ -71,7 +71,8 @@ function brandOf(p){
  return (n.split(/\s+/)[0]||"Мой Маркет").replace(/[—–-].*$/,"" ).trim() || "Мой Маркет";
 }
 function speakText(text){
- try{if(!('speechSynthesis' in window))return false;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang==='ru'?'ru-RU':'ky-KG';u.rate=.96;u.pitch=1;window.speechSynthesis.speak(u);return true}catch(e){return false}}
+ try{if(!('speechSynthesis' in window))return false;window.speechSynthesis.cancel();const target=lang==='ru'?'ru':'ky';const voices=window.speechSynthesis.getVoices?window.speechSynthesis.getVoices():[];const voice=voices.find(v=>v.lang?.toLowerCase()===target+'-kg'||v.lang?.toLowerCase()===target+'-ru')||voices.find(v=>v.lang?.toLowerCase().startsWith(target+'-'))||((target==='ky')?voices.find(v=>v.lang?.toLowerCase().startsWith('ru-')):null);const u=new SpeechSynthesisUtterance(text);u.lang=voice?.lang||(lang==='ru'?'ru-RU':'ky-KG');if(voice)u.voice=voice;u.rate=.90;u.pitch=1.02;u.volume=.92;window.speechSynthesis.speak(u);return true}catch(e){return false}}
+if('speechSynthesis' in window)window.speechSynthesis.onvoiceschanged=()=>{}
 function productSpeech(p){const specs=(lang==='ru'?(p.characteristicsRu||[]):(p.characteristics||[]));const parts=[nameOf(p),`${lang==='ru'?'Цена':'Баасы'} ${money(p.price)}`];if(specs.length)parts.push((lang==='ru'?'Характеристики: ':'Характеристикалары: ')+specs.join(', '));return parts.join('. ')}
 function openProductPreview(id){
  const p=products.find(x=>x.id===id); if(!p)return;
@@ -108,14 +109,55 @@ $("#langSwitch").onclick=()=>{lang=lang==="ky"?"ru":"ky";localStorage.setItem("m
 document.addEventListener("click",e=>{const photo=e.target.closest(".photo[data-product-id]");if(photo)openProductPreview(photo.dataset.productId);if(e.target.closest("#previewClose")||e.target.id==="previewBackdrop")closeProductPreview()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProductPreview()});
 $("#searchBtn").onclick=()=>{document.querySelector("#searchbox").scrollIntoView({behavior:"smooth"});setTimeout(()=>$("#searchInput").focus(),300)};
 function robotSpeak(text){const ok=speakText(text);const box=$("#robotReply");if(box&&!ok){box.hidden=false;box.textContent=tr("robotVoiceOff")}}
+function normalizeQuery(s){return (s||"").toLowerCase().replace(/ё/g,"е").replace(/[^\p{L}\p{N}\s]/gu," ").replace(/\s+/g," ").trim()}
+function robotFindProducts(q){
+ const x=normalizeQuery(q); if(!x)return [];
+ const aliases={
+  "блендер":"blender","блендерлер":"blender","блендеры":"blender",
+  "пылесос":"vacuum","пылесостор":"vacuum","пылесосы":"vacuum",
+  "микроволновка":"microwave","микроволновкалар":"microwave","микроволновые печи":"microwave","микроволновая печь":"microwave",
+  "микроволновую":"microwave","микроволновке":"microwave"
+ };
+ let key=Object.keys(aliases).find(a=>x.includes(a));
+ let list=products.filter(p=>{
+  const hay=normalizeQuery([p.name,p.nameRu,p.description,p.descriptionRu,p.categoryName,p.categoryNameRu,p.subcategoryName,p.subcategoryNameRu,p.id].join(" "));
+  return key?p.subcategory===aliases[key]:hay.split(" ").some(w=>w.length>2&&x.includes(w));
+ });
+ if(!list.length){
+  const tokens=x.split(" ").filter(w=>w.length>2);
+  list=products.map(p=>{const hay=normalizeQuery([p.name,p.nameRu,p.description,p.descriptionRu,p.subcategoryName,p.subcategoryNameRu].join(" "));const score=tokens.reduce((n,t)=>n+(hay.includes(t)?1:0),0);return {p,score}}).filter(a=>a.score>0).sort((a,b)=>b.score-a.score).map(a=>a.p);
+ }
+ return list.slice(0,6);
+}
 function answerRobotQuestion(q){
- const raw=(q||"").trim();if(!raw)return;const x=raw.toLowerCase();let answer="";
- if(/жеткир|доставка|доставк|канча убакыт|сколько времени|когда приед/.test(x))answer=lang==='ru'?"По Бишкеку доставка Яндекс Go — в течение 2 часов. В регионы через Ылдам Экспресс — в течение 1–2 дней.":"Бишкек шаар ичинде Яндекс Go аркылуу 2 сааттын ичинде жеткиребиз. Региондорго Ылдам Экспресс аркылуу 1–2 күндүн ичинде жеткиребиз.";
- else if(/корзин|себет|заказ|заказа|заказ бер/.test(x))answer=tr("robotCartText");
- else if(/товар|продукт|найти|изде|издөө|барбы|есть/.test(x))answer=lang==='ru'?"Напишите название товара — я помогу найти его в каталоге.":"Товардын атын жазыңыз — каталогдон таап берүүгө жардам берем.";
- else if(/баа|цена|сколько стоит|канча/.test(x))answer=lang==='ru'?"Цена каждого товара указана прямо в карточке товара.":"Ар бир товардын баасы анын карточкасында көрсөтүлөт.";
- else if(/тил|язык|рус|кыргыз|кыргызча/.test(x))answer=tr("robotLanguageText");
- else answer=lang==='ru'?"Я помогу с товарами, ценами, корзиной и доставкой. Спросите: «Сколько доставка по Бишкеку?»":"Товар, баа, корзина же жеткирүү боюнча жардам берем. Мисалы: «Бишкекке жеткирүү канча убакыт?» деп сураңыз.";
+ const raw=(q||"").trim();if(!raw)return;const x=normalizeQuery(raw);let answer="";
+ const found=robotFindProducts(raw);
+ const asksStock=/барбы|бар бекен|барбы экен|есть ли|есть\b|налич|имеет|имеются|кандай товар|какие товар|эмне бар|что есть|покажи|көрсөт|изде|найти/.test(x);
+ const asksPrice=/баа|баасы|баасы канча|цена|ценасы|сколько стоит|сколько|канча сом/.test(x);
+ const asksSpecs=/характерист|сипат|кубат|мощност|литр|модель|специфика|өзгөчөлүк/.test(x);
+ if(/жеткир|доставка|доставк|канча убакыт|сколько времени|когда приед|сколько едет/.test(x)){
+  answer=lang==='ru'?"По Бишкеку доставка Яндекс Go — в течение 2 часов. В регионы через Ылдам Экспресс — в течение 1–2 дней. Доставка платная.":"Бишкек шаар ичинде Яндекс Go аркылуу 2 сааттын ичинде жеткиребиз. Региондорго Ылдам Экспресс аркылуу 1–2 күндүн ичинде жеткиребиз. Жеткирүү төлөмдүү.";
+ }else if(found.length){
+  const categoryMatch=found.length>1 && found.every(p=>p.subcategory===found[0].subcategory);
+  if(categoryMatch || asksStock){
+   const title=lang==='ru'?(found.length===1?"Да, есть в наличии:":"Да, есть такие товары:"):(found.length===1?"Ооба, бар:":"Ооба, мындай товарлар бар:");
+   answer=title+" "+found.map(p=>`${nameOf(p)} — ${money(p.price)}`).join("; ")+".";
+   if(asksSpecs&&found.length===1){const specs=lang==='ru'?(found[0].characteristicsRu||[]):(found[0].characteristics||[]);if(specs.length)answer+=" "+(lang==='ru'?"Характеристики: ":"Характеристикалары: ")+specs.join(", ")+".";}
+  }else if(asksPrice){
+   answer=found.map(p=>`${nameOf(p)} — ${money(p.price)}`).join("; ")+".";
+  }else{
+   const p=found[0];const specs=lang==='ru'?(p.characteristicsRu||[]):(p.characteristics||[]);
+   answer=lang==='ru'?`${nameOf(p)} — ${money(p.price)}. ${descOf(p)}${specs.length?" Характеристики: "+specs.join(", ")+".":""}`:`${nameOf(p)} — ${money(p.price)}. ${descOf(p)}${specs.length?" Характеристикалары: "+specs.join(", ")+".":""}`;
+  }
+ }else if(/корзин|себет|заказ|заказа|заказ бер|заказ кыл/.test(x)){
+  answer=tr("robotCartText");
+ }else if(/тил|язык|рус|кыргыз|кыргызча/.test(x)){
+  answer=tr("robotLanguageText");
+ }else if(asksPrice){
+  answer=lang==='ru'?"Конечно. Напишите название товара, и я сразу найду его цену в каталоге.":"Албетте. Товардын атын жазыңыз, баасын каталогдон дароо таап берем.";
+ }else{
+  answer=lang==='ru'?"Я помогу найти товар, узнать цену и характеристики, проверить доставку и оформить заказ. Например: «Есть ли блендер?» или «Сколько стоит пылесос?» — и я сразу отвечу.":"Товарды таап, баасын жана характеристикасын айтып, жеткирүү жана заказ боюнча жардам берем. Мисалы: «Блендер барбы?» же «Пылесос канча турат?» десеңиз, дароо жооп берем.";
+ }
  const box=$("#robotReply");if(box){box.hidden=false;box.textContent=answer}robotSpeak(answer)
 }
 function robotReply(key){const box=$("#robotReply"); if(!box)return; box.hidden=false; box.textContent=tr(key);}
