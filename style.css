@@ -7,3 +7,9 @@
 .specs ul{margin:0;padding-left:16px}
 .specs li{margin:2px 0}
 @media(max-width:520px){.specs{font-size:11px;min-height:105px}.specs>b{font-size:12px}}
+
+/* FINAL SPACING FIX: keep price and characteristics close when description is empty */
+.desc:has(> .desc:empty){display:none}
+.desc:empty{display:none}
+.price{margin-bottom:8px}
+.specs{margin-top:0}
