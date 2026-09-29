@@ -70,9 +70,35 @@ function brandOf(p){
  const n=(p.name||p.nameRu||"").trim();
  return (n.split(/\s+/)[0]||"Мой Маркет").replace(/[—–-].*$/,"" ).trim() || "Мой Маркет";
 }
+function chooseVoice(){
+ try{
+  const voices=window.speechSynthesis?.getVoices?.()||[];
+  const target=lang==='ru'?'ru':'ky';
+  const prefs=target==='ru'?['ru-RU','ru']:[ 'ky-KG','ky','kk-KZ','kk','ru-RU','ru'];
+  for(const code of prefs){const exact=voices.find(v=>(v.lang||'').toLowerCase()===code.toLowerCase());if(exact)return exact}
+  const natural=voices.find(v=>{const l=(v.lang||'').toLowerCase();const n=(v.name||'').toLowerCase();return (l.startsWith(target)||(target==='ky'&&l.startsWith('kk')))&&/(natural|google|yandex|premium|enhanced|neural|online)/.test(n)});
+  if(natural)return natural;
+  return voices.find(v=>{const l=(v.lang||'').toLowerCase();return l.startsWith(target)||(target==='ky'&&l.startsWith('kk'))})||voices.find(v=>(v.lang||'').toLowerCase().startsWith('ru'))||null;
+ }catch(e){return null}
+}
+function cleanSpeechText(text){return String(text||'').replace(/https?:\/\/\S+/g,'').replace(/[🔥🚕📦💬🔎🛒🌐👋😊⭐️✨]/g,'').replace(/\s+/g,' ').trim()}
 function speakText(text){
- try{if(!('speechSynthesis' in window))return false;window.speechSynthesis.cancel();const target=lang==='ru'?'ru':'ky';const voices=window.speechSynthesis.getVoices?window.speechSynthesis.getVoices():[];const voice=voices.find(v=>v.lang?.toLowerCase()===target+'-kg'||v.lang?.toLowerCase()===target+'-ru')||voices.find(v=>v.lang?.toLowerCase().startsWith(target+'-'))||((target==='ky')?voices.find(v=>v.lang?.toLowerCase().startsWith('ru-')):null);const u=new SpeechSynthesisUtterance(text);u.lang=voice?.lang||(lang==='ru'?'ru-RU':'ky-KG');if(voice)u.voice=voice;u.rate=.90;u.pitch=1.02;u.volume=.92;window.speechSynthesis.speak(u);return true}catch(e){return false}}
-if('speechSynthesis' in window)window.speechSynthesis.onvoiceschanged=()=>{}
+ try{
+  if(!('speechSynthesis' in window))return false;
+  window.speechSynthesis.cancel();
+  const speech=cleanSpeechText(text); if(!speech)return false; const u=new SpeechSynthesisUtterance(speech);
+  const voice=chooseVoice();
+  const target=lang==='ru'?'ru-RU':'ky-KG';
+  u.voice=voice||null;
+  u.lang=voice?.lang||target;
+  u.rate=.92;
+  u.pitch=1.0;
+  u.volume=1;
+  window.speechSynthesis.speak(u);
+  return true;
+ }catch(e){return false}
+}
+if('speechSynthesis' in window){window.speechSynthesis.onvoiceschanged=()=>{window.__moyVoices=window.speechSynthesis.getVoices()}}
 function productSpeech(p){const specs=(lang==='ru'?(p.characteristicsRu||[]):(p.characteristics||[]));const parts=[nameOf(p),`${lang==='ru'?'Цена':'Баасы'} ${money(p.price)}`];if(specs.length)parts.push((lang==='ru'?'Характеристики: ':'Характеристикалары: ')+specs.join(', '));return parts.join('. ')}
 function openProductPreview(id){
  const p=products.find(x=>x.id===id); if(!p)return;
@@ -104,7 +130,7 @@ function renderCart(){const rows=cart.map(x=>{const p=products.find(a=>a.id===x.
 function openCart(){$("#cartDrawer").classList.add("open");$("#backdrop").classList.add("open")}
 function closeCart(){$("#cartDrawer").classList.remove("open");$("#backdrop").classList.remove("open")}
 function order(){if(!cart.length)return;let total=0,msg=lang==="ru"?"Здравствуйте! Хочу оформить заказ в Мой Маркет:":"Салам! Мой Маркеттен заказ бергим келет:";cart.forEach(x=>{const p=products.find(a=>a.id===x.id);if(!p)return;const sub=p.price*x.qty;total+=sub;msg+=`\n\n• ${nameOf(p)}\n${tr("qty")}: ${x.qty}\n${tr("price")}: ${p.price} сом\n${tr("subtotal")}: ${sub} сом\n🖼️ ${lang==="ru"?"Ссылка на фото":"Сүрөттүн шилтемеси"}: ${productImageUrl(p)}`});const d=document.querySelector('input[name="deliveryChoice"]:checked')?.value||"yandex";msg+=`\n\n🚚 ${lang==="ru"?"Доставка":"Жеткирүү"}: ${d==="yldam"?"Ылдам Экспресс":"Яндекс Go"}`;const a=$("#deliveryAddress").value.trim(),ph=$("#deliveryPhone").value.trim();if(a)msg+=`\n📍 ${lang==="ru"?"Адрес":"Дарек"}: ${a}`;if(ph)msg+=`\n📞 Телефон: ${ph}`;msg+=`\n\n${tr("total")} ${total} сом`;location.href=`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`}
-async function load(){products=FALLBACK_PRODUCTS;categories=FALLBACK_CATEGORIES;try{const b=location.href.substring(0,location.href.lastIndexOf("/")+1);const [p,c]=await Promise.all([fetch(b+"products.json?v=33",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_PRODUCTS).catch(()=>FALLBACK_PRODUCTS),fetch(b+"categories.json?v=33",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_CATEGORIES).catch(()=>FALLBACK_CATEGORIES)]);if(Array.isArray(p)&&p.length)products=p;if(Array.isArray(c)&&c.length)categories=c}catch(e){console.log("fallback",e)}applyText();renderCats();renderSubcats();renderProducts();renderCart()}
+async function load(){products=FALLBACK_PRODUCTS;categories=FALLBACK_CATEGORIES;try{const b=location.href.substring(0,location.href.lastIndexOf("/")+1);const [p,c]=await Promise.all([fetch(b+"products.json?v=37",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_PRODUCTS).catch(()=>FALLBACK_PRODUCTS),fetch(b+"categories.json?v=37",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_CATEGORIES).catch(()=>FALLBACK_CATEGORIES)]);if(Array.isArray(p)&&p.length)products=p;if(Array.isArray(c)&&c.length)categories=c}catch(e){console.log("fallback",e)}applyText();renderCats();renderSubcats();renderProducts();renderCart()}
 $("#langSwitch").onclick=()=>{lang=lang==="ky"?"ru":"ky";localStorage.setItem("moyLang",lang);applyText();renderCats();renderSubcats();renderProducts();renderCart()};
 document.addEventListener("click",e=>{const photo=e.target.closest(".photo[data-product-id]");if(photo)openProductPreview(photo.dataset.productId);if(e.target.closest("#previewClose")||e.target.id==="previewBackdrop")closeProductPreview()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProductPreview()});
 $("#searchBtn").onclick=()=>{document.querySelector("#searchbox").scrollIntoView({behavior:"smooth"});setTimeout(()=>$("#searchInput").focus(),300)};
@@ -113,55 +139,56 @@ function normalizeQuery(s){return (s||"").toLowerCase().replace(/ё/g,"е").repl
 function robotFindProducts(q){
  const x=normalizeQuery(q); if(!x)return [];
  const aliases={
-  "блендер":"blender","блендерлер":"blender","блендеры":"blender",
-  "пылесос":"vacuum","пылесостор":"vacuum","пылесосы":"vacuum",
-  "микроволновка":"microwave","микроволновкалар":"microwave","микроволновые печи":"microwave","микроволновая печь":"microwave",
-  "микроволновую":"microwave","микроволновке":"microwave"
+  "блендер":"blender","блендерлер":"blender","блендеры":"blender","блендерди":"blender","блендерге":"blender","блендерлерди":"blender",
+  "пылесос":"vacuum","пылесостор":"vacuum","пылесосы":"vacuum","пылесосту":"vacuum","пылесоско":"vacuum","чаң соргуч":"vacuum","чаң соргучтар":"vacuum",
+  "микроволновка":"microwave","микроволновкалар":"microwave","микроволновые печи":"microwave","микроволновая печь":"microwave","микроволновую":"microwave","микроволновке":"microwave","микроволновканы":"microwave",
+  "утюг":"iron","үтүк":"iron","үтүктөр":"iron","чайник":"kettle","чайники":"kettle","чайникти":"kettle"
  };
- let key=Object.keys(aliases).find(a=>x.includes(a));
- let list=products.filter(p=>{
-  const hay=normalizeQuery([p.name,p.nameRu,p.description,p.descriptionRu,p.categoryName,p.categoryNameRu,p.subcategoryName,p.subcategoryNameRu,p.id].join(" "));
-  return key?p.subcategory===aliases[key]:hay.split(" ").some(w=>w.length>2&&x.includes(w));
- });
- if(!list.length){
-  const tokens=x.split(" ").filter(w=>w.length>2);
-  list=products.map(p=>{const hay=normalizeQuery([p.name,p.nameRu,p.description,p.descriptionRu,p.subcategoryName,p.subcategoryNameRu].join(" "));const score=tokens.reduce((n,t)=>n+(hay.includes(t)?1:0),0);return {p,score}}).filter(a=>a.score>0).sort((a,b)=>b.score-a.score).map(a=>a.p);
- }
- return list.slice(0,6);
+ const key=Object.keys(aliases).find(a=>x.includes(a));
+ if(key){const list=products.filter(p=>p.subcategory===aliases[key]);if(list.length)return list.slice(0,8)}
+ const tokens=x.split(" ").filter(w=>w.length>2);
+ return products.map(p=>{const name=normalizeQuery([p.name,p.nameRu].join(" "));const hay=normalizeQuery([p.name,p.nameRu,p.description,p.descriptionRu,p.categoryName,p.categoryNameRu,p.subcategoryName,p.subcategoryNameRu,p.id].join(" "));let score=0;tokens.forEach(t=>{if(name.includes(t))score+=4;else if(hay.includes(t))score+=1});return {p,score}}).filter(a=>a.score>0).sort((a,b)=>b.score-a.score||a.p.price-b.p.price).slice(0,8).map(a=>a.p);
+}
+function robotFindProductByName(q){
+ const x=normalizeQuery(q);if(!x)return null;let best=null,score=0;
+ products.forEach(p=>{let s=0;[p.name,p.nameRu,p.id].map(normalizeQuery).forEach(n=>{if(n&&x.includes(n))s=Math.max(s,n.length+20);else s=Math.max(s,n.split(" ").filter(t=>t.length>2).reduce((v,t)=>v+(x.includes(t)?2:0),0))});if(s>score){score=s;best=p}});
+ return score>=3?best:null;
+}
+function robotCatalogAnswer(list,mode){
+ if(!list.length)return "";const shown=list.slice(0,6);
+ if(mode==='specs'&&shown.length===1){const p=shown[0],specs=lang==='ru'?(p.characteristicsRu||[]):(p.characteristics||[]);return specs.length?`${nameOf(p)}. ${lang==='ru'?'Цена':'Баасы'} ${money(p.price)}. ${lang==='ru'?'Характеристики: ':'Характеристикалары: '}${specs.join(', ')}.`:`${nameOf(p)}. ${money(p.price)}. ${descOf(p)}`}
+ if(mode==='price')return shown.map(p=>`${nameOf(p)} — ${money(p.price)}`).join('. ')+'.';
+ return (lang==='ru'?'Да, в каталоге есть: ':'Ооба, каталогдо бар: ')+shown.map(p=>`${nameOf(p)} — ${money(p.price)}`).join('; ')+'.';
 }
 function answerRobotQuestion(q){
- const raw=(q||"").trim();if(!raw)return;const x=normalizeQuery(raw);let answer="";
- const found=robotFindProducts(raw);
- const asksStock=/барбы|бар бекен|барбы экен|есть ли|есть\b|налич|имеет|имеются|кандай товар|какие товар|эмне бар|что есть|покажи|көрсөт|изде|найти/.test(x);
- const asksPrice=/баа|баасы|баасы канча|цена|ценасы|сколько стоит|сколько|канча сом/.test(x);
+ const raw=(q||'').trim();if(!raw)return;const x=normalizeQuery(raw);let answer='';
+ const direct=robotFindProductByName(raw),found=robotFindProducts(raw);
+ const isDelivery=/жеткир|доставка|доставк|канча убакыт|сколько времени|когда приед|сколько едет/.test(x);
+ const isAddress=/дарек|адрес|филиал|филиалы|кайда жайгаш|где находит/.test(x);
+ const isHours=/саат|время работы|работаете|открыт|закрыт|график|когда откры/.test(x);
+ const isContact=/телефон|номер|whatsapp|ватсап|байланыш|связ/.test(x);
+ const isPayment=/төлөм|оплата|налич|карта|перевод/.test(x);
+ const isCart=/корзин|себет|заказ|заказа|заказ бер|заказ кыл/.test(x);
+ const asksPrice=/баа|баасы|цена|ценасы|сколько стоит|сколько|канча сом/.test(x);
  const asksSpecs=/характерист|сипат|кубат|мощност|литр|модель|специфика|өзгөчөлүк/.test(x);
- if(/жеткир|доставка|доставк|канча убакыт|сколько времени|когда приед|сколько едет/.test(x)){
-  answer=lang==='ru'?"По Бишкеку доставка Яндекс Go — в течение 2 часов. В регионы через Ылдам Экспресс — в течение 1–2 дней. Доставка платная.":"Бишкек шаар ичинде Яндекс Go аркылуу 2 сааттын ичинде жеткиребиз. Региондорго Ылдам Экспресс аркылуу 1–2 күндүн ичинде жеткиребиз. Жеткирүү төлөмдүү.";
- }else if(found.length){
-  const categoryMatch=found.length>1 && found.every(p=>p.subcategory===found[0].subcategory);
-  if(categoryMatch || asksStock){
-   const title=lang==='ru'?(found.length===1?"Да, есть в наличии:":"Да, есть такие товары:"):(found.length===1?"Ооба, бар:":"Ооба, мындай товарлар бар:");
-   answer=title+" "+found.map(p=>`${nameOf(p)} — ${money(p.price)}`).join("; ")+".";
-   if(asksSpecs&&found.length===1){const specs=lang==='ru'?(found[0].characteristicsRu||[]):(found[0].characteristics||[]);if(specs.length)answer+=" "+(lang==='ru'?"Характеристики: ":"Характеристикалары: ")+specs.join(", ")+".";}
-  }else if(asksPrice){
-   answer=found.map(p=>`${nameOf(p)} — ${money(p.price)}`).join("; ")+".";
-  }else{
-   const p=found[0];const specs=lang==='ru'?(p.characteristicsRu||[]):(p.characteristics||[]);
-   answer=lang==='ru'?`${nameOf(p)} — ${money(p.price)}. ${descOf(p)}${specs.length?" Характеристики: "+specs.join(", ")+".":""}`:`${nameOf(p)} — ${money(p.price)}. ${descOf(p)}${specs.length?" Характеристикалары: "+specs.join(", ")+".":""}`;
-  }
- }else if(/корзин|себет|заказ|заказа|заказ бер|заказ кыл/.test(x)){
-  answer=tr("robotCartText");
- }else if(/тил|язык|рус|кыргыз|кыргызча/.test(x)){
-  answer=tr("robotLanguageText");
- }else if(asksPrice){
-  answer=lang==='ru'?"Конечно. Напишите название товара, и я сразу найду его цену в каталоге.":"Албетте. Товардын атын жазыңыз, баасын каталогдон дароо таап берем.";
- }else{
-  answer=lang==='ru'?"Я помогу найти товар, узнать цену и характеристики, проверить доставку и оформить заказ. Например: «Есть ли блендер?» или «Сколько стоит пылесос?» — и я сразу отвечу.":"Товарды таап, баасын жана характеристикасын айтып, жеткирүү жана заказ боюнча жардам берем. Мисалы: «Блендер барбы?» же «Пылесос канча турат?» десеңиз, дароо жооп берем.";
- }
- const box=$("#robotReply");if(box){box.hidden=false;box.textContent=answer}robotSpeak(answer)
+ const asksStock=/барбы|бар бекен|есть ли|налич|имеется|имеются|эмне бар|что есть|покажи|көрсөт|изде|найти/.test(x);
+ const isCategories=/категор|бөлүм|раздел|что продаете|эмнелер бар|кандай товар/.test(x);
+ const isLanguage=/тил|язык|рус|кыргыз|кыргызча/.test(x);
+ if(isDelivery)answer=lang==='ru'?'По Бишкеку доставка Яндекс Go — в течение 2 часов. В регионы через Ылдам Экспресс — в течение 1–2 дней. Доставка платная.':'Бишкек шаар ичинде Яндекс Go аркылуу 2 сааттын ичинде жеткиребиз. Региондорго Ылдам Экспресс аркылуу 1–2 күндүн ичинде жеткиребиз. Жеткирүү төлөмдүү.';
+ else if(isAddress)answer=lang==='ru'?'Наши филиалы: Жибек-Жолу 235; Жибек-Жолу 227; Ауэзова 17; Бейшеналиева 20; Токтогул 259/10.':'Биздин филиалдар: Жибек-Жолу 235; Жибек-Жолу 227; Ауэзова 17; Бейшеналиева 20; Токтогул 259/10.';
+ else if(isHours)answer=lang==='ru'?'Мы работаем ежедневно с 09:00 до 21:00.':'Биз күн сайын 09:00дөн 21:00гө чейин иштейбиз.';
+ else if(isContact)answer=lang==='ru'?'WhatsApp: плюс 996 507 66 88 66. Заказ можно отправить прямо из корзины.':'WhatsApp: плюс 996 507 66 88 66. Заказды түз эле корзинадан жөнөтсөңүз болот.';
+ else if(isPayment)answer=lang==='ru'?'Оплата и доставка уточняются при оформлении заказа. Стоимость доставки зависит от выбранного способа.':'Төлөм жана жеткирүү заказ учурунда такталат. Жеткирүүнүн баасы тандалган ыкмага жараша болот.';
+ else if(isLanguage)answer=lang==='ru'?'Сайт работает на русском и кыргызском языках. Я отвечаю на языке вашего сообщения.':'Сайт кыргызча жана орусча иштейт. Мен сиз кайсы тилде сурасаңыз, ошол тилде жооп берем.';
+ else if(isCategories)answer=lang==='ru'?'В каталоге есть посуда, бытовая техника, казаны и кухонные товары, наборы и акционные товары.':'Каталогдо идиш-аяк, тиричилик техникасы, казан жана ашкана товарлары, наборлор жана акциядагы товарлар бар.';
+ else if(direct)answer=robotCatalogAnswer([direct],asksSpecs?'specs':asksPrice?'price':'stock');
+ else if(found.length)answer=robotCatalogAnswer(found,asksSpecs?'specs':asksPrice?'price':'stock');
+ else if(isCart)answer=tr('robotCartText');
+ else answer=lang==='ru'?'Я проверил каталог и функции сайта. Здесь можно получить информацию о товарах, ценах, наличии, характеристиках, доставке, филиалах и заказе. По этому вопросу отдельной информации в каталоге нет.':'Каталогду жана сайттагы маалыматты текшердим. Бул жерде товарлар, баалар, бар-жогу, характеристикасы, жеткирүү, филиалдар жана заказ боюнча маалымат бере алам. Бул суроо боюнча каталогдо өзүнчө маалымат жок.';
+ const box=$('#robotReply');if(box){box.hidden=false;box.textContent=answer}robotSpeak(answer);
 }
 function robotReply(key){const box=$("#robotReply"); if(!box)return; box.hidden=false; box.textContent=tr(key);}
-function openRobot(){$("#robotPanel").classList.add("open");$("#robotPanel").setAttribute("aria-hidden","false");}
+function openRobot(){$("#robotPanel").classList.add("open");$("#robotPanel").setAttribute("aria-hidden","false");clearTimeout(window.__robotGreetingTimer);window.__robotGreetingTimer=setTimeout(()=>robotSpeak(tr("robotGreeting")),180)}
 function closeRobot(){$("#robotPanel").classList.remove("open");$("#robotPanel").setAttribute("aria-hidden","true");}
 $("#robotFab").onclick=()=>{if($("#robotPanel").classList.contains("open"))closeRobot();else openRobot()};
 $("#robotClose").onclick=closeRobot;
