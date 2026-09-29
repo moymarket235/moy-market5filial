@@ -165,14 +165,15 @@ const robotQuestion=$("#robotQuestion"),robotAsk=$("#robotAsk");robotAsk?.addEve
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
-})();;
+})();
 
 $("#mobileSearch").onclick=()=>$("#searchBtn").click();$("#cartBtn").onclick=openCart;$("#mobileCart").onclick=openCart;$("#closeCart").onclick=closeCart;$("#backdrop").onclick=closeCart;$("#orderBtn").onclick=order;$("#heroCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileHome").onclick=()=>scrollTo({top:0,behavior:"smooth"});$("#allBtn").onclick=()=>{activeCat="all";activeSub="all";renderCats();renderSubcats();renderProducts()};$("#searchInput").oninput=renderProducts;$("#clearSearch").onclick=()=>{$("#searchInput").value="";renderProducts()};
 load();
 
-// v3.19 HERO ROBOT — REAL WALKING ANIMATION
-// The mascot uses alternating walk poses while physically travelling across the hero.
-(function initHeroRobotMotion(){
+// v3.20 HERO ROBOT — REAL ANIMATED WALKING MASCOT
+// The robot is an actual animated WebP sequence (walking/dance/wave poses) while this controller
+// moves the whole animated character across the hero from left -> right -> left. No frame swapping here.
+(function initHeroAnimatedRobot(){
   const stage=document.querySelector('#heroRobotStage');
   const bot=document.querySelector('#heroRobot');
   const img=document.querySelector('#heroRobotImg');
@@ -182,107 +183,84 @@ load();
   const fx=document.querySelector('#heroRobotFx');
   if(!stage||!bot||!img)return;
 
-  const frames={
-    idle:'assets/robot-frames/robot-1.png',
-    walkA:'assets/robot-frames/robot-2.png',
-    walkB:'assets/robot-frames/robot-3.png',
-    wave:'assets/robot-frames/robot-4.png',
-    danceA:'assets/robot-frames/robot-6.png',
-    danceB:'assets/robot-frames/robot-7.png',
-    point:'assets/robot-frames/robot-8.png'
-  };
-  Object.values(frames).forEach(src=>{const im=new Image();im.src=src});
+  img.src='assets/robot-animated.webp';
 
-  // Walk → wave → walk → dance → point → walk to the other side → turn → walk back.
-  const script=[
-    {dur:700,pose:'idle',say:'Салам! 👋'},
-    {dur:4300,pose:'walk',from:.00,to:.36,say:'МОЙ МАРКЕТ! 🚶'},
-    {dur:900,pose:'wave',at:.36,say:'Кош келиңиз! 👋'},
-    {dur:2700,pose:'walk',from:.36,to:.57,say:'Товарларды издеп жатам… 🔎'},
-    {dur:3000,pose:'dance',at:.57,say:'Маанай сонун! 💃'},
-    {dur:1000,pose:'point',at:.57,say:'Каталог ушул жакта →'},
-    {dur:4300,pose:'walk',from:.57,to:.94,say:'Жүрө берели! 🚶‍♂️'},
-    {dur:900,pose:'turn',at:.94,say:'Кайра келем! ↩️'},
-    {dur:4600,pose:'walkBack',from:.94,to:.04,say:'Сизге жардам берем 🤖'},
-    {dur:900,pose:'wave',at:.04,say:'Көрүшкөнчө! 👋'}
+  // These phases are synchronized with robot-animated.webp.
+  const phases=[
+    {dur:700, from:.03, to:.03, mode:'idle', say:'Салам! 👋'},
+    {dur:4080, from:.03, to:.36, mode:'walk', say:'МОЙ МАРКЕТ! 🚶'},
+    {dur:900, from:.36, to:.36, mode:'wave', say:'Кош келиңиз! 👋'},
+    {dur:2720, from:.36, to:.57, mode:'walk', say:'Товарларды издеп жатам… 🔎'},
+    {dur:2640, from:.57, to:.57, mode:'dance', say:'Маанай сонун! 💃'},
+    {dur:750, from:.57, to:.57, mode:'point', say:'Каталог ушул жакта →'},
+    {dur:2380, from:.57, to:.94, mode:'walk', say:'Жүрө берели! 🚶‍♂️'},
+    {dur:4080, from:.94, to:.03, mode:'walkBack', say:'Кайра келем! ↩️'},
+    {dur:800, from:.03, to:.03, mode:'wave', say:'Көрүшкөнчө! 👋'}
   ];
-  const total=script.reduce((n,s)=>n+s.dur,0);
-  let start=performance.now(), currentFrame='';
-
-  function frame(src){
-    if(src!==currentFrame){img.src=src;currentFrame=src}
-  }
-  function pos(frac,bob,tilt,direction){
-    const stageW=stage.clientWidth;
-    const botW=bot.offsetWidth||130;
-    const x=(stageW-botW)*Math.max(0,Math.min(1,frac));
-    bot.style.left=x+'px';
-    bot.style.transform=`translate3d(0,${bob}px,0) rotate(${tilt}deg) scaleX(${direction})`;
-    if(glow){glow.style.left=Math.max(0,x+botW*.1)+'px'}
-    if(floor){floor.style.left=Math.max(0,x+botW*.05)+'px'}
-    if(bubble){bubble.style.left=Math.max(0,x+botW*.04)+'px'}
-    if(fx){fx.style.left=Math.max(0,x+botW*.2)+'px'}
-  }
-  function setMode(pose){
-    stage.classList.toggle('dancing',pose==='dance');
-    stage.classList.toggle('waving',pose==='wave');
-    stage.classList.toggle('walking',pose==='walk'||pose==='walkBack');
-  }
+  const total=phases.reduce((n,p)=>n+p.dur,0);
+  let started=performance.now();
   let lastSay='';
 
-  function tick(now){
-    const t=(now-start)%total;
-    let acc=0,seg=script[0];
-    for(const s of script){if(t<acc+s.dur){seg=s;break}acc+=s.dur}
-    const local=t-acc;
-    const p=Math.min(1,local/seg.dur);
-    let frac=seg.at??0,bob=0,tilt=0,direction=1;
-    setMode(seg.pose);
+  function setMode(mode){
+    stage.classList.toggle('walking',mode==='walk'||mode==='walkBack');
+    stage.classList.toggle('dancing',mode==='dance');
+    stage.classList.toggle('waving',mode==='wave');
+  }
+  function setPosition(frac,bob,tilt,direction){
+    const stageW=stage.clientWidth;
+    const botW=bot.offsetWidth||120;
+    const x=Math.max(0,(stageW-botW)*Math.max(0,Math.min(1,frac)));
+    bot.style.left=x+'px';
+    bot.style.transform=`translate3d(0,${bob}px,0) rotate(${tilt}deg) scaleX(${direction})`;
+    if(glow)glow.style.left=x+'px';
+    if(floor)floor.style.left=x+'px';
+    if(bubble)bubble.style.left=Math.max(0,x+botW*.05)+'px';
+    if(fx)fx.style.left=Math.max(0,x+botW*.2)+'px';
+  }
 
-    if(seg.pose==='walk'||seg.pose==='walkBack'){
-      const eased=p*p*(3-2*p);
-      frac=seg.from+(seg.to-seg.from)*eased;
-      const step=Math.sin(local/155*Math.PI);
-      bob=-Math.abs(step)*5;
-      tilt=step*2.4;
-      direction=seg.pose==='walk' ? 1 : -1;
-      // Two real walking poses alternate with the stride, not just a translated image.
-      frame((Math.floor(local/155)%2===0)?frames.walkA:frames.walkB);
-    }else if(seg.pose==='dance'){
-      frac=seg.at+Math.sin(local/330*Math.PI)*.035;
-      bob=-Math.abs(Math.sin(local/150*Math.PI))*13;
-      tilt=Math.sin(local/190*Math.PI)*9;
-      direction=Math.sin(local/330*Math.PI)>=0?1:-1;
-      frame((Math.floor(local/220)%2===0)?frames.danceA:frames.danceB);
-    }else if(seg.pose==='wave'){
-      frac=seg.at;
-      bob=-Math.abs(Math.sin(local/180*Math.PI))*3;
-      tilt=Math.sin(local/250*Math.PI)*2;
-      direction=1;
-      frame(frames.wave);
-    }else if(seg.pose==='point'){
-      frac=seg.at; bob=-2; tilt=-3; direction=1; frame(frames.point);
-    }else if(seg.pose==='turn'){
-      frac=seg.at;
-      const turnP=Math.min(1,local/seg.dur);
-      direction=turnP<.5?1:-1;
-      bob=-Math.abs(Math.sin(local/180*Math.PI))*3;
-      tilt=(turnP<.5?1:-1)*5;
-      frame(frames.idle);
-    }else{
-      frac=.01; bob=-2; direction=1; frame(frames.idle);
+  function tick(now){
+    const t=(now-started)%total;
+    let acc=0,phase=phases[0];
+    for(const p of phases){
+      if(t<acc+p.dur){phase=p;break}
+      acc+=p.dur;
+    }
+    const local=t-acc;
+    const q=Math.min(1,local/phase.dur);
+    const eased=q*q*(3-2*q);
+    const frac=phase.from+(phase.to-phase.from)*eased;
+    let bob=0,tilt=0,direction=1;
+
+    if(phase.mode==='walk'||phase.mode==='walkBack'){
+      // Natural step bounce follows the actual animated walking frames.
+      bob=-Math.abs(Math.sin(local/170*Math.PI))*4.5;
+      tilt=Math.sin(local/340*Math.PI)*1.6;
+      direction=phase.mode==='walk'?1:-1;
+    }else if(phase.mode==='dance'){
+      bob=-Math.abs(Math.sin(local/220*Math.PI))*8;
+      tilt=Math.sin(local/330*Math.PI)*6;
+    }else if(phase.mode==='wave'){
+      bob=-Math.abs(Math.sin(local/250*Math.PI))*2.5;
+      tilt=Math.sin(local/300*Math.PI)*1.5;
+    }else if(phase.mode==='point'){
+      bob=-2; tilt=-2;
     }
 
-    if(seg.say!==lastSay){lastSay=seg.say;if(bubble)bubble.textContent=seg.say}
-    pos(frac,bob,tilt,direction);
+    setMode(phase.mode);
+    if(phase.say!==lastSay){lastSay=phase.say;if(bubble)bubble.textContent=phase.say}
+    setPosition(frac,bob,tilt,direction);
     requestAnimationFrame(tick);
   }
 
   bot.addEventListener('click',()=>{
-    const fab=document.querySelector('#robotFab');if(fab)fab.click();
+    const fab=document.querySelector('#robotFab');
+    if(fab)fab.click();
   });
+
   if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
-    frame(frames.idle);pos(.06,0,0,1);
-  }else requestAnimationFrame(tick);
+    setPosition(.06,0,0,1);
+  }else{
+    requestAnimationFrame(tick);
+  }
 })();
 
