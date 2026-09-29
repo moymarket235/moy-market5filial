@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ky">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07111f">
+<title>Мой Маркет — Бишкек</title>
+<meta name="description" content="Мой Маркет — идиш-аяк, бытовая техника, казаны, наборы и товары для дома.">
+<link rel="preload" as="image" href="assets/hero.webp">
+<link rel="stylesheet" href="style.css?v=2.4">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#" aria-label="Мой Маркет"><img src="assets/logo.webp" alt="Мой Маркет"></a>
+  <div class="top-actions">
+    <button class="lang-switch" id="langSwitch">KG / RU</button>
+    <button class="icon-btn" id="searchBtn" aria-label="Поиск">⌕</button>
+    <button class="icon-btn cart-mini" id="cartBtn" aria-label="Корзина">🛒<b id="cartCount">0</b></button>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="hero-bg"></div><div class="hero-shade"></div>
+  <div class="hero-content">
+    <span class="eyebrow" data-i18n="heroEyebrow">БИШКЕК • КҮН САЙЫН 09:00–21:00</span>
+    <h1 data-i18n-html="heroTitle">Үйүңүзгө керектүүнүн<br><em>баары бир жерде.</em></h1>
+    <p data-i18n="heroText">Идиш-аяк, техника, казан, наборлор жана күнүмдүк керектүү товарлар.</p>
+    <button class="primary" id="heroCatalog"><span data-i18n="heroButton">Каталогду көрүү</span> →</button>
+  </div>
+</section>
+
+<section class="quick-strip">
+  <div><strong>🚚</strong><span data-i18n="delivery">Жеткирүү бар</span></div>
+  <div><strong>💬</strong><span data-i18n="waOrder">WhatsApp заказ</span></div>
+  <div><strong>💳</strong><span data-i18n="payment">Ыңгайлуу төлөм</span></div>
+</section>
+
+<section class="section" id="catalog">
+  <div class="section-head">
+    <div><span class="eyebrow dark" data-i18n="selectedSections">ТАНДАЛГАН БӨЛҮМДӨР</span><h2 data-i18n="catalog">Каталог</h2></div>
+    <button class="ghost" id="allBtn" data-i18n="viewAll">Баарын көрүү →</button>
+  </div>
+  <div class="categories" id="categories">
+  <button class="cat active" data-cat="all"><span class="ico">🛍️</span><b>Баары</b><span class="arrow">→</span></button>
+  <button class="cat" data-cat="dishes"><span class="ico">🍽️</span><b>Идиш-аяк</b><span class="arrow">→</span></button>
+  <button class="cat" data-cat="appliances"><span class="ico">⚡</span><b>Бытовая техника</b><span class="arrow">→</span></button>
+  <button class="cat" data-cat="cookware"><span class="ico">🍳</span><b>Казан & Ашкана</b><span class="arrow">→</span></button>
+  <button class="cat" data-cat="sets"><span class="ico">🎁</span><b>Наборлор</b><span class="arrow">→</span></button>
+  <button class="cat" data-cat="sale"><span class="ico">🔥</span><b>Акциялар</b><span class="arrow">→</span></button>
+</div>
+  <div class="subcategories" id="subcategories"></div>
+</section>
+
+<section class="section products-section" id="productsSection">
+  <div class="section-head">
+    <div><span class="eyebrow dark" data-i18n="newProducts">ТОВАРЛАР</span><h2 data-i18n="liked">Сизге жаккан нерселер</h2></div>
+    <span class="result-count" id="resultCount"></span>
+  </div>
+  <div class="searchbox" id="searchbox">
+    <span>⌕</span><input id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Товар издеңиз..." autocomplete="off">
+    <button id="clearSearch">×</button>
+  </div>
+  <div class="products" id="products"><div class="loading">Жүктөлүүдө...</div></div>
+  <div class="empty" id="empty" hidden><div>🛍️</div><h3 data-i18n="notFound">Товар табылган жок</h3><p data-i18n="tryAnother">Башка ат менен издеп көрүңүз.</p></div>
+</section>
+</main>
+
+<section class="delivery-info">
+  <div class="section-head"><div><span class="eyebrow" data-i18n="deliveryEyebrow">Жеткирүү</span><h2 data-i18n="deliveryTitle">Сизге ыңгайлуу жеткирүү</h2></div></div>
+  <div class="delivery-grid">
+    <div class="delivery-card"><div class="delivery-icon">🚕</div><div><strong data-i18n="deliveryYandex">Бишкек — Яндекс Go</strong><span data-i18n="deliveryPaid">Төлөмдүү жеткирүү</span></div></div>
+    <div class="delivery-card"><div class="delivery-icon">🚚</div><div><strong data-i18n="deliveryYldam">Региондор — Ылдам Экспресс</strong><span data-i18n="deliveryPaid">Төлөмдүү жеткирүү</span></div></div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand"><img src="assets/logo.webp" alt=""><p data-i18n="footerText">Үйгө керектүүнүн баары — бир жерде.</p></div>
+  <div><b data-i18n="addresses">Даректер</b><p>Жибек-Жолу 235<br>Жибек-Жолу 227<br>Ауэзова 17<br>Бейшеналиева 20<br>Токтогул 259/10</p></div>
+  <div><b data-i18n="contacts">Байланыш</b><p>WhatsApp: +996 507 66 88 66<br><span data-i18n="dailyHours">Күн сайын 09:00–21:00</span></p></div>
+</footer>
+
+<nav class="mobile-nav">
+ <button id="mobileHome">⌂<small data-i18n="home">Башкы</small></button>
+ <button id="mobileCatalog">▦<small data-i18n="catalog">Каталог</small></button>
+ <button id="mobileSearch">⌕<small data-i18n="search">Издөө</small></button>
+ <button id="mobileCart">🛒<small><span data-i18n="cart">Корзина</span> <b id="mobileCartCount">0</b></small></button>
+</nav>
+
+<div class="drawer-backdrop" id="backdrop"></div>
+<aside class="cart-drawer" id="cartDrawer">
+ <div class="drawer-head"><h3 data-i18n="cart">Корзина</h3><button id="closeCart">×</button></div>
+ <div id="cartItems" class="cart-items"></div>
+ <div class="cart-bottom">
+   <div><span data-i18n="total">Жалпы:</span><strong id="cartTotal">0 сом</strong></div>
+   <div class="checkout-delivery">
+     <div class="checkout-title" data-i18n="checkoutDeliveryTitle">Жеткирүү түрүн тандаңыз</div>
+     <label class="delivery-option"><input type="radio" name="deliveryChoice" value="yandex" checked><span>🚕</span><span><strong data-i18n="checkoutBishkek">Бишкек — Яндекс Go</strong><small data-i18n="deliveryPaid">Төлөмдүү жеткирүү</small></span></label>
+     <label class="delivery-option"><input type="radio" name="deliveryChoice" value="yldam"><span>🚚</span><span><strong data-i18n="checkoutRegions">Региондор — Ылдам Экспресс</strong><small data-i18n="deliveryPaid">Төлөмдүү жеткирүү</small></span></label>
+     <input id="deliveryAddress" class="checkout-input" type="text" data-i18n-placeholder="deliveryAddressPlaceholder" placeholder="Жеткирүү дареги">
+     <input id="deliveryPhone" class="checkout-input" type="tel" data-i18n-placeholder="deliveryPhonePlaceholder" placeholder="Телефон номери">
+   </div>
+   <button class="primary full" id="orderBtn" data-i18n="waOrderButton">WhatsApp аркылуу заказ</button>
+ </div>
+</aside>
+
+<script src="app.js?v=2.4"></script>
+</body>
+</html>
