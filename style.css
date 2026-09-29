@@ -120,3 +120,18 @@ body.preview-open{overflow:hidden}
 .robot-bubble.bot .robot-speaker{float:right;border:0;background:transparent;color:#9edfff;cursor:pointer;font-size:15px;margin-left:8px}
 .robot-reply{display:none!important}
 @media(max-width:520px){.market-robot{right:8px;bottom:76px}.robot-fab{width:74px;height:92px}.robot-panel{width:calc(100vw - 16px);max-height:calc(100vh - 96px);right:-2px}}
+
+/* Robot product recommendations */
+.robot-product-results{display:flex;flex-direction:column;gap:10px;margin-top:8px;max-width:100%}
+.robot-product-card{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.065);border:1px solid rgba(71,190,255,.18);border-radius:16px;padding:9px;overflow:hidden}
+.robot-product-card>img{width:88px;height:88px;object-fit:contain;background:#fff;border-radius:11px;flex:0 0 88px}
+.rpc-body{min-width:0;flex:1}
+.rpc-body>b{display:block;color:#fff;font-size:13px;line-height:1.3;margin-bottom:3px}
+.rpc-body>strong{display:block;color:#ff8a24;font-size:16px;margin-bottom:5px}
+.rpc-specs{font-size:11px;color:#d9e5f0;line-height:1.35;margin-bottom:7px}
+.rpc-specs>span{font-weight:700;color:#fff}
+.rpc-specs ul{margin:3px 0 0;padding-left:15px}
+.rpc-specs li{margin:1px 0}
+.rpc-body>button{border:0;border-radius:9px;background:#ff7a00;color:#fff;font-weight:700;padding:7px 10px;font-size:11px;cursor:pointer;width:100%}
+.rpc-body>button:active{transform:scale(.98)}
+@media(max-width:520px){.robot-product-card>img{width:76px;height:76px;flex-basis:76px}.rpc-body>b{font-size:12px}.rpc-body>strong{font-size:15px}.rpc-specs{font-size:10.5px}}
