@@ -108,30 +108,13 @@ body.preview-open{overflow:hidden}
 /* v3.9 PRO ROBOT — transparent full mascot + language-safe chat */
 .market-robot{right:14px;bottom:86px;z-index:600}
 /* v3.14 FUN ROBOT — walking + little dance + friendly glow */
-.robot-fab{width:86px;height:104px;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;padding:0;overflow:visible;animation:robotAdventure 8.8s ease-in-out infinite;display:grid;place-items:center;transform-origin:50% 92%;will-change:transform;position:relative}
-.robot-fab img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 10px 14px rgba(0,0,0,.28));animation:robotBodyBounce .52s ease-in-out infinite alternate;will-change:transform}
+.robot-fab{width:86px;height:104px;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;padding:0;overflow:visible;display:grid;place-items:center;transform-origin:50% 92%;will-change:transform;position:relative;cursor:pointer}
+.robot-fab img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 10px 14px rgba(0,0,0,.28));will-change:transform}
 .robot-fab:before{content:"";position:absolute;left:50%;bottom:-3px;width:74px;height:18px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse,rgba(0,174,255,.26),transparent 68%);filter:blur(3px);animation:robotGround 1.8s ease-in-out infinite}
 .robot-fab:after{content:"✦  ·  ✦";position:absolute;top:3px;right:-20px;color:#ff9a2f;font-size:10px;letter-spacing:3px;opacity:.8;animation:robotSpark 2.4s ease-in-out infinite}
-@keyframes robotAdventure{
-  0%,8%{transform:translate3d(0,0,0) rotate(0deg)}
-  18%{transform:translate3d(-42px,-3px,0) rotate(-3deg)}
-  28%{transform:translate3d(-70px,0,0) rotate(2deg)}
-  38%{transform:translate3d(-28px,-2px,0) rotate(3deg)}
-  46%,54%{transform:translate3d(0,0,0) rotate(0deg)}
-  60%{transform:translate3d(-3px,-3px,0) rotate(-8deg)}
-  64%{transform:translate3d(4px,0,0) rotate(8deg)}
-  68%{transform:translate3d(-5px,-2px,0) rotate(-7deg)}
-  72%{transform:translate3d(5px,0,0) rotate(7deg)}
-  76%{transform:translate3d(0,-5px,0) rotate(0deg)}
-  82%{transform:translate3d(-18px,0,0) rotate(-2deg)}
-  90%{transform:translate3d(-42px,-2px,0) rotate(2deg)}
-  100%{transform:translate3d(0,0,0) rotate(0deg)}
-}
-@keyframes robotBodyBounce{from{transform:translateY(0) rotate(0deg)}to{transform:translateY(-2px) rotate(.6deg)}}
+/* v3.17 REAL FRAME MOTION — controlled by JavaScript so it also works when the device disables CSS motion */
 @keyframes robotGround{0%,100%{transform:translateX(-50%) scaleX(.85);opacity:.35}50%{transform:translateX(-50%) scaleX(1.05);opacity:.7}}
 @keyframes robotSpark{0%,100%{transform:translate(0,0) scale(.8);opacity:.15}45%{transform:translate(5px,-5px) scale(1.1);opacity:1}70%{transform:translate(-2px,-2px) scale(.9);opacity:.35}}
-@media(prefers-reduced-motion:reduce){.robot-fab,.robot-fab img,.robot-fab:before,.robot-fab:after{animation:none!important}}
-
 .robot-panel{width:min(380px,calc(100vw - 24px));max-height:min(650px,calc(100vh - 120px));overflow:hidden;border-radius:24px;background:linear-gradient(180deg,#071321,#0b1929);border:1px solid rgba(71,190,255,.22);padding:14px;box-shadow:0 24px 80px rgba(0,0,0,.45)}
 .robot-head{position:sticky;top:0;background:linear-gradient(180deg,#071321 88%,rgba(7,19,33,0));z-index:2;padding-bottom:12px}
 .robot-avatar{background:transparent;border-radius:12px}.robot-avatar img{object-fit:contain}

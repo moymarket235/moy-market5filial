@@ -98,7 +98,7 @@ function renderCart(){const rows=cart.map(x=>{const p=products.find(a=>a.id===x.
 function openCart(){$("#cartDrawer").classList.add("open");$("#backdrop").classList.add("open")}
 function closeCart(){$("#cartDrawer").classList.remove("open");$("#backdrop").classList.remove("open")}
 function order(){if(!cart.length)return;let total=0,msg=lang==="ru"?"Здравствуйте! Хочу оформить заказ в Мой Маркет:":"Салам! Мой Маркеттен заказ бергим келет:";cart.forEach(x=>{const p=products.find(a=>a.id===x.id);if(!p)return;const sub=p.price*x.qty;total+=sub;msg+=`\n\n• ${nameOf(p)}\n${tr("qty")}: ${x.qty}\n${tr("price")}: ${p.price} сом\n${tr("subtotal")}: ${sub} сом\n🖼️ ${lang==="ru"?"Ссылка на фото":"Сүрөттүн шилтемеси"}: ${productImageUrl(p)}`});const d=document.querySelector('input[name="deliveryChoice"]:checked')?.value||"yandex";msg+=`\n\n🚚 ${lang==="ru"?"Доставка":"Жеткирүү"}: ${d==="yldam"?"Ылдам Экспресс":"Яндекс Go"}`;const a=$("#deliveryAddress").value.trim(),ph=$("#deliveryPhone").value.trim();if(a)msg+=`\n📍 ${lang==="ru"?"Адрес":"Дарек"}: ${a}`;if(ph)msg+=`\n📞 Телефон: ${ph}`;msg+=`\n\n${tr("total")} ${total} сом`;location.href=`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`}
-async function load(){products=FALLBACK_PRODUCTS;categories=FALLBACK_CATEGORIES;try{const b=location.href.substring(0,location.href.lastIndexOf("/")+1);const [p,c]=await Promise.all([fetch(b+"products.json?v=40",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_PRODUCTS).catch(()=>FALLBACK_PRODUCTS),fetch(b+"categories.json?v=40",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_CATEGORIES).catch(()=>FALLBACK_CATEGORIES)]);if(Array.isArray(p)&&p.length)products=p;if(Array.isArray(c)&&c.length)categories=c}catch(e){console.log("fallback",e)}applyText();renderCats();renderSubcats();renderProducts();renderCart()}
+async function load(){products=FALLBACK_PRODUCTS;categories=FALLBACK_CATEGORIES;try{const b=location.href.substring(0,location.href.lastIndexOf("/")+1);const [p,c]=await Promise.all([fetch(b+"products.json?v=41",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_PRODUCTS).catch(()=>FALLBACK_PRODUCTS),fetch(b+"categories.json?v=41",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_CATEGORIES).catch(()=>FALLBACK_CATEGORIES)]);if(Array.isArray(p)&&p.length)products=p;if(Array.isArray(c)&&c.length)categories=c}catch(e){console.log("fallback",e)}applyText();renderCats();renderSubcats();renderProducts();renderCart()}
 $("#langSwitch").onclick=()=>{lang=lang==="ky"?"ru":"ky";localStorage.setItem("moyLang",lang);applyText();renderCats();renderSubcats();renderProducts();renderCart()};
 document.addEventListener("click",e=>{const photo=e.target.closest(".photo[data-product-id]");if(photo)openProductPreview(photo.dataset.productId);if(e.target.closest("#previewClose")||e.target.id==="previewBackdrop")closeProductPreview()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProductPreview()});
 $("#searchBtn").onclick=()=>{document.querySelector("#searchbox").scrollIntoView({behavior:"smooth"});setTimeout(()=>$("#searchInput").focus(),300)};
@@ -149,5 +149,64 @@ $("#robotFab").onclick=()=>{if($("#robotPanel").classList.contains("open"))close
 $("#robotClose").onclick=closeRobot;
 document.querySelectorAll("[data-robot-action]").forEach(btn=>btn.onclick=()=>{const a=btn.dataset.robotAction;if(a==="search"){robotReply("robotSearchText");closeRobot();$("#searchBtn").click();}else if(a==="cart"){robotReply("robotCartText");openCart();}else if(a==="delivery"){robotReply("robotDeliveryText");document.querySelector(".delivery-info")?.scrollIntoView({behavior:"smooth"});}else if(a==="sale"){robotReply("robotSaleText");activeCat="sale";activeSub="all";renderCats();renderSubcats();renderProducts();document.querySelector("#catalog")?.scrollIntoView({behavior:"smooth"});}else if(a==="order"){robotReply("robotOrderText");openCart();}else if(a==="language"){lang=lang==="ky"?"ru":"ky";localStorage.setItem("moyLang",lang);applyText();renderCats();renderSubcats();renderProducts();renderCart();robotReply("robotLanguageText");}});
 const robotQuestion=$("#robotQuestion"),robotAsk=$("#robotAsk");robotAsk?.addEventListener("click",()=>answerRobotQuestion(robotQuestion?.value));robotQuestion?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();answerRobotQuestion(robotQuestion.value)}});
+
+// v3.17 REAL ROBOT MOTION: the mascot changes its own pose while walking, waving and dancing.
+(function initRealRobotMotion(){
+  const fab=document.querySelector("#robotFab");
+  const img=fab?.querySelector("img");
+  if(!fab||!img)return;
+  const frames=[1,2,3,2,1,4,5,8,5,1,6,7,6,7,6,5,4,8,4,1].map(n=>`assets/robot-frames/robot-${n}.png`);
+  const cache=frames.map(src=>{const im=new Image();im.src=src;return im});
+  let start=performance.now();
+  let lastFrame=-1;
+  function setFrame(index){
+    index=Math.max(0,Math.min(frames.length-1,index));
+    if(index!==lastFrame){img.src=frames[index];lastFrame=index;}
+  }
+  function tick(now){
+    const t=(now-start)%9600;
+    let x=0,y=0,rot=0,frame=0;
+    if(t<3600){
+      const p=t/3600;
+      // Walk left, with two clear walking poses.
+      x=-96*Math.sin(p*Math.PI/2);
+      y=-2+2*Math.abs(Math.sin(p*8*Math.PI));
+      rot=2*Math.sin(p*8*Math.PI);
+      const walk=[1,2,3,2];
+      frame=walk[Math.floor(t/180)%walk.length];
+    }else if(t<5200){
+      // Dance in place: side-to-side, head tilt and happy poses.
+      const p=(t-3600)/1600;
+      x=-96+96*(0.5-0.5*Math.cos(p*Math.PI));
+      const dance=[10,11,12,13,14,15,16,17];
+      frame=dance[Math.floor((t-3600)/190)%dance.length];
+      y=-4-4*Math.abs(Math.sin(p*3*Math.PI));
+      rot=9*Math.sin(p*4*Math.PI);
+    }else if(t<8600){
+      const p=(t-5200)/3400;
+      // Walk back toward the original position.
+      x=-96*(1-(0.5-0.5*Math.cos(p*Math.PI)));
+      y=-2+2*Math.abs(Math.sin(p*8*Math.PI));
+      rot=2*Math.sin(p*8*Math.PI);
+      const walk=[3,2,3,2];
+      frame=walk[Math.floor((t-5200)/180)%walk.length];
+    }else{
+      // Friendly wave at the end of the route.
+      const p=(t-8600)/1000;
+      x=-8*Math.sin(p*Math.PI);
+      y=-3*Math.abs(Math.sin(p*2*Math.PI));
+      rot=3*Math.sin(p*2*Math.PI);
+      const wave=[4,5,8,5];
+      frame=wave[Math.floor((t-8600)/230)%wave.length];
+    }
+    fab.style.transform=`translate3d(${x}px,${y}px,0) rotate(${rot}deg)`;
+    setFrame(frame);
+    requestAnimationFrame(tick);
+  }
+  // Start immediately with the branded idle pose, then animate continuously.
+  setFrame(0);
+  requestAnimationFrame(tick);
+})();
+
 $("#mobileSearch").onclick=()=>$("#searchBtn").click();$("#cartBtn").onclick=openCart;$("#mobileCart").onclick=openCart;$("#closeCart").onclick=closeCart;$("#backdrop").onclick=closeCart;$("#orderBtn").onclick=order;$("#heroCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileHome").onclick=()=>scrollTo({top:0,behavior:"smooth"});$("#allBtn").onclick=()=>{activeCat="all";activeSub="all";renderCats();renderSubcats();renderProducts()};$("#searchInput").oninput=renderProducts;$("#clearSearch").onclick=()=>{$("#searchInput").value="";renderProducts()};
 load();
