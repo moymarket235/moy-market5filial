@@ -170,74 +170,119 @@ const robotQuestion=$("#robotQuestion"),robotAsk=$("#robotAsk");robotAsk?.addEve
 $("#mobileSearch").onclick=()=>$("#searchBtn").click();$("#cartBtn").onclick=openCart;$("#mobileCart").onclick=openCart;$("#closeCart").onclick=closeCart;$("#backdrop").onclick=closeCart;$("#orderBtn").onclick=order;$("#heroCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileHome").onclick=()=>scrollTo({top:0,behavior:"smooth"});$("#allBtn").onclick=()=>{activeCat="all";activeSub="all";renderCats();renderSubcats();renderProducts()};$("#searchInput").oninput=renderProducts;$("#clearSearch").onclick=()=>{$("#searchInput").value="";renderProducts()};
 load();
 
-// v3.18 HERO ROBOT: the mascot physically travels across the hero, changes poses,
-// waves and dances in the middle instead of running inside a fixed frame.
+// v3.19 HERO ROBOT — REAL WALKING ANIMATION
+// The mascot uses alternating walk poses while physically travelling across the hero.
 (function initHeroRobotMotion(){
   const stage=document.querySelector('#heroRobotStage');
   const bot=document.querySelector('#heroRobot');
   const img=document.querySelector('#heroRobotImg');
   const glow=document.querySelector('.hero-robot-glow');
+  const floor=document.querySelector('.hero-robot-floor');
   const bubble=document.querySelector('#heroRobotBubble');
   const fx=document.querySelector('#heroRobotFx');
   if(!stage||!bot||!img)return;
-  const frames={idle:'assets/robot-frames/robot-1.png',walkA:'assets/robot-frames/robot-2.png',walkB:'assets/robot-frames/robot-3.png',wave:'assets/robot-frames/robot-4.png',happy:'assets/robot-frames/robot-5.png',danceA:'assets/robot-frames/robot-6.png',danceB:'assets/robot-frames/robot-7.png',point:'assets/robot-frames/robot-8.png'};
+
+  const frames={
+    idle:'assets/robot-frames/robot-1.png',
+    walkA:'assets/robot-frames/robot-2.png',
+    walkB:'assets/robot-frames/robot-3.png',
+    wave:'assets/robot-frames/robot-4.png',
+    danceA:'assets/robot-frames/robot-6.png',
+    danceB:'assets/robot-frames/robot-7.png',
+    point:'assets/robot-frames/robot-8.png'
+  };
   Object.values(frames).forEach(src=>{const im=new Image();im.src=src});
+
+  // Walk → wave → walk → dance → point → walk to the other side → turn → walk back.
   const script=[
-    {dur:600,pose:'idle',say:'Салам! 👋'},
-    {dur:2800,pose:'walk',say:'МОЙ МАРКЕТ! 🚶'},
-    {dur:900,pose:'wave',say:'Кош келиңиз! 👋'},
-    {dur:2200,pose:'walk',say:'Товар издеп жатам… 🔎'},
-    {dur:2600,pose:'dance',say:'Маанай сонун! 💃'},
-    {dur:1800,pose:'walkBack',say:'Дагы көрүшөбүз! 👋'},
-    {dur:900,pose:'point',say:'Каталог ушул жакта →'},
-    {dur:1100,pose:'idle',say:'Сизге жардам берем 🤖'}
+    {dur:700,pose:'idle',say:'Салам! 👋'},
+    {dur:4300,pose:'walk',from:.00,to:.36,say:'МОЙ МАРКЕТ! 🚶'},
+    {dur:900,pose:'wave',at:.36,say:'Кош келиңиз! 👋'},
+    {dur:2700,pose:'walk',from:.36,to:.57,say:'Товарларды издеп жатам… 🔎'},
+    {dur:3000,pose:'dance',at:.57,say:'Маанай сонун! 💃'},
+    {dur:1000,pose:'point',at:.57,say:'Каталог ушул жакта →'},
+    {dur:4300,pose:'walk',from:.57,to:.94,say:'Жүрө берели! 🚶‍♂️'},
+    {dur:900,pose:'turn',at:.94,say:'Кайра келем! ↩️'},
+    {dur:4600,pose:'walkBack',from:.94,to:.04,say:'Сизге жардам берем 🤖'},
+    {dur:900,pose:'wave',at:.04,say:'Көрүшкөнчө! 👋'}
   ];
-  const total=12800;
-  let start=performance.now(),lastPose='',lastFrame='';
-  function setPose(src,pose){
-    if(src!==lastFrame){img.src=src;lastFrame=src}
+  const total=script.reduce((n,s)=>n+s.dur,0);
+  let start=performance.now(), currentFrame='';
+
+  function frame(src){
+    if(src!==currentFrame){img.src=src;currentFrame=src}
+  }
+  function pos(frac,bob,tilt,direction){
+    const stageW=stage.clientWidth;
+    const botW=bot.offsetWidth||130;
+    const x=(stageW-botW)*Math.max(0,Math.min(1,frac));
+    bot.style.left=x+'px';
+    bot.style.transform=`translate3d(0,${bob}px,0) rotate(${tilt}deg) scaleX(${direction})`;
+    if(glow){glow.style.left=Math.max(0,x+botW*.1)+'px'}
+    if(floor){floor.style.left=Math.max(0,x+botW*.05)+'px'}
+    if(bubble){bubble.style.left=Math.max(0,x+botW*.04)+'px'}
+    if(fx){fx.style.left=Math.max(0,x+botW*.2)+'px'}
+  }
+  function setMode(pose){
     stage.classList.toggle('dancing',pose==='dance');
     stage.classList.toggle('waving',pose==='wave');
-    if(bubble && (pose==='dance'||pose==='wave'||pose==='point'||pose==='idle')) bubble.textContent=currentSay||'';
+    stage.classList.toggle('walking',pose==='walk'||pose==='walkBack');
   }
-  function setPosition(px,angle=0,bob=0){
-    bot.style.left=px+'px'; bot.style.transform=`translate3d(0,${bob}px,0) rotate(${angle}deg)`;
-    if(glow){glow.style.left=Math.max(0,px+6)+'px';glow.style.transform='translateX(0)'}
-    if(bubble){bubble.style.left=Math.max(0,px+10)+'px'}
-    if(fx){fx.style.left=Math.max(0,px)+'px'}
-  }
-  let currentSay='';
+  let lastSay='';
+
   function tick(now){
-    const stageW=stage.clientWidth, botW=bot.offsetWidth||120;
-    const minX=Math.max(6,stageW*.04), maxX=Math.max(minX+20,stageW-botW-stageW*.04), travel=maxX-minX;
-    let t=(now-start)%total, acc=0, seg=script[0];
+    const t=(now-start)%total;
+    let acc=0,seg=script[0];
     for(const s of script){if(t<acc+s.dur){seg=s;break}acc+=s.dur}
-    const local=t-acc, p=Math.min(1,local/seg.dur);
-    let x=minX,angle=0,bob=0,pose=seg.pose;
-    if(seg.pose==='walk'){
-      const ease=p*p*(3-2*p); x=minX+travel*ease; const step=Math.sin(local/115*Math.PI); bob=-Math.abs(step)*3; angle=step*2.2;
-      setPose((Math.floor(local/130)%2===0)?frames.walkA:frames.walkB,pose);
-    } else if(seg.pose==='wave'){
-      x=minX+travel*.28; angle=Math.sin(local/120*Math.PI)*3; bob=-Math.abs(Math.sin(local/150*Math.PI))*2; setPose(frames.wave,pose);
-    } else if(seg.pose==='dance'){
-      x=minX+travel*.53 + Math.sin(local/240*Math.PI)*Math.min(34,travel*.045); bob=-Math.abs(Math.sin(local/150*Math.PI))*9; angle=Math.sin(local/180*Math.PI)*8; setPose((Math.floor(local/170)%2===0)?frames.danceA:frames.danceB,pose);
-    } else if(seg.pose==='walkBack'){
-      const ease=p*p*(3-2*p); x=minX+travel*(1-ease); const step=Math.sin(local/115*Math.PI); bob=-Math.abs(step)*3; angle=step*2.2; setPose((Math.floor(local/130)%2===0)?frames.walkB:frames.walkA,pose);
-    } else if(seg.pose==='point'){
-      x=minX+travel*.13; angle=-2; bob=-2; setPose(frames.point,pose);
-    } else {
-      x=minX+travel*.07; bob=-2; setPose(frames.idle,pose);
+    const local=t-acc;
+    const p=Math.min(1,local/seg.dur);
+    let frac=seg.at??0,bob=0,tilt=0,direction=1;
+    setMode(seg.pose);
+
+    if(seg.pose==='walk'||seg.pose==='walkBack'){
+      const eased=p*p*(3-2*p);
+      frac=seg.from+(seg.to-seg.from)*eased;
+      const step=Math.sin(local/155*Math.PI);
+      bob=-Math.abs(step)*5;
+      tilt=step*2.4;
+      direction=seg.pose==='walk' ? 1 : -1;
+      // Two real walking poses alternate with the stride, not just a translated image.
+      frame((Math.floor(local/155)%2===0)?frames.walkA:frames.walkB);
+    }else if(seg.pose==='dance'){
+      frac=seg.at+Math.sin(local/330*Math.PI)*.035;
+      bob=-Math.abs(Math.sin(local/150*Math.PI))*13;
+      tilt=Math.sin(local/190*Math.PI)*9;
+      direction=Math.sin(local/330*Math.PI)>=0?1:-1;
+      frame((Math.floor(local/220)%2===0)?frames.danceA:frames.danceB);
+    }else if(seg.pose==='wave'){
+      frac=seg.at;
+      bob=-Math.abs(Math.sin(local/180*Math.PI))*3;
+      tilt=Math.sin(local/250*Math.PI)*2;
+      direction=1;
+      frame(frames.wave);
+    }else if(seg.pose==='point'){
+      frac=seg.at; bob=-2; tilt=-3; direction=1; frame(frames.point);
+    }else if(seg.pose==='turn'){
+      frac=seg.at;
+      const turnP=Math.min(1,local/seg.dur);
+      direction=turnP<.5?1:-1;
+      bob=-Math.abs(Math.sin(local/180*Math.PI))*3;
+      tilt=(turnP<.5?1:-1)*5;
+      frame(frames.idle);
+    }else{
+      frac=.01; bob=-2; direction=1; frame(frames.idle);
     }
-    if(currentSay!==seg.say){currentSay=seg.say;if(bubble)bubble.textContent=currentSay}
-    setPosition(x,angle,bob);
+
+    if(seg.say!==lastSay){lastSay=seg.say;if(bubble)bubble.textContent=seg.say}
+    pos(frac,bob,tilt,direction);
     requestAnimationFrame(tick);
   }
+
   bot.addEventListener('click',()=>{
-    const fab=document.querySelector('#robotFab'); if(fab) fab.click();
+    const fab=document.querySelector('#robotFab');if(fab)fab.click();
   });
-  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    setPose(frames.idle,'idle');setPosition(24,0,0);
-  }else{
-    requestAnimationFrame(tick);
-  }
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
+    frame(frames.idle);pos(.06,0,0,1);
+  }else requestAnimationFrame(tick);
 })();
+

@@ -178,3 +178,35 @@ body.preview-open{overflow:hidden}
  .hero-robot-route i{width:5px;height:5px}
 }
 @media(prefers-reduced-motion:reduce){.hero-robot-stage .hero-robot,.hero-robot-stage .hero-robot-glow,.hero-robot-stage .hero-robot-bubble{transition:none!important}.hero-robot-fx{animation:none!important}}
+
+/* v3.19 REAL WALKING ROBOT — full hero travel, not a fixed-frame run */
+.hero-robot-stage{height:300px;bottom:0;z-index:4;overflow:visible;pointer-events:none}
+.hero-robot-route{left:3%;right:3%;bottom:36px;height:4px;opacity:.95;background:repeating-linear-gradient(90deg,rgba(255,139,36,.98) 0 22px,transparent 22px 38px);box-shadow:0 0 12px rgba(255,120,0,.2)}
+.hero-robot-route i{width:9px;height:9px;box-shadow:0 0 16px rgba(67,204,255,.95)}
+.hero-robot{width:156px;height:178px;left:0;bottom:42px;z-index:5;will-change:left,transform}
+.hero-robot img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 18px 15px rgba(0,0,0,.48));will-change:contents}
+.hero-robot-floor{position:absolute;left:0;bottom:28px;width:148px;height:30px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,187,255,.42) 0%,rgba(0,187,255,.12) 45%,transparent 72%);filter:blur(5px);z-index:2;pointer-events:none;will-change:left}
+.hero-robot-glow{width:148px;height:28px;bottom:29px;z-index:2;will-change:left}
+.hero-robot-bubble{bottom:205px;z-index:7;white-space:nowrap;box-shadow:0 8px 25px rgba(0,0,0,.2)}
+.hero-robot-fx{bottom:185px;z-index:7}
+.hero-robot-stage.walking .hero-robot-floor{animation:heroFloorPulse .31s ease-in-out infinite alternate}
+.hero-robot-stage.dancing .hero-robot-floor{animation:heroFloorDance .22s ease-in-out infinite alternate}
+@keyframes heroFloorPulse{from{transform:scaleX(.78);opacity:.65}to{transform:scaleX(1.05);opacity:1}}
+@keyframes heroFloorDance{from{transform:scaleX(.72);opacity:.6}to{transform:scaleX(1.18);opacity:1}}
+@media(max-width:900px){
+ .hero-robot-stage{height:245px;bottom:0}
+ .hero-robot{width:118px;height:138px;bottom:34px}
+ .hero-robot-floor,.hero-robot-glow{width:112px;height:23px;bottom:23px}
+ .hero-robot-route{bottom:28px;left:2%;right:2%}
+ .hero-robot-bubble{bottom:160px;font-size:11px;padding:8px 10px;max-width:160px;white-space:normal}
+ .hero-robot-fx{bottom:146px;font-size:14px}
+}
+@media(max-width:560px){
+ .hero{min-height:900px}
+ .hero-robot-stage{height:225px}
+ .hero-robot{width:104px;height:122px;bottom:28px}
+ .hero-robot-floor,.hero-robot-glow{width:98px;height:20px;bottom:19px}
+ .hero-robot-route{bottom:24px}
+ .hero-robot-bubble{bottom:142px;max-width:145px}
+ .hero-robot-fx{bottom:130px}
+}
