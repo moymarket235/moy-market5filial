@@ -69,8 +69,8 @@
 <section class="delivery-info">
   <div class="section-head"><div><span class="eyebrow" data-i18n="deliveryEyebrow">Жеткирүү</span><h2 data-i18n="deliveryTitle">Сизге ыңгайлуу жеткирүү</h2></div></div>
   <div class="delivery-grid">
-    <div class="delivery-card"><div class="delivery-icon">🚕</div><div><strong data-i18n="deliveryYandex">Бишкек — Яндекс Go</strong><span data-i18n="deliveryPaid">Төлөмдүү жеткирүү</span></div></div>
-    <div class="delivery-card"><div class="delivery-icon">🚚</div><div><strong data-i18n="deliveryYldam">Региондор — Ылдам Экспресс</strong><span data-i18n="deliveryPaid">Төлөмдүү жеткирүү</span></div></div>
+    <div class="delivery-card"><div class="delivery-icon">🚕</div><div><strong data-i18n="deliveryYandex">Бишкек — Яндекс Go • 2 сааттын ичинде</strong><span data-i18n="deliveryPaid">Төлөмдүү жеткирүү</span></div></div>
+    <div class="delivery-card"><div class="delivery-icon">🚚</div><div><strong data-i18n="deliveryYldam">Региондор — Ылдам Экспресс • 1–2 күн</strong><span data-i18n="deliveryPaid">Төлөмдүү жеткирүү</span></div></div>
   </div>
 </section>
 
@@ -114,6 +114,29 @@
  </div>
 </aside>
 
-<script src="app.js?v=3.1"></script>
+<!-- Мой Маркет мини-робот консультант -->
+<div class="market-robot" id="marketRobot">
+  <button class="robot-fab" id="robotFab" aria-label="Мой Маркет жардамчысы">🤖</button>
+  <div class="robot-panel" id="robotPanel" aria-hidden="true">
+    <div class="robot-head">
+      <div class="robot-avatar">🤖</div>
+      <div><strong data-i18n="robotTitle">Мой Маркет жардамчысы</strong><small data-i18n="robotOnline">Онлайн • жардам берүүгө даяр</small></div>
+      <button id="robotClose" aria-label="Close">×</button>
+    </div>
+    <div class="robot-message" data-i18n="robotGreeting">Салам! 👋 Сизге кандай жардам керек?</div>
+    <div class="robot-actions">
+      <button data-robot-action="search">🔎 <span data-i18n="robotSearch">Товар табуу</span></button>
+      <button data-robot-action="cart">🛒 <span data-i18n="robotCart">Корзинамды ачуу</span></button>
+      <button data-robot-action="delivery">📦 <span data-i18n="robotDelivery">Жеткирүү тууралуу</span></button>
+      <button data-robot-action="sale">🔥 <span data-i18n="robotSale">Акцияларды көрүү</span></button>
+      <button data-robot-action="order">💬 <span data-i18n="robotOrder">Заказ берүүгө жардам</span></button>
+      <button data-robot-action="language">🌐 <span data-i18n="robotLanguage">Тилди өзгөртүү</span></button>
+    </div>
+    <div class="robot-question"><input id="robotQuestion" type="text" data-i18n-placeholder="robotInputPlaceholder" placeholder="Сурооңузду жазыңыз..." autocomplete="off"><button id="robotMic" type="button" title="Voice">🎙️</button><button id="robotAsk" type="button" data-i18n="robotAsk">Жооп алуу</button></div>
+    <div class="robot-reply" id="robotReply" hidden></div>
+  </div>
+</div>
+
+<script src="app.js?v=3.3"></script>
 </body>
 </html>
