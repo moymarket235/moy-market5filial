@@ -8,16 +8,11 @@
 .specs li{margin:2px 0}
 @media(max-width:520px){.specs{font-size:11px;min-height:105px}.specs>b{font-size:12px}}
 
-/* FINAL VACUUM GAP FIX: hide the empty description wrapper only */
-.pbody > .desc:has(.desc:empty){display:none !important;}
-.pbody > .desc:has(.desc:empty) + .price{margin-top:0 !important;}
-/* PRODUCT CARD SPACING FIX: characteristic products stay compact like microwaves */
-.product:has(.specs) .desc{display:none !important;}
-.product:has(.specs) .price{margin-top:0 !important;margin-bottom:8px !important;}
-.product:has(.specs) .specs{margin-top:0 !important;margin-bottom:13px !important;min-height:0 !important;}
-@media(max-width:520px){.product:has(.specs) .specs{min-height:0 !important;margin-top:0 !important;margin-bottom:10px !important;}}
-
-/* FIX: products with characteristics should not show the same information again in description */
-.pbody:has(.specs) .desc{display:none !important;margin:0 !important;min-height:0 !important;height:0 !important;padding:0 !important}
-.pbody:has(.specs) .price{margin-top:0 !important;margin-bottom:8px !important}
-.pbody:has(.specs) .specs{margin-top:0 !important}
+/* Product spacing: keep price and characteristics close to the product. */
+.pname{min-height:0}
+.desc{min-height:0;margin:5px 0 8px}
+.price{margin-top:0;margin-bottom:8px}
+.specs{margin-top:0;margin-bottom:10px;min-height:0}
+.specs>b{margin-bottom:3px}
+.specs li{margin:1px 0}
+@media(max-width:520px){.desc{margin:4px 0 7px}.price{margin-bottom:7px}.specs{margin-bottom:9px;min-height:0}}
