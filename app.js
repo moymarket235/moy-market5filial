@@ -23,16 +23,49 @@ function renderCats(){
 function renderSubcats(){
  const box=$("#subcategories"); const cat=categories.find(c=>c.id===activeCat);
  if(!cat){box.innerHTML="";return}
- box.innerHTML=`<button class="subcat active" data-sub="all">${tr("categoryAll")}</button>`+(cat.subcategories||[]).map((s,i)=>`<button class="subcat" data-sub="${i}">${esc(s)}</button>`).join("");
+ box.innerHTML=`<button class="subcat active" data-sub="all">${tr("categoryAll")}</button>`+(cat.subcategories||[]).map((s,i)=>`<button class="subcat" data-sub="${i}">${esc(lang==="ru"?({"Микроволновкалар":"Микроволновые печи","Блендерлер":"Блендеры","Пылесостор":"Пылесосы"}[s]||s):s)}</button>`).join("");
  box.querySelectorAll(".subcat").forEach(b=>b.onclick=()=>{activeSub=b.dataset.sub;box.querySelectorAll(".subcat").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderProducts()});
 }
 function renderProducts(){
- const q=($("#searchInput")?.value||"").trim().toLowerCase(),cat=categories.find(c=>c.id===activeCat),sub=activeSub!=="all"?cat?.subcategories?.[Number(activeSub)]:null;
- const list=products.filter(p=>{const hay=[p.name,p.nameRu,p.description,p.descriptionRu,p.categoryName,p.categoryNameRu,p.subcategoryName,p.subcategoryNameRu].join(" ").toLowerCase();return (activeCat==="all"||p.category===activeCat)&&(!sub||p.subcategoryName===sub||p.subcategoryNameRu===sub)&&hay.includes(q)});
+ const q=($("#searchInput")?.value||"").trim().toLowerCase();
+ const cat=categories.find(c=>c.id===activeCat);
+ const sub=activeSub!=="all"?cat?.subcategories?.[Number(activeSub)]:null;
+ const list=products.filter(p=>{
+  const hay=[p.name,p.nameRu,p.description,p.descriptionRu,p.categoryName,p.categoryNameRu,p.subcategoryName,p.subcategoryNameRu].join(" ").toLowerCase();
+  return (activeCat==="all"||p.category===activeCat)&&(!sub||p.subcategoryName===sub||p.subcategoryNameRu===sub)&&hay.includes(q);
+ });
  $("#resultCount").textContent=list.length?`${list.length} ${list.length===1?tr("item"):tr("items")}`:"";
  $("#empty").hidden=list.length>0;
- $("#products").innerHTML=list.map(p=>`<article class="product"><div class="photo"><img src="${esc(p.image||"assets/products/placeholder.svg")}" alt="${esc(nameOf(p))}" loading="lazy" onerror="this.onerror=null;this.src='assets/products/placeholder.svg'"></div><div class="pbody"><div class="pname">${esc(nameOf(p))}</div><div class="desc">${esc(descOf(p))}</div><div class="price">${money(p.price)}</div>${(p.characteristics||[]).length?`<div class="specs"><b>${tr("characteristics")}</b><ul>${(lang==="ru"?(p.characteristicsRu||p.characteristics):(p.characteristics||[])).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:`<div class="desc">${esc(descOf(p))}</div>`}<button class="buy" onclick="addToCart('${esc(p.id)}')">🛒 ${tr("addCart")}</button></div></article>`).join("")||"";
+ const card=p=>{
+  const specs=lang==="ru"?(p.characteristicsRu||p.characteristics||[]):(p.characteristics||[]);
+  // The description is shown only for products without a specifications list.
+  return `<article class="product"><div class="photo"><img src="${esc(p.image||"assets/products/placeholder.svg")}" alt="${esc(nameOf(p))}" loading="lazy" onerror="this.onerror=null;this.src='assets/products/placeholder.svg'"></div><div class="pbody"><div class="pname">${esc(nameOf(p))}</div>${specs.length?"":`<div class="desc">${esc(descOf(p))}</div>`}<div class="price">${money(p.price)}</div>${specs.length?`<div class="specs"><b>${tr("characteristics")}</b><ul>${specs.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}<button class="buy" onclick="addToCart('${esc(p.id)}')">🛒 ${tr("addCart")}</button></div></article>`;
+ };
+ const sections=[
+  {key:"vacuum",ky:"Пылесостор",ru:"Пылесосы"},
+  {key:"blender",ky:"Блендерлер",ru:"Блендеры"},
+  {key:"microwave",ky:"Микроволновкалар",ru:"Микроволновые печи"}
+ ];
+ // On the full catalog and appliance overview, group appliances by product type.
+ if(activeSub==="all" && (activeCat==="all"||activeCat==="appliances")){
+  const grouped=new Set();let html="";
+  for(const section of sections){
+   const items=list.filter(p=>p.category==="appliances"&&p.subcategory===section.key);
+   if(!items.length)continue;
+   items.forEach(p=>grouped.add(p.id));
+   html+=`<section class="product-group"><div class="product-group-head"><h3>${lang==="ru"?section.ru:section.ky}</h3><button type="button" class="group-all" data-group="${section.key}">${lang==="ru"?"Все":"Баары"} →</button></div><div class="products group-products">${items.map(card).join("")}</div></section>`;
+  }
+  const other=list.filter(p=>!grouped.has(p.id));
+  if(other.length)html+=`<section class="product-group"><div class="product-group-head"><h3>${lang==="ru"?"Другие товары":"Башка товарлар"}</h3></div><div class="products group-products">${other.map(card).join("")}</div></section>`;
+  $("#products").classList.add("grouped");$("#products").innerHTML=html;
+  $("#products").querySelectorAll(".group-all").forEach(btn=>btn.onclick=()=>{
+   activeCat="appliances";const c=categories.find(c=>c.id==="appliances");
+   activeSub=String(c.subcategories.findIndex(s=>({vacuum:"Пылесостор",blender:"Блендерлер",microwave:"Микроволновкалар"})[btn.dataset.group]===s));
+   renderCats();renderSubcats();renderProducts();document.querySelector("#catalog").scrollIntoView({behavior:"smooth"});
+  });
+ }else{$("#products").classList.remove("grouped");$("#products").innerHTML=list.map(card).join("");}
 }
+
 function save(){localStorage.setItem("moyCart",JSON.stringify(cart))}
 function addToCart(id){const x=cart.find(a=>a.id===id);x?x.qty++:cart.push({id,qty:1});save();renderCart();openCart()}
 function changeQty(id,n){const x=cart.find(a=>a.id===id);if(!x)return;x.qty+=n;if(x.qty<1)cart=cart.filter(a=>a.id!==id);save();renderCart()}
@@ -40,7 +73,7 @@ function renderCart(){const rows=cart.map(x=>{const p=products.find(a=>a.id===x.
 function openCart(){$("#cartDrawer").classList.add("open");$("#backdrop").classList.add("open")}
 function closeCart(){$("#cartDrawer").classList.remove("open");$("#backdrop").classList.remove("open")}
 function order(){if(!cart.length)return;let total=0,msg=lang==="ru"?"Здравствуйте! Хочу оформить заказ в Мой Маркет:":"Салам! Мой Маркеттен заказ бергим келет:";cart.forEach(x=>{const p=products.find(a=>a.id===x.id);if(!p)return;const sub=p.price*x.qty;total+=sub;msg+=`\n\n• ${nameOf(p)}\n${tr("qty")||"Саны"}: ${x.qty}\n${tr("price")||"Баасы"}: ${p.price} сом\n${tr("subtotal")||"Жалпы"}: ${sub} сом`});const d=document.querySelector('input[name="deliveryChoice"]:checked')?.value||"yandex";msg+=`\n\n🚚 ${lang==="ru"?"Доставка":"Жеткирүү"}: ${d==="yldam"?"Ылдам Экспресс":"Яндекс Go"}`;const a=$("#deliveryAddress").value.trim(),ph=$("#deliveryPhone").value.trim();if(a)msg+=`\n📍 ${lang==="ru"?"Адрес":"Дарек"}: ${a}`;if(ph)msg+=`\n📞 Телефон: ${ph}`;msg+=`\n\n${tr("total")} ${total} сом`;location.href=`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`}
-async function load(){products=FALLBACK_PRODUCTS;categories=FALLBACK_CATEGORIES;try{const b=location.href.substring(0,location.href.lastIndexOf("/")+1);const [p,c]=await Promise.all([fetch(b+"products.json?v=25",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_PRODUCTS).catch(()=>FALLBACK_PRODUCTS),fetch(b+"categories.json?v=25",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_CATEGORIES).catch(()=>FALLBACK_CATEGORIES)]);if(Array.isArray(p)&&p.length)products=p;if(Array.isArray(c)&&c.length)categories=c}catch(e){console.log("fallback",e)}applyText();renderCats();renderSubcats();renderProducts();renderCart()}
+async function load(){products=FALLBACK_PRODUCTS;categories=FALLBACK_CATEGORIES;try{const b=location.href.substring(0,location.href.lastIndexOf("/")+1);const [p,c]=await Promise.all([fetch(b+"products.json?v=29",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_PRODUCTS).catch(()=>FALLBACK_PRODUCTS),fetch(b+"categories.json?v=29",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_CATEGORIES).catch(()=>FALLBACK_CATEGORIES)]);if(Array.isArray(p)&&p.length)products=p;if(Array.isArray(c)&&c.length)categories=c}catch(e){console.log("fallback",e)}applyText();renderCats();renderSubcats();renderProducts();renderCart()}
 $("#langSwitch").onclick=()=>{lang=lang==="ky"?"ru":"ky";localStorage.setItem("moyLang",lang);applyText();renderCats();renderSubcats();renderProducts();renderCart()};
 $("#searchBtn").onclick=()=>{document.querySelector("#searchbox").scrollIntoView({behavior:"smooth"});setTimeout(()=>$("#searchInput").focus(),300)};
 $("#mobileSearch").onclick=()=>$("#searchBtn").click();$("#cartBtn").onclick=openCart;$("#mobileCart").onclick=openCart;$("#closeCart").onclick=closeCart;$("#backdrop").onclick=closeCart;$("#orderBtn").onclick=order;$("#heroCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileHome").onclick=()=>scrollTo({top:0,behavior:"smooth"});$("#allBtn").onclick=()=>{activeCat="all";activeSub="all";renderCats();renderSubcats();renderProducts()};$("#searchInput").oninput=renderProducts;$("#clearSearch").onclick=()=>{$("#searchInput").value="";renderProducts()};

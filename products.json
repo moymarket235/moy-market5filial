@@ -162,5 +162,73 @@
       "Насадки в комплекте"
     ],
     "image": "assets/products/haley-hy-9918-5600.png"
+  },
+  {
+    "id": "samsung-sn-902-2300",
+    "name": "SAMSUNG SN-902 — Блендер",
+    "nameRu": "SAMSUNG SN-902 — Блендер",
+    "price": 2300,
+    "category": "appliances",
+    "categoryName": "Бытовая техника",
+    "categoryNameRu": "Бытовая техника",
+    "subcategory": "blender",
+    "subcategoryName": "Блендерлер",
+    "subcategoryNameRu": "Блендеры",
+    "description": "SAMSUNG SN-902 блендери. Күнүмдүк ашкана колдонууга ылайыктуу.",
+    "descriptionRu": "SAMSUNG SN-902 — блендер для ежедневного использования на кухне.",
+    "characteristics": [
+      "Модель: SN-902",
+      "Көлөмү: 1,5 л",
+      "5 ылдамдык",
+      "8 бычак",
+      "Дат баспас болоттон жасалган бычактар",
+      "Муз майдалоо функциясы",
+      "Кошумча майдалагыч насадка"
+    ],
+    "characteristicsRu": [
+      "Модель: SN-902",
+      "Объём: 1,5 л",
+      "5 скоростей",
+      "8 лезвий",
+      "Лезвия из нержавеющей стали",
+      "Функция измельчения льда",
+      "Дополнительная насадка-измельчитель"
+    ],
+    "image": "assets/products/samsung-sn-902-2300.png"
+  },
+  {
+    "id": "sonifer-sf-8202-2400",
+    "name": "Sonifer SF-8202 — Блендер",
+    "nameRu": "Sonifer SF-8202 — Блендер",
+    "price": 2400,
+    "category": "appliances",
+    "categoryName": "Бытовая техника",
+    "categoryNameRu": "Бытовая техника",
+    "subcategory": "blender",
+    "subcategoryName": "Блендерлер",
+    "subcategoryNameRu": "Блендеры",
+    "description": "Sonifer SF-8202 блендери. 1,5 литрлик айнек идиш менен.",
+    "descriptionRu": "Sonifer SF-8202. Блендер со стеклянной чашей 1,5 л.",
+    "characteristics": [
+      "Модель: SF-8202",
+      "Кубаттуулугу: 800 Вт",
+      "Көлөмү: 1,5 л",
+      "5 ылдамдык + Pulse",
+      "6 дат баспас болот бычак",
+      "Ысып кетүүдөн коргоо",
+      "Коопсуздук блокировкасы",
+      "Айнек идиш"
+    ],
+    "characteristicsRu": [
+      "Модель: SF-8202",
+      "Мощность: 800 Вт",
+      "Объём: 1,5 л",
+      "5 скоростей + Pulse",
+      "6 лезвий из нержавеющей стали",
+      "Защита от перегрева",
+      "Безопасная блокировка",
+      "Стеклянная чаша"
+    ],
+    "image": "assets/products/sonifer-sf-8202-2400.png"
   }
 ]
