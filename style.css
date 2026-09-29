@@ -11,3 +11,13 @@
 /* FINAL VACUUM GAP FIX: hide the empty description wrapper only */
 .pbody > .desc:has(.desc:empty){display:none !important;}
 .pbody > .desc:has(.desc:empty) + .price{margin-top:0 !important;}
+/* PRODUCT CARD SPACING FIX: characteristic products stay compact like microwaves */
+.product:has(.specs) .desc{display:none !important;}
+.product:has(.specs) .price{margin-top:0 !important;margin-bottom:8px !important;}
+.product:has(.specs) .specs{margin-top:0 !important;margin-bottom:13px !important;min-height:0 !important;}
+@media(max-width:520px){.product:has(.specs) .specs{min-height:0 !important;margin-top:0 !important;margin-bottom:10px !important;}}
+
+/* FIX: products with characteristics should not show the same information again in description */
+.pbody:has(.specs) .desc{display:none !important;margin:0 !important;min-height:0 !important;height:0 !important;padding:0 !important}
+.pbody:has(.specs) .price{margin-top:0 !important;margin-bottom:8px !important}
+.pbody:has(.specs) .specs{margin-top:0 !important}
