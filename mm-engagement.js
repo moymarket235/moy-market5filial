@@ -39,19 +39,23 @@
     if(card.dataset.mmActions==='1') return;
     const p=ensure(card);
     const bar=document.createElement('div'); bar.className='mm-card-actions';
-    bar.innerHTML=`<button type="button" class="mm-social-btn" data-mm-action="like" aria-label="Лайк"><span class="mm-social-icon mm-heart">♡</span><b>${p.likes}</b></button><button type="button" class="mm-social-btn" data-mm-action="comment" aria-label="Комментарий"><span class="mm-social-icon mm-comment-icon">◯</span><b>${p.comments.length}</b></button><button type="button" class="mm-social-btn" data-mm-action="share" aria-label="Поделиться"><span class="mm-social-icon mm-share-icon">⌁</span><b>${p.shares}</b></button><span class="mm-view-hidden" data-mm-view="1" aria-hidden="true"><b>${p.views}</b></span>`;
+    bar.innerHTML=`<button type="button" data-mm-action="like">❤️ <b>${p.likes}</b></button><button type="button" data-mm-action="comment">💬 <b>${p.comments.length}</b></button><button type="button" data-mm-action="share">🔗 <b>${p.shares}</b></button><span data-mm-view="1">👁️ <b>${p.views}</b></span>`;
     card.appendChild(bar); card.dataset.mmActions='1';
   }
 
   function decorate(){
-    qsa('#products .product, #products .product-card, #products [data-product-card]').forEach(addCardActions);
+    qsa('#products .product, #products .product-card, #products [data-product-card]').forEach((card,index)=>{
+      addCardActions(card);
+      ensureBadges(card,index);
+      refreshBadges(card,index);
+    });
   }
 
   let viewer, viewerImg, viewerName, viewerPrice, viewerBrand;
   function ensureViewer(){
     if(viewer) return;
     viewer=document.createElement('div'); viewer.id='mmProductViewer'; viewer.className='mm-product-viewer'; viewer.setAttribute('aria-hidden','true');
-    viewer.innerHTML=`<div class="mm-viewer-backdrop"></div><button class="mm-viewer-close" type="button" aria-label="Жабуу">×</button><div class="mm-viewer-card"><div class="mm-viewer-image-wrap"><img class="mm-viewer-img" alt=""></div><div class="mm-viewer-body"><div class="mm-viewer-brand" id="mmViewerBrand">МОЙ МАРКЕТ</div><h2 id="mmViewerName"></h2><div class="mm-viewer-price" id="mmViewerPrice"></div><div class="mm-viewer-actions"><button type="button" data-vaction="like">❤️ <b>0</b></button><button type="button" data-vaction="comment">💬 <b>0</b></button><button type="button" data-vaction="share">✈️ <b>0</b></button><button type="button" class="mm-viewer-cart" data-vaction="cart">🛒 Себетке кошуу</button></div><div class="mm-viewer-hint">Товарды чоң көрүү режими. Башка товарды көрүү үчүн жабып, каалаган товарды кайра басыңыз.</div></div></div>`;
+    viewer.innerHTML=`<div class="mm-viewer-backdrop"></div><button class="mm-viewer-close" type="button" aria-label="Жабуу">×</button><div class="mm-viewer-card"><div class="mm-viewer-image-wrap"><img class="mm-viewer-img" alt=""></div><div class="mm-viewer-body"><div class="mm-viewer-brand" id="mmViewerBrand">МОЙ МАРКЕТ</div><h2 id="mmViewerName"></h2><div class="mm-viewer-price" id="mmViewerPrice"></div><div class="mm-viewer-actions"><button type="button" data-vaction="like">❤️ <b>0</b></button><button type="button" data-vaction="comment">💬 <b>0</b></button><button type="button" data-vaction="share">🔗 <b>0</b></button><button type="button" class="mm-viewer-cart" data-vaction="cart">🛒 Себетке кошуу</button></div><div class="mm-viewer-hint">Товарды чоң көрүү режими. Башка товарды көрүү үчүн жабып, каалаган товарды кайра басыңыз.</div></div></div>`;
     document.body.appendChild(viewer);
     viewerImg=qs('.mm-viewer-img',viewer); viewerName=qs('#mmViewerName',viewer); viewerPrice=qs('#mmViewerPrice',viewer); viewerBrand=qs('#mmViewerBrand',viewer);
     qs('.mm-viewer-backdrop',viewer).addEventListener('click',closeViewer);
@@ -70,7 +74,9 @@
   function closeViewer(){if(!viewer)return; viewer.classList.remove('show'); viewer.setAttribute('aria-hidden','true'); document.body.classList.remove('mm-viewer-open'); activeCard=null; viewer._card=null;}
   function refreshViewer(card){const p=ensure(card); qsa('[data-vaction="like"] b',viewer)[0].textContent=p.likes; qsa('[data-vaction="comment"] b',viewer)[0].textContent=p.comments.length; qsa('[data-vaction="share"] b',viewer)[0].textContent=p.shares;}
 
-  function updateCard(card){const p=ensure(card); const bar=qs('.mm-card-actions',card); if(!bar)return; const vals={like:p.likes,comment:p.comments.length,share:p.shares}; Object.entries(vals).forEach(([k,v])=>{const b=qs(`[data-mm-action="${k}"] b`,bar);if(b)b.textContent=v;}); const eye=qs('[data-mm-view] b',bar);if(eye)eye.textContent=p.views; const like=qs('[data-mm-action="like"]',bar); if(like)like.classList.toggle('liked',p.liked);}
+  function updateCard(card){const p=ensure(card); const bar=qs('.mm-card-actions',card); if(!bar)return; const vals={like:p.likes,comment:p.comments.length,share:p.shares}; Object.entries(vals).forEach(([k,v])=>{const b=qs(`[data-mm-action="${k}"] b`,bar);if(b)b.textContent=v;}); const eye=qs('[data-mm-view] b',bar);if(eye)eye.textContent=p.views; const like=qs('[data-mm-action="like"]',bar); if(like)like.classList.toggle('liked',p.liked);
+    const cards=qsa('#products .product, #products .product-card, #products [data-product-card]');
+    refreshBadges(card, Math.max(0,cards.indexOf(card)));}
 
   function handleAction(action,card){
     const p=ensure(card);
