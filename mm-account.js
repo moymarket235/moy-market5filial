@@ -21,6 +21,7 @@
     w.querySelector('.mm-account-backdrop').onclick=close;
   }
   function open(){ensureModal();render();document.getElementById('mmAccountModal').classList.add('show');document.body.classList.add('mm-account-open')}
+  function bindButton(){const b=document.getElementById('accountBtn');if(b&&!b.dataset.bound){b.dataset.bound='1';b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();open()})}}
   function close(){const w=document.getElementById('mmAccountModal');if(w){w.classList.remove('show');document.body.classList.remove('mm-account-open')}}
   function render(){
     const body=document.getElementById('mmAccountBody'); if(!body)return; const c=load();
@@ -51,5 +52,6 @@
   }
   function refreshButton(){const b=document.getElementById('mmAccountOpen');if(!b)return;const c=load();b.classList.toggle('is-registered',!!c);b.querySelector('.mm-account-open-label').textContent=c?(c.fullName.split(/\s+/)[0]||'Аккаунт'):'Аккаунт'}
   function start(){injectButton();window.addEventListener('storage',refreshButton);document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});}
+  function start(){bindButton();}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();

@@ -49,12 +49,12 @@
         if(document.getElementById('mmReelViewer')?.classList.contains('show')) return;
         const targetEl=e.target instanceof Element?e.target:null;
         if(!targetEl) return;
-        const interactive=targetEl.closest('button,a,input,textarea,select,.mm-eng-actions,.mm-reel');
+        const interactive=targetEl.closest('button,input,textarea,select,.mm-eng-actions,.mm-reel,.cart-btn,.add-to-cart,[data-add-to-cart]');
         if(interactive) return;
         const card=targetEl.closest('#products .product');
         if(!card) return;
         e.preventDefault();
-        e.stopPropagation();
+        e.stopImmediatePropagation();
         openReel(card);
       },true);
       document.addEventListener('keydown',e=>{
