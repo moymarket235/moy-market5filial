@@ -147,10 +147,10 @@ function openRobot(){$("#robotPanel").classList.add("open");$("#robotPanel").set
 function closeRobot(){$("#robotPanel").classList.remove("open");$("#robotPanel").setAttribute("aria-hidden","true");}
 $("#robotFab").onclick=()=>{if($("#robotPanel").classList.contains("open"))closeRobot();else openRobot()};
 $("#robotClose").onclick=closeRobot;$("#robotCloseBottom").onclick=closeRobot;$("#cartBackBottom").onclick=closeCart;
-document.querySelectorAll("[data-robot-action]").forEach(btn=>btn.onclick=(e)=>{e.preventDefault();const a=btn.dataset.robotAction;if(a==="search"){robotReply("robotSearchText");closeRobot();$("#searchBtn").click();}else if(a==="cart"){robotReply("robotCartText");closeRobot();openCart();}else if(a==="delivery"){robotReply("robotDeliveryText");document.querySelector(".delivery-info")?.scrollIntoView({behavior:"smooth"});}else if(a==="sale"){robotReply("robotSaleText");activeCat="sale";activeSub="all";renderCats();renderSubcats();renderProducts();document.querySelector("#catalog")?.scrollIntoView({behavior:"smooth"});}else if(a==="order"){robotReply("robotOrderText");closeRobot();openCart();}else if(a==="language"){lang=lang==="ky"?"ru":"ky";localStorage.setItem("moyLang",lang);applyText();renderCats();renderSubcats();renderProducts();renderCart();robotReply("robotLanguageText");}});
+document.querySelectorAll("[data-robot-action]").forEach(btn=>btn.onclick=()=>{const a=btn.dataset.robotAction;if(a==="search"){robotReply("robotSearchText");closeRobot();$("#searchBtn").click();}else if(a==="cart"){robotReply("robotCartText");closeRobot();openCart();}else if(a==="delivery"){robotReply("robotDeliveryText");document.querySelector(".delivery-info")?.scrollIntoView({behavior:"smooth"});}else if(a==="sale"){robotReply("robotSaleText");activeCat="sale";activeSub="all";renderCats();renderSubcats();renderProducts();document.querySelector("#catalog")?.scrollIntoView({behavior:"smooth"});}else if(a==="order"){robotReply("robotOrderText");closeRobot();openCart();}else if(a==="language"){lang=lang==="ky"?"ru":"ky";localStorage.setItem("moyLang",lang);applyText();renderCats();renderSubcats();renderProducts();renderCart();robotReply("robotLanguageText");}});
 const robotQuestion=$("#robotQuestion"),robotAsk=$("#robotAsk");robotAsk?.addEventListener("click",()=>answerRobotQuestion(robotQuestion?.value));robotQuestion?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();answerRobotQuestion(robotQuestion.value)}});
 
-// v3.17 CHAT ROBOT MOTION: subtle idle movement for the floating chat button.
+// v3.23 HUMAN ASSISTANT MOTION: frame-based human mascot movement for the floating chat button.
 (function initRealRobotMotion(){
   const fab=document.querySelector('#robotFab');
   const img=fab?.querySelector('img');
@@ -170,8 +170,8 @@ const robotQuestion=$("#robotQuestion"),robotAsk=$("#robotAsk");robotAsk?.addEve
 $("#mobileSearch").onclick=()=>$("#searchBtn").click();$("#cartBtn").onclick=openCart;$("#mobileCart").onclick=openCart;$("#closeCart").onclick=closeCart;$("#backdrop").onclick=closeCart;$("#orderBtn").onclick=order;$("#heroCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileCatalog").onclick=()=>$("#catalog").scrollIntoView({behavior:"smooth"});$("#mobileHome").onclick=()=>scrollTo({top:0,behavior:"smooth"});$("#allBtn").onclick=()=>{activeCat="all";activeSub="all";renderCats();renderSubcats();renderProducts()};$("#searchInput").oninput=renderProducts;$("#clearSearch").onclick=()=>{$("#searchInput").value="";renderProducts()};
 load();
 
-// v3.20 HERO ROBOT — REAL ANIMATED WALKING MASCOT
-// The robot is an actual animated WebP sequence (walking/dance/wave poses) while this controller
+// v3.23 HERO HUMAN ASSISTANT — FRAME-BASED WALKING MASCOT
+// The assistant uses an animated WebP sequence (walking/wave/interaction poses) while this controller
 // moves the whole animated character across the hero from left -> right -> left. No frame swapping here.
 (function initHeroAnimatedRobot(){
   const stage=document.querySelector('#heroRobotStage');
