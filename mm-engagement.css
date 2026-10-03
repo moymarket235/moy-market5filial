@@ -79,3 +79,94 @@ body.mm-viewer-open{overflow:hidden!important}
 #products .mm-card-actions .mm-eye-icon{font-size:25px;line-height:1}
 #products .mm-card-actions .mm-social-btn.liked .mm-heart{color:#ff4d55!important}
 @media(max-width:650px){#products .mm-card-actions{gap:14px;padding-left:0;padding-right:0}.mm-card-actions .mm-social-icon{flex:0 0 auto}.mm-card-actions button.mm-social-btn,.mm-card-actions .mm-social-view{min-width:44px;height:40px}}
+
+/* STEP 9.2 — compact social bar: small, clean, mobile-safe */
+#products .mm-card-actions{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:4px!important;
+  min-height:50px!important;
+  height:50px!important;
+  margin:14px 0 0!important;
+  padding:4px 8px!important;
+  box-sizing:border-box!important;
+  border-top:1px solid rgba(255,255,255,.08)!important;
+  overflow:hidden!important;
+}
+#products .mm-card-actions button.mm-social-btn,
+#products .mm-card-actions .mm-social-view{
+  flex:1 1 0!important;
+  min-width:0!important;
+  width:auto!important;
+  height:40px!important;
+  min-height:40px!important;
+  padding:0 4px!important;
+  margin:0!important;
+  gap:5px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:8px!important;
+  color:#f4f6f8!important;
+  box-shadow:none!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  font-size:12px!important;
+  line-height:1!important;
+}
+#products .mm-card-actions .mm-social-icon{
+  width:auto!important;
+  height:auto!important;
+  flex:0 0 auto!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  color:#f4f6f8!important;
+  font-family:Arial,sans-serif!important;
+  font-weight:400!important;
+  line-height:1!important;
+}
+#products .mm-card-actions .mm-heart{font-size:27px!important}
+#products .mm-card-actions .mm-comment-icon{
+  width:21px!important;
+  height:16px!important;
+  font-size:0!important;
+  border:2px solid #f4f6f8!important;
+  border-radius:50%!important;
+  position:relative!important;
+}
+#products .mm-card-actions .mm-comment-icon:after{
+  content:""!important;
+  position:absolute!important;
+  right:-1px!important;
+  bottom:-5px!important;
+  width:0!important;
+  height:0!important;
+  border-width:4px 0 0 5px!important;
+  border-style:solid!important;
+  border-color:transparent transparent transparent #f4f6f8!important;
+  transform:rotate(8deg)!important;
+}
+#products .mm-card-actions .mm-share-icon{font-size:27px!important;transform:rotate(-32deg)!important}
+#products .mm-card-actions .mm-eye-icon{font-size:20px!important}
+#products .mm-card-actions b{font-size:12px!important;font-weight:700!important;color:#f4f6f8!important}
+#products .mm-card-actions button.mm-social-btn.liked .mm-heart{color:#ff4d55!important}
+
+/* Keep the assistant clear of the bottom navigation and reduce accidental product overlap. */
+.market-robot{z-index:1200!important}
+.assistant-figure{max-width:118px!important}
+#assistantImage{max-width:118px!important;height:auto!important}
+@media(max-width:650px){
+  #products .mm-card-actions{height:48px!important;min-height:48px!important;padding:3px 5px!important;gap:2px!important}
+  #products .mm-card-actions button.mm-social-btn,
+  #products .mm-card-actions .mm-social-view{height:38px!important;min-height:38px!important;padding:0 2px!important;gap:4px!important}
+  #products .mm-card-actions .mm-heart{font-size:25px!important}
+  #products .mm-card-actions .mm-comment-icon{width:20px!important;height:15px!important}
+  #products .mm-card-actions .mm-share-icon{font-size:25px!important}
+  #products .mm-card-actions .mm-eye-icon{font-size:19px!important}
+  #products .mm-card-actions b{font-size:11px!important}
+  .assistant-figure,#assistantImage{max-width:100px!important}
+}
