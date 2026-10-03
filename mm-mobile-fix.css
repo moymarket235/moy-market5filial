@@ -1,0 +1,61 @@
+/* MOY MARKET — mobile polish v1
+   Safe override: does not replace the main 4.0 design. */
+
+/* Keep the floating assistant clear of the mobile bottom navigation. */
+.market-robot{
+  z-index:76 !important;
+}
+
+@media (max-width:900px){
+  .market-robot{
+    right:10px !important;
+    bottom:82px !important;
+    max-width:calc(100vw - 20px) !important;
+  }
+
+  /* Give the hero a little less vertical height on phones. */
+  .hero{
+    min-height:760px !important;
+  }
+
+  .hero-content{
+    padding-top:115px !important;
+    padding-bottom:80px !important;
+  }
+
+  .hero-dots{
+    bottom:24px !important;
+  }
+
+  .quick-strip{
+    margin-top:-22px !important;
+  }
+}
+
+@media (max-width:520px){
+  .market-robot{
+    bottom:78px !important;
+  }
+
+  .hero{
+    min-height:700px !important;
+  }
+
+  .hero-content{
+    padding-top:105px !important;
+    padding-bottom:70px !important;
+  }
+
+  .hero h1{
+    font-size:44px !important;
+  }
+
+  .hero p{
+    font-size:16px !important;
+  }
+
+  .hero-benefits{
+    gap:7px !important;
+    flex-wrap:wrap !important;
+  }
+}
