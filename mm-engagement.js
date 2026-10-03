@@ -23,7 +23,7 @@
   function openComments(card){ensureCommentModal();const id=getId(card),s=ensureProduct(id),title=escapeHtml(cardTitle(card)),modal=document.getElementById('mmCommentModal'),body=document.getElementById('mmCommentBody');body.innerHTML='<div class="mm-comments-head"><span class="eyebrow">💬 Комментарийлер</span><h2>'+title+'</h2></div><div class="mm-comment-list">'+(s.comments.length?s.comments.map(c=>'<div class="mm-comment"><b>'+escapeHtml(c.name||'Кардар')+'</b><span>'+escapeHtml(c.text)+'</span><small>'+new Date(c.at).toLocaleString()+'</small></div>').join(''):'<div class="mm-empty-comment">Азырынча комментарий жок.</div>')+'</div><form id="mmCommentForm" class="mm-comment-form"><input id="mmCommentInput" maxlength="300" required placeholder="Комментарий жазыңыз..."><button class="primary" type="submit">Жөнөтүү</button></form>';modal.classList.add('show');document.getElementById('mmCommentForm').onsubmit=e=>{e.preventDefault();const input=document.getElementById('mmCommentInput'),text=input.value.trim();if(!text)return;s.comments.push({text,name:'Кардар',at:Date.now()});save(state);openComments(card)}}
   function trackView(card){const id=getId(card),key='mmViewed24h_'+id,seen=Number(sessionStorage.getItem(key)||0);if(seen&&Date.now()-seen<DAY)return;const s=ensureProduct(id);s.views++;sessionStorage.setItem(key,String(Date.now()));save(state)}
   function syncCard(card){const id=getId(card),s=ensureProduct(id),bar=card.querySelector('.mm-eng-actions');if(!bar)return;bar.querySelector('.mm-like b').textContent=s.likes;bar.querySelector('.mm-comment b').textContent=s.comments.length;bar.querySelector('.mm-share b').textContent=s.shares;bar.querySelector('.mm-views b').textContent=s.views;bar.querySelector('.mm-like').classList.toggle('is-on',s.liked)}
-  function decorateCard(card){if(!card||card.dataset.mmEngaged==='1'){if(card)syncCard(card);return}card.dataset.mmEngaged='1';const id=getId(card),s=ensureProduct(id);const bar=document.createElement('div');bar.className='mm-eng-actions';bar.innerHTML='<button type="button" class="mm-eng-btn mm-like">❤️ <b>'+s.likes+'</b></button><button type="button" class="mm-eng-btn mm-comment">💬 <b>'+s.comments.length+'</b></button><button type="button" class="mm-eng-btn mm-share">🔗 <b>'+s.shares+'</b></button><span class="mm-views">👁️ <b>'+s.views+'</b></span>';card.appendChild(bar);
+  function decorateCard(card){if(!card||card.dataset.mmEngaged==='1'){if(card)syncCard(card);return}card.dataset.mmEngaged='1';card.classList.add('mm-product-openable');card.setAttribute('role','button');card.setAttribute('tabindex','0');const id=getId(card),s=ensureProduct(id);const bar=document.createElement('div');bar.className='mm-eng-actions';bar.innerHTML='<button type="button" class="mm-eng-btn mm-like">❤️ <b>'+s.likes+'</b></button><button type="button" class="mm-eng-btn mm-comment">💬 <b>'+s.comments.length+'</b></button><button type="button" class="mm-eng-btn mm-share">🔗 <b>'+s.shares+'</b></button><span class="mm-views">👁️ <b>'+s.views+'</b></span>';card.appendChild(bar);
     const like=bar.querySelector('.mm-like');like.classList.toggle('is-on',s.liked);like.onclick=e=>{e.preventDefault();e.stopPropagation();s.liked=!s.liked;s.likes=Math.max(0,s.likes+(s.liked?1:-1));save(state);syncCard(card)};
     bar.querySelector('.mm-comment').onclick=e=>{e.preventDefault();e.stopPropagation();openComments(card)};
     bar.querySelector('.mm-share').onclick=async e=>{e.preventDefault();e.stopPropagation();const url=new URL(location.href);url.hash='product-'+id;const title=cardTitle(card);try{if(navigator.share)await navigator.share({title,text:title+' '+cardPrice(card),url:url.href});else if(navigator.clipboard){await navigator.clipboard.writeText(url.href);window.toast?.('🔗 Шилтеме көчүрүлдү')}s.shares++;save(state);syncCard(card)}catch(_){} };
@@ -49,14 +49,20 @@
         if(document.getElementById('mmReelViewer')?.classList.contains('show')) return;
         const targetEl=e.target instanceof Element?e.target:null;
         if(!targetEl) return;
-        const interactive=targetEl.closest('button,a,input,textarea,select,.mm-eng-actions');
+        const interactive=targetEl.closest('button,a,input,textarea,select,.mm-eng-actions,.mm-reel');
         if(interactive) return;
         const card=targetEl.closest('#products .product');
         if(!card) return;
-        const im=targetEl.closest('img');
-        if(!im) return;
         e.preventDefault();
         e.stopPropagation();
+        openReel(card);
+      },true);
+      document.addEventListener('keydown',e=>{
+        if(document.getElementById('mmReelViewer')?.classList.contains('show')) return;
+        if(e.key!=='Enter' && e.key!==' ') return;
+        const card=e.target instanceof Element?e.target.closest('#products .product'):null;
+        if(!card) return;
+        e.preventDefault();
         openReel(card);
       },true);
     }
