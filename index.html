@@ -108,7 +108,7 @@
   </div>
 </div>
 <aside class="cart-drawer" id="cartDrawer">
- <div class="drawer-head"><h3 data-i18n="cart">Корзина</h3><button id="closeCart">×</button></div>
+ <div class="drawer-head"><button id="closeCart" class="drawer-back" aria-label="Back to shop">← <span data-i18n="backToShop">Артка</span></button><h3 data-i18n="cart">Корзина</h3><span class="drawer-head-spacer" aria-hidden="true"></span></div>
  <div id="cartItems" class="cart-items"></div>
  <div class="cart-bottom">
    <div><span data-i18n="total">Жалпы:</span><strong id="cartTotal">0 сом</strong></div>
@@ -120,6 +120,7 @@
      <input id="deliveryPhone" class="checkout-input" type="tel" data-i18n-placeholder="deliveryPhonePlaceholder" placeholder="Телефон номери">
    </div>
    <button class="primary full" id="orderBtn" data-i18n="waOrderButton">WhatsApp аркылуу заказ</button>
+   <button class="cart-back-bottom" id="cartBackBottom" type="button">← <span data-i18n="backToShop">Артка</span></button>
  </div>
 </aside>
 
@@ -141,11 +142,13 @@
       <button data-robot-action="order">💬 <span data-i18n="robotOrder">Заказ берүүгө жардам</span></button>
       <button data-robot-action="language">🌐 <span data-i18n="robotLanguage">Тилди өзгөртүү</span></button>
     </div>
-    <div class="robot-question"><input id="robotQuestion" type="text" data-i18n-placeholder="robotInputPlaceholder" placeholder="Сурооңузду жазыңыз..." autocomplete="off"><button id="robotAsk" type="button" data-i18n="robotAsk">Жооп алуу</button></div>
-    <div class="robot-chat" id="robotChat" aria-live="polite"></div><div class="robot-reply" id="robotReply" hidden></div>
+    <div class="robot-chat" id="robotChat" aria-live="polite"></div>
+    <div class="robot-question"><input id="robotQuestion" type="text" data-i18n-placeholder="robotInputPlaceholder" placeholder="Сурооңузду жазыңыз..." autocomplete="off"><button id="robotAsk" type="button" aria-label="Send" data-i18n="robotAsk">➤</button></div>
+    <button class="robot-close-bottom" id="robotCloseBottom" type="button">↓ <span data-i18n="robotCloseText">Чатты жабуу</span></button>
+    <div class="robot-reply" id="robotReply" hidden></div>
   </div>
 </div>
 
-<script src="app.js?v=3.20"></script>
+<script src="app.js?v=3.21"></script>
 </body>
 </html>
