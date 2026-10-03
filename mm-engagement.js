@@ -34,7 +34,35 @@
   async function barShare(card,s,button){const id=getId(card),url=new URL(location.href);url.hash='product-'+id;try{if(navigator.share)await navigator.share({title:cardTitle(card),text:cardTitle(card)+' '+cardPrice(card),url:url.href});else if(navigator.clipboard){await navigator.clipboard.writeText(url.href);window.toast?.('🔗 Шилтеме көчүрүлдү')}s.shares++;save(state);button.textContent='🔗 '+s.shares}catch(_){} }
   function bindImageOpen(card){const im=cardImage(card);if(im)im.style.cursor='zoom-in'}
   function decorateAll(){document.querySelectorAll('#products .product').forEach(c=>{decorateCard(c);bindImageOpen(c)});refreshVisitor()}
-  function start(){injectStats();decorateAll();const target=document.getElementById('products');if(target){new MutationObserver(()=>requestAnimationFrame(decorateAll)).observe(target,{childList:true,subtree:true});target.addEventListener('click',e=>{const im=e.target.closest('img');const card=im?.closest('.product');if(im&&card&&target.contains(card)){e.preventDefault();e.stopPropagation();openReel(card)}},true)}document.addEventListener('keydown',e=>{if(e.key==='Escape')closeReel()});setInterval(refreshVisitor,60000)}
+  function start(){
+    injectStats();
+    decorateAll();
+    const target=document.getElementById('products');
+    if(target){
+      new MutationObserver(()=>requestAnimationFrame(decorateAll)).observe(target,{childList:true,subtree:true});
+    }
+    // Use document-level capture delegation so it keeps working even if app.js
+    // replaces/re-renders the #products contents after the first viewer open.
+    if(!document.documentElement.dataset.mmReelClickBound){
+      document.documentElement.dataset.mmReelClickBound='1';
+      document.addEventListener('click',e=>{
+        if(document.getElementById('mmReelViewer')?.classList.contains('show')) return;
+        const targetEl=e.target instanceof Element?e.target:null;
+        if(!targetEl) return;
+        const interactive=targetEl.closest('button,a,input,textarea,select,.mm-eng-actions');
+        if(interactive) return;
+        const card=targetEl.closest('#products .product');
+        if(!card) return;
+        const im=targetEl.closest('img');
+        if(!im) return;
+        e.preventDefault();
+        e.stopPropagation();
+        openReel(card);
+      },true);
+    }
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeReel()});
+    setInterval(refreshVisitor,60000)
+  }
   function closeReel(){const viewer=document.getElementById('mmReelViewer');if(viewer){viewer.classList.remove('show');document.body.classList.remove('mm-reel-open');document.body.style.overflow='';}}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
