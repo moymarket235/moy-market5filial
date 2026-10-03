@@ -1,7 +1,8 @@
-/* MOY MARKET — mobile polish v1
-   Safe override: does not replace the main 4.0 design. */
+/* MOY MARKET — mobile polish v2
+   Fixes the oversized assistant and keeps engagement controls clean.
+   Safe override: does not replace the main 4.0 design.
+*/
 
-/* Keep the floating assistant clear of the mobile bottom navigation. */
 .market-robot{
   z-index:76 !important;
 }
@@ -10,10 +11,15 @@
   .market-robot{
     right:10px !important;
     bottom:82px !important;
-    max-width:calc(100vw - 20px) !important;
+    width:190px !important;
+    max-width:190px !important;
   }
 
-  /* Give the hero a little less vertical height on phones. */
+  .market-robot img{
+    max-width:100% !important;
+    height:auto !important;
+  }
+
   .hero{
     min-height:760px !important;
   }
@@ -30,11 +36,31 @@
   .quick-strip{
     margin-top:-22px !important;
   }
+
+  .mm-eng-actions{
+    padding-bottom:2px !important;
+  }
+
+  .mm-eng-btn,
+  .mm-views{
+    min-height:34px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    white-space:nowrap !important;
+  }
 }
 
 @media (max-width:520px){
   .market-robot{
+    right:8px !important;
     bottom:78px !important;
+    width:155px !important;
+    max-width:155px !important;
+  }
+
+  .market-robot img{
+    max-width:100% !important;
   }
 
   .hero{
@@ -57,5 +83,22 @@
   .hero-benefits{
     gap:7px !important;
     flex-wrap:wrap !important;
+  }
+
+  /* Prevent the comment button from looking like a stuck/focused white pill. */
+  .mm-eng-btn:focus,
+  .mm-eng-btn:focus-visible,
+  .mm-views:focus,
+  .mm-views:focus-visible{
+    outline:none !important;
+    box-shadow:none !important;
+  }
+
+  .mm-eng-btn{
+    background:rgba(255,255,255,.035) !important;
+  }
+
+  .mm-eng-btn.is-on{
+    background:rgba(255,70,90,.12) !important;
   }
 }
