@@ -31,7 +31,7 @@
     if(qs('#mmEngagementStats')) return;
     const top=qs('.topbar'); if(!top) return;
     const bar=document.createElement('div'); bar.id='mmEngagementStats'; bar.className='mm-engagement-stats';
-    bar.innerHTML='<span>👥 <b id="mmVisitorCount">1</b> <small>24 саат</small></span><span>❤️ Лайк · 💬 Комментарий · 🔗 Бөлүшүү · 👁️ Көрүү</span>';
+    bar.innerHTML='<span>👥 <b id="mmVisitorCount">1</b> <small>24 саат</small></span><span>♡ Лайк · 💬 Комментарий · ✈️ Поделиться</span>';
     top.insertAdjacentElement('afterend',bar); qs('#mmVisitorCount').textContent=visitor24h();
   }
 
@@ -39,12 +39,27 @@
     if(card.dataset.mmActions==='1') return;
     const p=ensure(card);
     const bar=document.createElement('div'); bar.className='mm-card-actions';
-    bar.innerHTML=`<button type="button" class="mm-social-btn" data-mm-action="like" aria-label="Лайк"><span class="mm-social-icon mm-heart">♡</span><b>${p.likes}</b></button><button type="button" class="mm-social-btn" data-mm-action="comment" aria-label="Комментарий"><span class="mm-social-icon mm-comment-icon">◯</span><b>${p.comments.length}</b></button><button type="button" class="mm-social-btn" data-mm-action="share" aria-label="Поделиться"><span class="mm-social-icon mm-share-icon">⌁</span><b>${p.shares}</b></button><span class="mm-view-hidden" data-mm-view="1" aria-hidden="true"><b>${p.views}</b></span>`;
+    bar.innerHTML=`<button type="button" class="mm-social-btn" data-mm-action="like" aria-label="Лайк"><span class="mm-social-icon mm-heart">♡</span><b>${p.likes}</b></button><button type="button" class="mm-social-btn" data-mm-action="comment" aria-label="Комментарий"><span class="mm-social-icon mm-comment-icon">◯</span><b>${p.comments.length}</b></button><button type="button" class="mm-social-btn" data-mm-action="share" aria-label="Поделиться"><span class="mm-social-icon mm-share-icon">⌁</span><b>${p.shares}</b></button>`;
     card.appendChild(bar); card.dataset.mmActions='1';
   }
 
+  function addViewBadge(card){
+    const img=qs('img',card); if(!img) return;
+    const host=img.parentElement || card;
+    if(host.querySelector('.mm-image-view-badge')){
+      host.querySelector('.mm-image-view-badge b').textContent=ensure(card).views;
+      return;
+    }
+    host.style.position='relative';
+    const badge=document.createElement('span');
+    badge.className='mm-image-view-badge';
+    badge.setAttribute('aria-label','Көрүү саны');
+    badge.innerHTML=`<span aria-hidden="true">◉</span> <b>${ensure(card).views}</b>`;
+    host.appendChild(badge);
+  }
+
   function decorate(){
-    qsa('#products .product, #products .product-card, #products [data-product-card]').forEach(addCardActions);
+    qsa('#products .product, #products .product-card, #products [data-product-card]').forEach(card=>{ addCardActions(card); addViewBadge(card); });
   }
 
   let viewer, viewerImg, viewerName, viewerPrice, viewerBrand;
@@ -70,7 +85,7 @@
   function closeViewer(){if(!viewer)return; viewer.classList.remove('show'); viewer.setAttribute('aria-hidden','true'); document.body.classList.remove('mm-viewer-open'); activeCard=null; viewer._card=null;}
   function refreshViewer(card){const p=ensure(card); qsa('[data-vaction="like"] b',viewer)[0].textContent=p.likes; qsa('[data-vaction="comment"] b',viewer)[0].textContent=p.comments.length; qsa('[data-vaction="share"] b',viewer)[0].textContent=p.shares;}
 
-  function updateCard(card){const p=ensure(card); const bar=qs('.mm-card-actions',card); if(!bar)return; const vals={like:p.likes,comment:p.comments.length,share:p.shares}; Object.entries(vals).forEach(([k,v])=>{const b=qs(`[data-mm-action="${k}"] b`,bar);if(b)b.textContent=v;}); const eye=qs('[data-mm-view] b',bar);if(eye)eye.textContent=p.views; const like=qs('[data-mm-action="like"]',bar); if(like)like.classList.toggle('liked',p.liked);}
+  function updateCard(card){const p=ensure(card); const bar=qs('.mm-card-actions',card); if(bar){const vals={like:p.likes,comment:p.comments.length,share:p.shares}; Object.entries(vals).forEach(([k,v])=>{const b=qs(`[data-mm-action="${k}"] b`,bar);if(b)b.textContent=v;}); const like=qs('[data-mm-action="like"]',bar); if(like)like.classList.toggle('liked',p.liked);} const badge=qs('.mm-image-view-badge b',card); if(badge)badge.textContent=p.views;}
 
   function handleAction(action,card){
     const p=ensure(card);
