@@ -58,3 +58,24 @@ body.mm-viewer-open{overflow:hidden!important}
 .mm-product-badges .mm-badge-view{background:rgba(20,24,30,.92)}
 .mm-product-badges .mm-badge-pop{background:rgba(40,18,10,.92);border-color:rgba(255,122,0,.35)}
 @media(max-width:650px){.mm-product-badges{left:7px;top:7px;gap:5px}.mm-product-badges span{font-size:9px;padding:5px 7px}}
+
+
+/* STEP 9.1 — social controls FIX */
+#products .mm-card-actions{box-sizing:border-box;width:100%;position:relative;z-index:3;overflow:visible}
+#products .mm-card-actions button.mm-social-btn,
+#products .mm-card-actions .mm-social-view{
+  box-sizing:border-box!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  background:transparent!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  color:#f4f6f8!important;
+  text-decoration:none!important;
+}
+#products .mm-card-actions .mm-social-view{min-width:48px;height:44px;padding:0 2px;display:inline-flex;align-items:center;justify-content:flex-start;gap:7px;font-size:13px}
+#products .mm-card-actions button.mm-social-btn:hover{background:transparent!important}
+#products .mm-card-actions .mm-eye-icon{font-size:25px;line-height:1}
+#products .mm-card-actions .mm-social-btn.liked .mm-heart{color:#ff4d55!important}
+@media(max-width:650px){#products .mm-card-actions{gap:14px;padding-left:0;padding-right:0}.mm-card-actions .mm-social-icon{flex:0 0 auto}.mm-card-actions button.mm-social-btn,.mm-card-actions .mm-social-view{min-width:44px;height:40px}}

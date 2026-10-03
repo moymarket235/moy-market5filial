@@ -38,9 +38,39 @@
   function addCardActions(card){
     if(card.dataset.mmActions==='1') return;
     const p=ensure(card);
-    const bar=document.createElement('div'); bar.className='mm-card-actions';
-    bar.innerHTML=`<button type="button" data-mm-action="like">❤️ <b>${p.likes}</b></button><button type="button" data-mm-action="comment">💬 <b>${p.comments.length}</b></button><button type="button" data-mm-action="share">🔗 <b>${p.shares}</b></button><span data-mm-view="1">👁️ <b>${p.views}</b></span>`;
-    card.appendChild(bar); card.dataset.mmActions='1';
+    const bar=document.createElement('div');
+    bar.className='mm-card-actions';
+    bar.innerHTML=`<button class="mm-social-btn" type="button" data-mm-action="like" aria-label="Лайк"><span class="mm-social-icon mm-heart">♡</span><b>${p.likes}</b></button><button class="mm-social-btn" type="button" data-mm-action="comment" aria-label="Комментарий"><span class="mm-social-icon mm-comment-icon"></span><b>${p.comments.length}</b></button><button class="mm-social-btn" type="button" data-mm-action="share" aria-label="Бөлүшүү"><span class="mm-social-icon mm-share-icon">➤</span><b>${p.shares}</b></button><span class="mm-social-view" data-mm-view="1" aria-label="Көрүүлөр"><span class="mm-social-icon mm-eye-icon">◉</span><b>${p.views}</b></span>`;
+    card.appendChild(bar);
+    card.dataset.mmActions='1';
+  }
+
+  function getPhoto(card){
+    return qs('.photo',card) || qs('.product-photo,.image-wrap,.product-image',card);
+  }
+
+  function ensureBadges(card,index){
+    const photo=getPhoto(card);
+    if(!photo) return null;
+    let wrap=qs('.mm-product-badges',photo);
+    if(!wrap){
+      wrap=document.createElement('div');
+      wrap.className='mm-product-badges';
+      wrap.setAttribute('aria-hidden','true');
+      photo.appendChild(wrap);
+    }
+    return wrap;
+  }
+
+  function refreshBadges(card,index){
+    const wrap=ensureBadges(card,index);
+    if(!wrap) return;
+    const p=ensure(card);
+    const badges=[];
+    if(index < 3) badges.push('<span class="mm-badge-new">✨ Жаңы</span>');
+    if(p.views >= 5) badges.push('<span class="mm-badge-view">👁 Көп көрүлүүдө</span>');
+    if(p.likes >= 3) badges.push('<span class="mm-badge-pop">🔥 Популярдуу</span>');
+    wrap.innerHTML=badges.join('');
   }
 
   function decorate(){
