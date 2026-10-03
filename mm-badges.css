@@ -1,0 +1,5 @@
+/* Optional external stylesheet for the product badges.
+   The JS also injects these rules so the feature works even without this file. */
+.mm-badge-wrap{position:absolute;left:10px;top:10px;z-index:12;display:flex;gap:6px;flex-wrap:wrap;pointer-events:none}
+.mm-product-badge{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border:1px solid rgba(255,145,0,.55);border-radius:999px;background:rgba(10,13,18,.90);color:#fff;font:700 11px/1.1 system-ui,sans-serif;box-shadow:0 5px 16px rgba(0,0,0,.28)}
+#products .product,.products-grid .product,.product-card{position:relative}
