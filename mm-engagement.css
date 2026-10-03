@@ -1,0 +1,48 @@
+/* MOY MARKET — engagement layer v1 */
+.mm-eng-stats{
+  max-width:1200px;margin:0 auto;padding:8px 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:rgba(4,8,13,.94);border-bottom:1px solid rgba(255,145,35,.14);
+  color:#f7eadc;font-size:11px;
+}
+.mm-stat-main{display:flex;align-items:center;gap:6px;color:#ffb15a}
+.mm-stat-main b{font-size:14px;color:#fff}
+.mm-stat-main span{font-size:9px;color:#9ea5ad}
+.mm-stat-note{font-size:8px;color:#8e969f;letter-spacing:.2px}
+.mm-eng-actions{
+  display:flex;align-items:center;gap:5px;
+  margin:9px 2px 1px;padding-top:7px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.mm-eng-btn,.mm-views{
+  border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);
+  color:#dfe5ea;border-radius:10px;padding:6px 7px;font-size:9px;
+  cursor:pointer;line-height:1;
+}
+.mm-eng-btn b,.mm-views b{font-size:9px;margin-left:2px}
+.mm-eng-btn:hover{border-color:rgba(255,116,24,.5);transform:translateY(-1px)}
+.mm-eng-btn.is-on{background:rgba(255,70,90,.12);border-color:rgba(255,90,110,.38)}
+.mm-views{margin-left:auto;color:#8f99a3;cursor:default}
+.mm-comments-head h2{margin:7px 0 14px}
+.mm-comment-list{max-height:320px;overflow:auto;display:grid;gap:8px}
+.mm-comment{
+  background:#f7f0e9;border:1px solid #eadfd4;border-radius:13px;padding:10px;
+  display:grid;gap:4px;font-size:11px;
+}
+.mm-comment span{color:#443b34;line-height:1.45}
+.mm-comment small{font-size:8px;color:#9b9189}
+.mm-empty-comment{padding:30px 8px;text-align:center;color:#8a8077;font-size:11px}
+.mm-comment-form{display:flex;gap:8px;margin-top:13px}
+.mm-comment-form input{
+  min-width:0;flex:1;border:1px solid #eadfd4;border-radius:12px;
+  padding:11px 12px;outline:0;background:#fffaf6;
+}
+.mm-comment-form .primary{padding:11px 13px}
+@media(max-width:650px){
+  .mm-eng-stats{padding:7px 12px;display:block;text-align:center}
+  .mm-stat-main{justify-content:center}
+  .mm-stat-note{margin-top:4px}
+  .mm-eng-actions{gap:4px}
+  .mm-eng-btn,.mm-views{padding:6px 5px;font-size:8px}
+  .mm-comment-form{flex-direction:column}
+}
