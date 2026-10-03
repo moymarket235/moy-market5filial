@@ -60,4 +60,19 @@
 .mm-reel-actions{display:flex;gap:7px;flex-wrap:wrap}.mm-reel-btn,.mm-reel-cart{border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 12px;background:rgba(12,17,22,.8);color:#fff;font-size:12px;font-weight:700}.mm-reel-cart{background:#ff7a00;color:#111;border-color:#ff7a00}
 .mm-reel-close,.mm-reel-prev,.mm-reel-next{position:absolute;z-index:2;border:1px solid rgba(255,255,255,.2);background:rgba(10,14,18,.75);color:#fff;width:42px;height:42px;border-radius:50%;font-size:28px;line-height:1}.mm-reel-close{right:20px;top:20px}.mm-reel-prev{left:max(12px,calc(50% - 260px));top:50%;transform:translateY(-50%)}.mm-reel-next{right:max(12px,calc(50% - 260px));top:50%;transform:translateY(-50%)}
 .mm-reel-hint{position:absolute;z-index:2;bottom:8px;left:50%;transform:translateX(-50%);color:#aeb5bc;font-size:9px;letter-spacing:.4px}
-@media(max-width:650px){.mm-reel{padding:0}.mm-reel-stage{width:100vw;height:100dvh;border-radius:0;border:0}.mm-reel-close{right:14px;top:14px}.mm-reel-prev,.mm-reel-next{display:none}.mm-reel-copy{left:18px;right:18px;bottom:28px}.mm-reel-copy h2{font-size:20px}.mm-reel-copy strong{font-size:22px}.mm-reel-actions{gap:5px}.mm-reel-btn,.mm-reel-cart{padding:9px 10px;font-size:11px}.mm-reel-hint{bottom:8px}}
+@media(max-width:650px){
+  /* Mobile product viewer: no large empty area above the product image. */
+  .mm-reel{padding:0;align-items:stretch}
+  .mm-reel-stage{width:100vw;height:100dvh;border-radius:0;border:0;display:block;overflow:hidden}
+  .mm-reel-img{top:0;left:0;right:0;width:100%;height:58%;object-fit:contain;background:#080b0f}
+  .mm-reel-gradient{inset:auto 0 42% 0;height:20%;background:linear-gradient(to bottom,rgba(0,0,0,0),rgba(0,0,0,.72))}
+  .mm-reel-copy{left:0;right:0;bottom:0;height:42%;padding:22px 18px 20px;background:linear-gradient(to bottom,rgba(8,11,15,.82),#080b0f 22%);text-shadow:none}
+  .mm-reel-brand{font-size:9px;margin-bottom:7px}
+  .mm-reel-copy h2{font-size:20px;line-height:1.2;margin:0 0 8px}
+  .mm-reel-copy strong{font-size:23px;margin-bottom:14px}
+  .mm-reel-actions{gap:6px;flex-wrap:wrap}
+  .mm-reel-btn,.mm-reel-cart{padding:10px 11px;font-size:11px;border-radius:12px}
+  .mm-reel-close{right:14px;top:14px;width:44px;height:44px;z-index:5;background:rgba(10,14,18,.9)}
+  .mm-reel-prev,.mm-reel-next{display:none}
+  .mm-reel-hint{bottom:7px;left:50%;font-size:9px;z-index:5}
+}
