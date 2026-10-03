@@ -137,7 +137,14 @@
 
   function start(){
     ensureStats(); bindDelegated(); decorate();
-    const root=qs('#products'); if(root){new MutationObserver(()=>{decorate();}).observe(root,{childList:true,subtree:true});}
+    const root=qs('#products');
+    if(root){
+      const observer=new MutationObserver(()=>{
+        observer.disconnect();
+        try{ decorate(); } finally { observer.observe(root,{childList:true,subtree:true}); }
+      });
+      observer.observe(root,{childList:true,subtree:true});
+    }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
