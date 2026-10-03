@@ -1,156 +1,103 @@
 <!doctype html>
 <html lang="ky">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#05090d">
-<title>Мой Маркет — Бишкек</title>
-<meta name="description" content="Мой Маркет — идиш-аяк, бытовая техника, казаны, наборы и товары для дома.">
-<link rel="preload" as="image" href="assets/hero.webp">
-<link rel="stylesheet" href="style.css?v=4.0">
-</head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Мой Маркет — WOW</title>
+<meta name="description" content="Мой Маркет — үйгө керектүүнүн баары бир жерде.">
+<link rel="preload" as="image" href="cinematic-hero.webp">
+<link rel="preload" as="image" href="logo.webp">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="mm-engagement.css">
+<style>
+.chameleon-badge{
+  position:fixed;right:14px;bottom:14px;z-index:20;
+  display:flex;align-items:center;gap:7px;
+  padding:7px 11px;border:1px solid rgba(255,171,67,.25);
+  border-radius:999px;background:rgba(3,7,11,.58);
+  color:rgba(255,219,176,.72);font-size:9px;letter-spacing:1.2px;
+  backdrop-filter:blur(10px);pointer-events:none;
+}
+.chameleon-badge span{
+  width:7px;height:7px;border-radius:50%;
+  background:#ff7b1a;box-shadow:0 0 12px #ff7b1a;
+  animation:mmDot 3s ease-in-out infinite alternate;
+}
+@keyframes mmDot{
+  0%{background:#ff7b1a;box-shadow:0 0 8px #ff7b1a}
+  50%{background:#29d68b;box-shadow:0 0 12px #29d68b}
+  100%{background:#8c6cff;box-shadow:0 0 12px #8c6cff}
+}
+@media(max-width:700px){.chameleon-badge{bottom:8px;right:8px;font-size:8px;padding:6px 9px}}
+</style></head>
 <body>
-<header class="topbar">
-  <div class="topbar-left">
-    <button class="menu-btn" type="button" aria-label="Меню">☰</button>
-    <a class="brand" href="#" aria-label="Мой Маркет"><img src="assets/logo.webp" alt="Мой Маркет"></a>
-  </div>
-  <div class="header-search" id="searchbox">
-    <span class="search-icon">⌕</span>
-    <input id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Товар издеңиз..." autocomplete="off">
-    <button id="clearSearch" type="button" aria-label="Очистить">×</button>
-    <button class="search-go" id="searchBtn" type="button" aria-label="Поиск">⌕</button>
-  </div>
-  <div class="header-meta">
-    <button class="location-pill" type="button">⌖ <span>Бишкек</span><b>⌄</b></button>
-    <button class="lang-switch" id="langSwitch">KG / RU</button>
-    <button class="branches-pill" type="button">▣ <span data-i18n="branches">Биздин филиалдар</span></button>
-    <button class="icon-btn cart-mini" id="cartBtn" aria-label="Корзина">🛒<b id="cartCount">0</b><span data-i18n="cart">Корзина</span></button>
-  </div>
+<div class="chameleon-badge" aria-hidden="true"><span></span> PREMIUM • CHAMELEON</div>
+
+<div id="welcome" class="welcome" aria-label="Мой Маркетке кош келиңиз">
+  <div class="welcome-bg"></div><img src="logo.webp" alt="Мой Маркет" class="welcome-logo">
+  <div class="welcome-copy"><span>МОЙ МАРКЕТ</span><h2>Мой Маркетке<br><em>кош келиңиз!</em></h2><small>Үйүңүзгө керектүүнүн баары — бир жерде.</small></div>
+  <button id="enterSite" class="welcome-enter">Сайтка кирүү <b>→</b></button>
+</div>
+<header class="nav">
+  <a class="brand" href="#home"><img src="logo.webp" alt="Мой Маркет"></a>
+  <nav><a href="#home" data-ky="Башкы бет" data-ru="Главная">Башкы бет</a><a href="#catalog" data-ky="Каталог" data-ru="Каталог">Каталог</a><a href="#calc" data-ky="Калькулятор" data-ru="Калькулятор">Калькулятор</a><a href="#branches" data-ky="Филиалдар" data-ru="Филиалы">Филиалдар</a></nav>
+  <div class="actions"><div class="langs"><button data-lang="ky" class="active">KG</button><button data-lang="ru">RU</button></div><button id="cart">🛒<b id="count">0</b></button></div>
 </header>
 
-<main>
-<section class="hero">
-  <div class="hero-bg"></div><div class="hero-shade"></div>
-  <div class="hero-content">
-    <span class="hero-badge" data-i18n="heroBadge">ЖАҢЫ КОЛЛЕКЦИЯ</span>
-    <span class="eyebrow" data-i18n="heroEyebrow">БИШКЕК • КҮН САЙЫН 09:00–21:00</span>
-    <h1 data-i18n-html="heroTitle">Үйүңүзгө керектүүнүн<br><em>баары бир жерде.</em></h1>
-    <p data-i18n="heroText">Идиш-аяк, техника, казан, наборлор жана күнүмдүк керектүү товарлар.</p>
-    <div class="hero-benefits">
-      <span>◇ <b data-i18n="heroBenefit1">Сапаттуу товарлар</b></span>
-      <span>▱ <b data-i18n="heroBenefit2">Тез жеткирүү</b></span>
-      <span>✓ <b data-i18n="heroBenefit3">Ыңгайлуу баалар</b></span>
+<section class="hero" id="home">
+ <div class="hero-text reveal"><span class="eyebrow">✨ WOW MARKET</span>
+  <h1>Үйүңүзгө керектүүнүн баары — <em>бир жерде.</em></h1>
+  <p data-ky="Идиш-аяк, тиричилик техникасы, үй буюмдары, косметика, оюнчуктар жана дагы көп нерсе."
+     data-ru="Посуда, бытовая техника, товары для дома, косметика, игрушки и многое другое.">Идиш-аяк, тиричилик техникасы, үй буюмдары, косметика, оюнчуктар жана дагы көп нерсе.</p>
+  <div class="buttons">
+      <a class="primary" href="#catalog">Каталогду ачуу →</a>
+      <a class="whatsapp hero-wa" id="heroWa" href="#" target="_blank" rel="noopener">🟢 WhatsApp · Заказ берүү →</a>
+      <button class="ghost" id="surprise">🎁 Сюрприз</button>
     </div>
-    <button class="primary" id="heroCatalog"><span data-i18n="heroButton">Каталогду көрүү</span> →</button>
-  </div>
-  <div class="hero-dots"><i></i><i class="active"></i><i></i></div>
-</section>
-
-<section class="quick-strip">
-  <div><strong>🚚</strong><span><b data-i18n="quickDeliveryTitle">Тез жеткирүү</b><small data-i18n="quickDeliveryText">Бишкек боюнча 2 саатта</small></span></div>
-  <div><strong>▣</strong><span><b data-i18n="quickQualityTitle">Ишенимдүү товарлар</b><small data-i18n="quickQualityText">Сапатка көңүл бурабыз</small></span></div>
-  <div><strong>🏷</strong><span><b data-i18n="quickSaleTitle">Ыңгайлуу баалар</b><small data-i18n="quickSaleText">Дайыма жакшы сунуштар</small></span></div>
-  <div><strong>♧</strong><span><b data-i18n="quickHelpTitle">Онлайн жардамчы</b><small data-i18n="quickHelpText">24/7 сиз менен</small></span></div>
-  <div><strong>⌂</strong><span><b data-i18n="quickBranchTitle">Биздин филиалдар</b><small>Бишкек боюнча 5 дарек</small></span></div>
-</section>
-
-<div class="catalog-shell">
-  <aside class="catalog-sidebar" id="catalog">
-    <div class="sidebar-title"><span>▦</span><strong data-i18n="catalog">Каталог</strong></div>
-    <div class="categories" id="categories">
-      <button class="cat active" data-cat="all"><span class="ico">🛍️</span><b>Баары</b><span class="arrow">→</span></button>
-    </div>
-    <div class="sidebar-note"><span>◉</span><div><b data-i18n="sidebarHelp">Товар таба албай жатасызбы?</b><small data-i18n="sidebarHelpText">Онлайн жардамчыдан сураңыз</small></div></div>
-  </aside>
-
-  <section class="section products-section" id="productsSection">
-    <div class="section-head">
-      <div><span class="eyebrow dark" data-i18n="newProducts">ТОВАРЛАР</span><h2 data-i18n="liked">Сизге жаккан нерселер</h2></div>
-      <button class="ghost" id="allBtn" data-i18n="viewAll">Баарын көрүү →</button>
-    </div>
-    <div class="subcategories" id="subcategories"></div>
-    <div class="products" id="products"><div class="loading">Жүктөлүүдө...</div></div>
-    <div class="empty" id="empty" hidden><div>🛍️</div><h3 data-i18n="notFound">Товар табылган жок</h3><p data-i18n="tryAnother">Башка ат менен издеп көрүңүз.</p></div>
-  </section>
-</div>
-</main>
-
-<section class="delivery-info">
-  <div class="section-head"><div><span class="eyebrow" data-i18n="deliveryEyebrow">Жеткирүү</span><h2 data-i18n="deliveryTitle">Сизге ыңгайлуу жеткирүү</h2></div></div>
-  <div class="delivery-grid">
-    <div class="delivery-card"><div class="delivery-icon">🚕</div><div><strong data-i18n="deliveryYandex">Бишкек — Яндекс Go • 2 сааттын ичинде</strong><span data-i18n="deliveryPaid">Төлөмдүү жеткирүү</span></div></div>
-    <div class="delivery-card"><div class="delivery-icon">🚚</div><div><strong data-i18n="deliveryYldam">Региондор — Ылдам Экспресс • 1–2 күн</strong><span data-i18n="deliveryPaid">Төлөмдүү жеткирүү</span></div></div>
-  </div>
-</section>
-
-<footer>
-  <div class="footer-brand"><img src="assets/logo.webp" alt="Мой Маркет"><p data-i18n="footerText">Үйгө керектүүнүн баары — бир жерде.</p></div>
-  <div><b data-i18n="addresses">Даректер</b><p>Жибек-Жолу 235<br>Жибек-Жолу 227<br>Ауэзова 17<br>Бейшеналиева 20<br>Токтогул 259/10</p></div>
-  <div><b data-i18n="contacts">Байланыш</b><p>WhatsApp: +996 507 66 88 66<br><span data-i18n="dailyHours">Күн сайын 09:00–21:00</span></p></div>
-</footer>
-
-<nav class="mobile-nav">
- <button id="mobileHome">⌂<small data-i18n="home">Башкы</small></button>
- <button id="mobileCatalog">▦<small data-i18n="catalog">Каталог</small></button>
- <button id="mobileSearch">⌕<small data-i18n="search">Издөө</small></button>
- <button id="mobileCart">🛒<small><span data-i18n="cart">Корзина</span> <b id="mobileCartCount">0</b></small></button>
-</nav>
-
-<div class="drawer-backdrop" id="backdrop"></div>
-<div class="cart-toast" id="cartToast" aria-live="polite"></div>
-<div class="product-preview" id="productPreview" aria-hidden="true">
-  <div class="preview-backdrop" id="previewBackdrop"></div>
-  <button class="preview-close" id="previewClose" aria-label="Close">×</button>
-  <div class="preview-brand" id="previewBrand"></div>
-  <div class="preview-stage">
-    <img class="preview-img" id="previewImg" src="assets/products/placeholder.svg" alt="">
-    <div class="preview-info"><span class="preview-name" id="previewName"></span><span class="preview-price" id="previewPrice"></span></div>
-  </div>
-</div>
-<aside class="cart-drawer" id="cartDrawer">
- <div class="drawer-head"><h3 data-i18n="cart">Корзина</h3><button id="closeCart">×</button></div>
- <div id="cartItems" class="cart-items"></div>
- <div class="cart-bottom">
-   <div><span data-i18n="total">Жалпы:</span><strong id="cartTotal">0 сом</strong></div>
-   <div class="checkout-delivery">
-     <div class="checkout-title" data-i18n="checkoutDeliveryTitle">Жеткирүү түрүн тандаңыз</div>
-     <label class="delivery-option"><input type="radio" name="deliveryChoice" value="yandex" checked><span>🚕</span><span><strong data-i18n="checkoutBishkek">Бишкек — Яндекс Go</strong><small data-i18n="deliveryPaid">Төлөмдүү жеткирүү</small></span></label>
-     <label class="delivery-option"><input type="radio" name="deliveryChoice" value="yldam"><span>🚚</span><span><strong data-i18n="checkoutRegions">Региондор — Ылдам Экспресс</strong><small data-i18n="deliveryPaid">Төлөмдүү жеткирүү</small></span></label>
-     <input id="deliveryAddress" class="checkout-input" type="text" data-i18n-placeholder="deliveryAddressPlaceholder" placeholder="Жеткирүү дареги">
-     <input id="deliveryPhone" class="checkout-input" type="tel" data-i18n-placeholder="deliveryPhonePlaceholder" placeholder="Телефон номери">
-   </div>
-   <button class="primary full" id="orderBtn" data-i18n="waOrderButton">WhatsApp аркылуу заказ</button>
+  <small>⚡ Ыкчам сайт &nbsp; • &nbsp; 🕘 09:00–21:00 &nbsp; • &nbsp; 🚚 Жеткирип берүү — төлөмдүү</small>
  </div>
-</aside>
-
-<div class="market-robot" id="marketRobot">
-  <button class="assistant-figure" id="robotFab" aria-label="Мой Маркет жардамчысы">
-    <img id="assistantImage" src="assets/assistant-magnify.png" alt="Мой Маркет онлайн жардамчысы">
-    <span class="assistant-pulse"></span>
-  </button>
-  <div class="assistant-caption" data-i18n="assistantCaption">Онлайн жардамчы</div>
-  <div class="robot-panel" id="robotPanel" aria-hidden="true">
-    <div class="robot-head">
-      <div class="robot-avatar"><img src="assets/assistant-magnify.png" alt="Онлайн жардамчы"></div>
-      <div><strong data-i18n="robotTitle">Мой Маркет жардамчысы</strong><small data-i18n="robotOnline">Онлайн • жардам берүүгө даяр</small></div>
-      <button id="robotClose" aria-label="Close">×</button>
-    </div>
-    <div class="robot-message" data-i18n="robotGreeting">Салам! 👋 Сизге кандай жардам керек?</div>
-    <div class="robot-actions">
-      <button data-robot-action="search">🛍️ <span data-i18n="robotSearch">Товар табуу</span></button>
-      <button data-robot-action="cart">🛒 <span data-i18n="robotCart">Корзинамды ачуу</span></button>
-      <button data-robot-action="delivery">🚚 <span data-i18n="robotDelivery">Жеткирүү тууралуу</span></button>
-      <button data-robot-action="sale">🔥 <span data-i18n="robotSale">Акцияларды көрүү</span></button>
-      <button data-robot-action="order">💬 <span data-i18n="robotOrder">Заказ берүүгө жардам</span></button>
-      <button data-robot-action="language">🌐 <span data-i18n="robotLanguage">Тилди өзгөртүү</span></button>
-    </div>
-    <div class="robot-question"><input id="robotQuestion" type="text" data-i18n-placeholder="robotInputPlaceholder" placeholder="Сурооңузду жазыңыз..." autocomplete="off"><button id="robotAsk" type="button" data-i18n="robotAsk">Жооп алуу</button></div>
-    <div class="robot-chat" id="robotChat" aria-live="polite"></div><div class="robot-reply" id="robotReply" hidden></div>
-    <button class="robot-close-bottom" id="robotCloseBottom" type="button" data-i18n="robotClose">Чатты жабуу</button>
-  </div>
+ <div class="hero-cinema reveal">
+  <img src="cinematic-hero.webp" alt="Мой Маркет — ашкана жана үй товарлары" fetchpriority="high">
+  <div class="cinema-vignette"></div>
+  <div class="cinema-caption"><span>МОЙ МАРКЕТ • HOME & KITCHEN</span><h2>Үйгө керектүүнүн<br><em>баары бир жерде.</em></h2><small>Идиш-аяк • Техника • Үй буюмдары</small></div>
 </div>
+ </section>
 
-<script src="app.js?v=4.0"></script>
-</body>
-</html>
+<section class="section" id="catalog">
+ <div class="head"><div><span class="eyebrow">КАТАЛОГ</span><h2 data-ky="Баары иреттүү" data-ru="Всё удобно">Баары иреттүү</h2></div><label class="search">⌕ <input id="search" placeholder="Товар издеңиз..."></label></div>
+ <div class="catalog"><aside id="cats"></aside><div><div id="subs" class="subs"></div><div id="products" class="products"></div></div></div>
+</section>
+
+<section class="section" id="calc"><div class="head"><div><span class="eyebrow">🧮 CALCULATOR</span><h2 data-ky="Сатып алууну эсептеңиз" data-ru="Рассчитайте покупку">Сатып алууну эсептеңиз</h2></div></div>
+ <div class="calculator"><div id="calcRows"></div><div class="total"><span>Жалпы / Итого</span><strong id="total">0 сом</strong></div><button class="primary" id="order">💬 WhatsApp заказ</button></div>
+</section>
+
+<section class="section info">
+  <div class="info-card"><span>🚚</span><h3>Жеткирип берүү</h3><p>Жеткирип берүү бар. <strong>Төлөмдүү.</strong> Баасы өзүнчө эсептелет.</p></div>
+  <div class="info-card"><span>💬</span><h3>WhatsApp заказ</h3><p><strong>+996 507 66 88 66</strong><br>Суроолор жана заказдар WhatsApp аркылуу.</p></div>
+  <div class="info-card"><span>⚡</span><h3>Тез иштейт</h3><p>Жеңил код, оптимизацияланган сүрөттөр жана керексиз оор эффекттер жок.</p></div>
+</section>
+
+<section class="wow"><div>✨</div><div><span>МОЙ МАРКЕТ WOW</span><h2>Сайтка киргенде эле <strong>WOW!</strong></h2></div><button id="magic">Сыйкырды сынап көр ✨</button></section>
+
+<section class="section" id="branches"><div class="head"><div><span class="eyebrow">📍 МОЙ МАРКЕТ</span><h2 data-ky="Биздин филиалдар" data-ru="Наши филиалы">Биздин филиалдар</h2></div></div>
+ <div class="branches">
+  <div><span>01</span>📍 <b>Жибек-Жолу 235</b><small>09:00–21:00</small></div>
+  <div><span>02</span>📍 <b>Жибек-Жолу 227</b><small>09:00–21:00</small></div>
+  <div><span>03</span>📍 <b>Ауэзова 17</b><small>09:00–21:00</small></div>
+  <div><span>04</span>📍 <b>Бейшеналиева 20</b><small>09:00–21:00</small></div>
+  <div><span>05</span>📍 <b>Токтогула 259/10</b><small>09:00–21:00</small></div>
+</div>
+ <div class="contact">
+  <div class="contact-brand">
+    <div class="wa-logo">☏</div>
+    <div><h3>WhatsApp аркылуу заказ берүү</h3><p><strong>+996 507 66 88 66</strong> · 09:00–21:00</p><small>Суроолор боюнча бизге жазыңыз. 🚚 Жеткирип берүү — төлөмдүү.</small></div>
+  </div>
+  <a id="wa" class="whatsapp" href="#" target="_blank" rel="noopener">🟢 Заказ берүү →</a>
+</div>
+</section>
+
+<footer><b>Мой Маркет</b><span>Үйүңүзгө керектүүнүн баары — бир жерде. ❤️</span></footer>
+<div id="toast"></div><div id="modal" class="modal"><div class="modal-box"><button id="close">×</button><div id="modalBody"></div></div></div>
+<script src="products.js" defer></script><script src="script.js" defer></script>
+<script src="mm-engagement.js" defer></script>
+</body></html>
