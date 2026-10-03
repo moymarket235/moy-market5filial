@@ -34,7 +34,7 @@ function renderProducts(){
   const hay=[p.name,p.nameRu,p.description,p.descriptionRu,p.categoryName,p.categoryNameRu,p.subcategoryName,p.subcategoryNameRu].join(" ").toLowerCase();
   return (activeCat==="all"||p.category===activeCat)&&(!sub||p.subcategoryName===sub||p.subcategoryNameRu===sub)&&hay.includes(q);
  });
- $("#resultCount").textContent=list.length?`${list.length} ${list.length===1?tr("item"):tr("items")}`:"";
+ const resultCount=$("#resultCount"); if(resultCount) resultCount.textContent=list.length?`${list.length} ${list.length===1?tr("item"):tr("items")}`:"";
  $("#empty").hidden=list.length>0;
  const card=p=>{
   const specs=lang==="ru"?(p.characteristicsRu||p.characteristics||[]):(p.characteristics||[]);
