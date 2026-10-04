@@ -37,27 +37,53 @@
   }
 
   function makeBadge() {
-    let badge = document.getElementById(BADGE_ID);
-    if (badge) return badge;
+  let badge = document.getElementById(BADGE_ID);
+  if (badge) return badge;
 
-    const top = qs(SITE_ROOT);
-    if (!top) return null;
+  const top = qs(SITE_ROOT) || document.querySelector('header');
 
-    badge = document.createElement('div');
-    badge.id = BADGE_ID;
-    badge.className = 'mm-daily-visitors';
-    badge.setAttribute('aria-label', 'Daily visitors');
-    badge.dataset.loading = '1';
-    badge.innerHTML = `
-      <span class="mm-daily-visitors-icon">${VISITOR_ICON}</span>
-      <span class="mm-daily-visitors-count">0</span>
-      <span class="mm-daily-visitors-dot"></span>
-      <span class="mm-daily-visitors-arrow" aria-hidden="true"></span>
-    `;
+  badge = document.createElement('div');
+  badge.id = BADGE_ID;
+  badge.className = 'mm-daily-visitors';
+  badge.setAttribute('aria-label', 'Daily visitors');
+  badge.dataset.loading = '1';
 
+  badge.innerHTML = `
+    <span class="mm-daily-visitors-icon">${VISITOR_ICON}</span>
+    <span class="mm-daily-visitors-count">0</span>
+    <span class="mm-daily-visitors-dot"></span>
+    <span class="mm-daily-visitors-arrow" aria-hidden="true">›</span>
+  `;
+
+  if (top) {
     top.insertAdjacentElement('afterend', badge);
-    return badge;
+  } else {
+    document.body.prepend(badge);
   }
+
+  return badge;
+  }
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+      
+      
+      
+      
+    
+
+    
+    
+  
 
   function removeOldBar() {
     const old = document.getElementById(OLD_ID);
