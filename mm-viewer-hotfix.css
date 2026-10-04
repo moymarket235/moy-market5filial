@@ -1,0 +1,128 @@
+/* MOY MARKET — PRODUCT VIEWER ICONS v1
+   Same clean Instagram-style icons as the product cards:
+   Like → Comment → Share → Views
+*/
+
+/* Replace the old emoji/rounded-button appearance in the large product viewer. */
+#mmProductViewer .mm-viewer-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0 !important;
+  flex-wrap: nowrap !important;
+  width: 100% !important;
+  margin: 6px 0 4px !important;
+}
+
+#mmProductViewer .mm-viewer-actions .mm-viewer-social {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #f6f7f8 !important;
+
+  font: 600 13px/1 Arial, sans-serif !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  cursor: pointer !important;
+}
+
+#mmProductViewer .mm-viewer-actions .mm-viewer-social + .mm-viewer-social {
+  border-left: 1px solid rgba(255,255,255,.12) !important;
+}
+
+#mmProductViewer .mm-viewer-actions .mm-viewer-social-icon {
+  width: 25px !important;
+  height: 25px !important;
+  flex: 0 0 25px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  color: currentColor !important;
+}
+
+#mmProductViewer .mm-viewer-actions .mm-viewer-social-icon svg {
+  display: block !important;
+  width: 25px !important;
+  height: 25px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+#mmProductViewer .mm-viewer-actions .mm-viewer-heart svg {
+  width: 27px !important;
+  height: 27px !important;
+}
+
+#mmProductViewer .mm-viewer-actions .mm-viewer-social.liked {
+  color: #ff4d55 !important;
+}
+
+/* Four social positions only; the orange cart button stays below them. */
+#mmProductViewer .mm-viewer-actions .mm-viewer-cart {
+  width: 100% !important;
+  flex: 1 0 100% !important;
+  min-width: 0 !important;
+  height: 52px !important;
+  min-height: 52px !important;
+  margin: 10px 0 0 !important;
+  border-radius: 14px !important;
+  border: 0 !important;
+  background: #ff7a00 !important;
+  color: #111 !important;
+  font-weight: 900 !important;
+}
+
+/* Rebuild actions as two rows: social row + cart row. */
+#mmProductViewer .mm-viewer-actions {
+  flex-wrap: wrap !important;
+}
+
+/* Remove old emoji text styling if remnants are present. */
+#mmProductViewer .mm-viewer-actions > button:not(.mm-viewer-social) {
+  box-shadow: none !important;
+}
+
+/* Mobile */
+@media (max-width: 650px) {
+  #mmProductViewer .mm-viewer-actions .mm-viewer-social {
+    height: 46px !important;
+    min-height: 46px !important;
+    gap: 5px !important;
+    font-size: 12px !important;
+  }
+
+  #mmProductViewer .mm-viewer-actions .mm-viewer-social-icon,
+  #mmProductViewer .mm-viewer-actions .mm-viewer-social-icon svg {
+    width: 23px !important;
+    height: 23px !important;
+    flex-basis: 23px !important;
+  }
+
+  #mmProductViewer .mm-viewer-actions .mm-viewer-heart svg {
+    width: 25px !important;
+    height: 25px !important;
+  }
+
+  #mmProductViewer .mm-viewer-actions .mm-viewer-cart {
+    height: 50px !important;
+    min-height: 50px !important;
+    margin-top: 8px !important;
+  }
+}
