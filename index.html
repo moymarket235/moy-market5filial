@@ -8,14 +8,10 @@
 <meta name="description" content="Мой Маркет — идиш-аяк, бытовая техника, казаны, наборы и товары для дома.">
 <link rel="preload" as="image" href="assets/hero.webp">
 <link rel="stylesheet" href="style.css?v=4.0">
-<link rel="stylesheet" href="mm-engagement.css?v=21.0">
+<link rel="stylesheet" href="mm-engagement.css?v=1.2">
 <link rel="stylesheet" href="mm-mobile-fix.css?v=1.0">
 <link rel="stylesheet" href="mm-account.css?v=1.0">
 <link rel="stylesheet" href="mm-hotfix.css?v=3.0">
-<link rel="stylesheet" href="mm-viewer-hotfix.css?v=1.0">
-<link rel="stylesheet" href="mm-visitors.css?v=1.0">
-<link rel="stylesheet" href="mm-product-detail.css?v=1.0">
-<link rel="stylesheet" href="mm-favorites.css?v=21.0">
 </head>
 <body>
 <header class="topbar">
@@ -23,45 +19,18 @@
     <button class="menu-btn" type="button" aria-label="Меню">☰</button>
     <a class="brand" href="#" aria-label="Мой Маркет"><img src="assets/logo.webp" alt="Мой Маркет"></a>
   </div>
-
   <div class="header-search" id="searchbox">
     <span class="search-icon">⌕</span>
     <input id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Товар издеңиз..." autocomplete="off">
     <button id="clearSearch" type="button" aria-label="Очистить">×</button>
     <button class="search-go" id="searchBtn" type="button" aria-label="Поиск">⌕</button>
   </div>
-
   <div class="header-meta">
     <button class="location-pill" type="button">⌖ <span>Бишкек</span><b>⌄</b></button>
     <button class="lang-switch" id="langSwitch">KG / RU</button>
-    <button class="mm-account-open-btn" id="accountBtn" type="button" aria-label="Кардар аккаунту">
-      <span class="mm-account-open-icon">👤</span><span class="mm-account-open-label">Аккаунт</span>
-    </button>
+  <button class="mm-account-open-btn" id="accountBtn" type="button" aria-label="Кардар аккаунту"><span class="mm-account-open-icon">👤</span><span class="mm-account-open-label">Аккаунт</span></button>
     <button class="branches-pill" type="button">▣ <span data-i18n="branches">Биздин филиалдар</span></button>
-
-    <!-- МОЙ МАРКЕТ: корзина + жаңы Избранное -->
-    <div class="mm-cart-favorites-stack">
-      <button class="icon-btn cart-mini" id="cartBtn" aria-label="Корзина">
-        🛒<b id="cartCount">0</b><span data-i18n="cart">Корзина</span>
-      </button>
-
-      <button
-        class="mm-favorites-open"
-        id="mmFavoritesBtn"
-        type="button"
-        aria-label="Избранное"
-        title="Избранное"
-        aria-haspopup="dialog"
-      >
-        <span class="mm-favorites-hex" aria-hidden="true">
-          <svg class="mm-favorites-hex-svg" viewBox="0 0 48 48" aria-hidden="true">
-            <path class="hex-shape" d="M24 3.5 41.5 13.75v20.5L24 44.5 6.5 34.25v-20.5L24 3.5Z"></path>
-            <path class="hex-heart" d="M24 33.2s-10.1-6.15-10.1-12.7c0-3.4 2.35-5.75 5.35-5.75 2.08 0 3.8 1.17 4.75 2.83.95-1.66 2.67-2.83 4.75-2.83 3 0 5.35 2.35 5.35 5.75C34.1 27.05 24 33.2 24 33.2Z"></path>
-          </svg>
-        </span>
-        <b class="mm-favorites-count" id="mmFavoritesCount">0</b>
-      </button>
-    </div>
+    <button class="icon-btn cart-mini" id="cartBtn" aria-label="Корзина">🛒<b id="cartCount">0</b><span data-i18n="cart">Корзина</span></button>
   </div>
 </header>
 
@@ -167,7 +136,6 @@
     <span class="assistant-pulse"></span>
   </button>
   <div class="assistant-caption" data-i18n="assistantCaption">Онлайн жардамчы</div>
-
   <div class="robot-panel" id="robotPanel" aria-hidden="true">
     <div class="robot-head">
       <div class="robot-avatar"><img src="assets/assistant-magnify.png" alt="Онлайн жардамчы"></div>
@@ -183,12 +151,8 @@
       <button data-robot-action="order">💬 <span data-i18n="robotOrder">Заказ берүүгө жардам</span></button>
       <button data-robot-action="language">🌐 <span data-i18n="robotLanguage">Тилди өзгөртүү</span></button>
     </div>
-    <div class="robot-question">
-      <input id="robotQuestion" type="text" data-i18n-placeholder="robotInputPlaceholder" placeholder="Сурооңузду жазыңыз..." autocomplete="off">
-      <button id="robotAsk" type="button" data-i18n="robotAsk">Жооп алуу</button>
-    </div>
-    <div class="robot-chat" id="robotChat" aria-live="polite"></div>
-    <div class="robot-reply" id="robotReply" hidden></div>
+    <div class="robot-question"><input id="robotQuestion" type="text" data-i18n-placeholder="robotInputPlaceholder" placeholder="Сурооңузду жазыңыз..." autocomplete="off"><button id="robotAsk" type="button" data-i18n="robotAsk">Жооп алуу</button></div>
+    <div class="robot-chat" id="robotChat" aria-live="polite"></div><div class="robot-reply" id="robotReply" hidden></div>
     <button class="robot-close-bottom" id="robotCloseBottom" type="button" data-i18n="robotClose">Чатты жабуу</button>
   </div>
 </div>
@@ -197,10 +161,5 @@
 <script src="mm-account.js?v=1.0"></script>
 <script src="mm-engagement.js?v=1.1"></script>
 <script src="mm-hotfix.js?v=3.0"></script>
-<script src="mm-viewer-hotfix.js?v=1.0"></script>
-<script src="mm-product-detail.js?v=1.0"></script>
-<script src="mm-visitors.js?v=1.0"></script>
-<script src="mm-favorites.js?v=20.0"></script>
-<script src="mm-home-like-final-v23.js?v=23.0"></script>
 </body>
 </html>
