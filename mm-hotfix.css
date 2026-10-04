@@ -225,3 +225,19 @@
     font-size: 11px !important;
   }
 }
+
+
+/* FINAL ICON DETAIL FIX
+   - Share / Поделиться icon: no inherited rotation, always points up-right.
+   - Comment icon: remove the old white speech-tail pseudo-element completely.
+*/
+#products .mm-card-actions .mm-share-icon,
+#products .mm-card-actions .mm-share-icon svg {
+  transform: none !important;
+}
+
+#products .mm-card-actions .mm-comment-icon::before,
+#products .mm-card-actions .mm-comment-icon::after {
+  content: none !important;
+  display: none !important;
+}
