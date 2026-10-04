@@ -1,0 +1,21 @@
+/* MOY MARKET — SAFE VISUAL HOTFIX */
+
+/* Товар карточкасынын мурунку фонун кайтаруу */
+#products .product .photo,
+#products .product-card .photo,
+#products [data-product-card] .photo {
+  background: linear-gradient(180deg,#f8f8f7,#eeeeed) !important;
+}
+
+/* Товар сүрөтүнүн мурунку өлчөмүн кайтаруу */
+#products .product .photo img,
+#products .product-card .photo img,
+#products [data-product-card] .photo img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  padding: 9px !important;
+  margin: 0 !important;
+  display: block !important;
+}
