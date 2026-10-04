@@ -119,7 +119,7 @@
 
   function openComment(card){
     let modal=qs('#mmCommentModal'); if(!modal){modal=document.createElement('div');modal.id='mmCommentModal';modal.className='mm-comment-modal';modal.innerHTML='<div class="mm-comment-backdrop"></div><div class="mm-comment-panel"><button class="mm-comment-close">×</button><h3>Комментарий</h3><textarea id="mmCommentText" maxlength="300" placeholder="Пикириңизди жазыңыз..."></textarea><button id="mmCommentSend">Жөнөтүү</button></div>';document.body.appendChild(modal);qs('.mm-comment-backdrop',modal).onclick=()=>modal.classList.remove('show');qs('.mm-comment-close',modal).onclick=()=>modal.classList.remove('show');}
-    modal._card=card; qs('#mmCommentText',modal).value=''; modal.classList.add('show'); qs('#mmCommentText',modal).focus(); qs('#mmCommentSend').onclick=()=>{const v=qs('#mmCommentText',modal).value.trim();if(!v)return;const p=ensure(card);p.comments.push({text:v,at:Date.now()});save();updateCard(card);if(viewer?.classList.contains('show')&&viewer._card===card)refreshViewer(card);modal.classList.remove('show');};
+    modal._card=card; qs('#mmCommentText',modal).value=''; modal.classList.add('show'); qs('#mmCommentText',modal).focus(); qs('#mmCommentSend').onclick=()=>{const v=qs('#mmCommentText',modal).value.trim();if(!v)return;const p=ensure(card);const a=loadAccount(); p.comments.push({name:a.name||'Кардар',phone:a.phone||'',text:v,at:Date.now()});save();updateCard(card);if(viewer?.classList.contains('show')&&viewer._card===card)refreshViewer(card);modal.classList.remove('show');};
   }
 
   function isActionTarget(el){return !!el.closest('button,a,input,textarea,select,[data-mm-action],[data-vaction],.mm-card-actions,.cart-add,.add-to-cart,[data-add-cart]');}
@@ -132,11 +132,68 @@
       // Capture at document level so re-rendered product cards always work.
       e.preventDefault(); e.stopPropagation(); openViewer(card);
     }, true);
-    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeViewer();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeViewer();closeAccount();}});
   }
 
+
+  // STEP 10.1 — customer account (persistent on this browser/device; editable, no delete button)
+  const ACCOUNT_KEY='mmCustomerAccountV1';
+  let accountModal=null;
+  function loadAccount(){
+    try {
+      const raw=localStorage.getItem(ACCOUNT_KEY);
+      if(raw){ const a=JSON.parse(raw); if(a && typeof a==='object') return {name:a.name||'',phone:a.phone||'',updatedAt:a.updatedAt||0}; }
+    } catch(_){}
+    return {name:'',phone:'',updatedAt:0};
+  }
+  function saveAccount(data){
+    const clean={name:String(data.name||'').trim(),phone:String(data.phone||'').trim(),updatedAt:Date.now()};
+    try{
+      localStorage.setItem(ACCOUNT_KEY,JSON.stringify(clean));
+      // Keep a second browser-level copy so a normal storage refresh does not lose the profile.
+      document.cookie=ACCOUNT_KEY+'='+encodeURIComponent(JSON.stringify(clean))+'; max-age=31536000; path=/; SameSite=Lax';
+    }catch(_){}
+    updateAccountButton();
+  }
+  function ensureAccountButton(){
+    if(qs('#mmAccountButton')) return;
+    const b=document.createElement('button');
+    b.id='mmAccountButton'; b.type='button'; b.className='mm-account-button';
+    b.innerHTML='<span class="mm-account-icon">👤</span><span class="mm-account-label">Аккаунт</span>';
+    b.addEventListener('click',openAccount);
+    document.body.appendChild(b); updateAccountButton();
+  }
+  function updateAccountButton(){
+    const b=qs('#mmAccountButton'); if(!b)return;
+    const a=loadAccount();
+    b.classList.toggle('mm-account-filled',!!(a.name&&a.phone));
+    b.querySelector('.mm-account-label').textContent=a.name ? a.name.split(/\s+/)[0] : 'Аккаунт';
+    b.title=a.name&&a.phone ? `${a.name} • ${a.phone}` : 'Аккаунт';
+  }
+  function ensureAccountModal(){
+    if(accountModal) return;
+    accountModal=document.createElement('div'); accountModal.id='mmAccountModal'; accountModal.className='mm-account-modal'; accountModal.setAttribute('aria-hidden','true');
+    accountModal.innerHTML=`<div class="mm-account-backdrop"></div><div class="mm-account-panel" role="dialog" aria-modal="true" aria-labelledby="mmAccountTitle"><button type="button" class="mm-account-close" aria-label="Жабуу">×</button><div class="mm-account-head"><div class="mm-account-avatar">👤</div><div><div class="mm-account-kicker">МОЙ МАРКЕТ</div><h3 id="mmAccountTitle">Кардар аккаунту</h3></div></div><label>Аты-жөнү<input id="mmAccountName" type="text" maxlength="80" autocomplete="name" placeholder="Аты-жөнүңүз"></label><label>Телефон номери<input id="mmAccountPhone" type="tel" maxlength="20" autocomplete="tel" inputmode="tel" placeholder="+996 ___ ___ ___"></label><div class="mm-account-note">Маалымат сакталат жана кайра киргенде автоматтык чыгат. Кааласаңыз кийин өзгөртө аласыз.</div><button type="button" id="mmAccountSave" class="mm-account-save">💾 Сактоо</button></div>`;
+    document.body.appendChild(accountModal);
+    qs('.mm-account-backdrop',accountModal).addEventListener('click',closeAccount);
+    qs('.mm-account-close',accountModal).addEventListener('click',closeAccount);
+    qs('#mmAccountSave',accountModal).addEventListener('click',()=>{
+      const name=qs('#mmAccountName',accountModal).value.trim();
+      const phone=qs('#mmAccountPhone',accountModal).value.trim();
+      if(name.length<2){qs('#mmAccountName',accountModal).focus(); return;}
+      if(phone.length<5){qs('#mmAccountPhone',accountModal).focus(); return;}
+      saveAccount({name,phone,updatedAt:Date.now()}); closeAccount();
+    });
+    qs('#mmAccountClear',accountModal).addEventListener('click',()=>{
+      try{localStorage.removeItem(ACCOUNT_KEY);}catch(_){}
+      qs('#mmAccountName',accountModal).value=''; qs('#mmAccountPhone',accountModal).value=''; updateAccountButton();
+    });
+  }
+  function openAccount(){ensureAccountModal(); const a=loadAccount(); qs('#mmAccountName',accountModal).value=a.name||''; qs('#mmAccountPhone',accountModal).value=a.phone||''; accountModal.classList.add('show'); accountModal.setAttribute('aria-hidden','false'); setTimeout(()=>qs('#mmAccountName',accountModal).focus(),40);}
+  function closeAccount(){if(!accountModal)return; accountModal.classList.remove('show'); accountModal.setAttribute('aria-hidden','true');}
+
   function start(){
-    ensureStats(); bindDelegated(); decorate();
+    ensureStats(); bindDelegated(); decorate(); ensureAccountButton(); ensureAccountModal();
     const root=qs('#products');
     if(root){
       const observer=new MutationObserver(()=>{

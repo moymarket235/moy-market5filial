@@ -170,3 +170,17 @@ body.mm-viewer-open{overflow:hidden!important}
   #products .mm-card-actions b{font-size:11px!important}
   .assistant-figure,#assistantImage{max-width:100px!important}
 }
+
+/* STEP 10 — Customer account */
+.mm-account-button{position:fixed;left:14px;bottom:82px;z-index:9996;display:flex;align-items:center;gap:7px;border:1px solid rgba(255,122,0,.38);background:rgba(9,13,18,.94);color:#fff;border-radius:999px;padding:9px 12px;box-shadow:0 8px 24px rgba(0,0,0,.3);font:800 12px/1 system-ui,-apple-system,Segoe UI,sans-serif;backdrop-filter:blur(10px);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mm-account-button:active{transform:scale(.98)}
+.mm-account-button.mm-account-filled{border-color:rgba(255,122,0,.75)}
+.mm-account-icon{font-size:17px;line-height:1}.mm-account-label{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mm-account-modal{position:fixed;inset:0;z-index:10020;display:none;align-items:center;justify-content:center;padding:18px}.mm-account-modal.show{display:flex}
+.mm-account-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(5px)}
+.mm-account-panel{position:relative;width:min(420px,100%);border:1px solid rgba(255,122,0,.28);border-radius:22px;background:linear-gradient(180deg,#111820,#0a0f14);box-shadow:0 24px 70px rgba(0,0,0,.55);padding:20px;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.mm-account-close{position:absolute;right:12px;top:10px;width:36px;height:36px;border:0;border-radius:50%;background:rgba(255,255,255,.07);color:#fff;font-size:25px;line-height:1;cursor:pointer}
+.mm-account-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}.mm-account-avatar{width:46px;height:46px;display:grid;place-items:center;border-radius:14px;background:rgba(255,122,0,.14);font-size:24px}.mm-account-kicker{font-size:10px;font-weight:900;letter-spacing:1.4px;color:#ff7a00}.mm-account-head h3{margin:3px 0 0;font-size:22px}
+.mm-account-panel label{display:block;margin:12px 0 0;font-size:12px;font-weight:800;color:#cbd2da}.mm-account-panel input{display:block;width:100%;box-sizing:border-box;margin-top:7px;padding:13px 14px;border-radius:13px;border:1px solid rgba(255,255,255,.12);outline:0;background:#080d12;color:#fff;font:600 14px system-ui}.mm-account-panel input:focus{border-color:rgba(255,122,0,.75)}
+.mm-account-note{margin:14px 0;color:#89939f;font-size:11px;line-height:1.45}.mm-account-save{width:100%;border:0;border-radius:13px;padding:13px;background:#ff7a00;color:#111;font-weight:900;font-size:14px;cursor:pointer}.mm-account-clear{width:100%;margin-top:8px;border:1px solid rgba(255,255,255,.1);border-radius:13px;padding:11px;background:transparent;color:#9ca6b1;font-weight:700;font-size:12px;cursor:pointer}
+@media(max-width:650px){.mm-account-button{left:10px;bottom:78px;padding:8px 10px}.mm-account-label{max-width:72px}.mm-account-panel{border-radius:20px;padding:18px}}
