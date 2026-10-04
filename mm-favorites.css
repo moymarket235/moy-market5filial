@@ -673,3 +673,208 @@ body.mm-favorites-lock {
   max-width: 20px !important;
   max-height: 20px !important;
 }
+
+
+/* =========================================================
+   МОЙ МАРКЕТ — FINAL HEART V18
+   Точно как на большом товар көрүү терезесиндеги жүрөк:
+   Instagram-like, compact, same visual size as neighboring icons.
+   ========================================================= */
+
+/* The Like button keeps the same compact footprint as the other actions. */
+#products .mm-card-actions
+button[data-mm-action="like"] {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  flex: 0 0 34px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Outline heart: 24×24, visually equal to the surrounding icons. */
+#products .mm-card-actions
+button[data-mm-action="like"]
+.mm-heart {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+  flex: 0 0 24px !important;
+
+  display: block !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  box-sizing: border-box !important;
+
+  font-size: 0 !important;
+  line-height: 0 !important;
+  color: transparent !important;
+
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: 24px 24px !important;
+
+  border: 0 !important;
+  overflow: visible !important;
+
+  opacity: 1 !important;
+  visibility: visible !important;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z' fill='none' stroke='%23f6f7f8' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+}
+
+/* Liked = same 24×24 size, solid Instagram red. */
+#products .mm-card-actions
+button[data-mm-action="like"].liked
+.mm-heart,
+#products .mm-card-actions
+button[data-mm-action="like"].is-liked
+.mm-heart,
+#products .mm-card-actions
+button[data-mm-action="like"].mm-favorite-active
+.mm-heart {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.84 4.61a5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 0 0 0 0-7.78 0Z' fill='%23ff4d55'/%3E%3C/svg%3E") !important;
+  background-size: 24px 24px !important;
+}
+
+/* Never show the old Unicode heart or pseudo-elements. */
+#products .mm-card-actions
+button[data-mm-action="like"]
+.mm-heart::before,
+#products .mm-card-actions
+button[data-mm-action="like"]
+.mm-heart::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Phone: remain the same size as the other compact icons. */
+@media (max-width: 650px) {
+  #products .mm-card-actions
+  button[data-mm-action="like"] {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    flex-basis: 34px !important;
+  }
+
+  #products .mm-card-actions
+  button[data-mm-action="like"]
+  .mm-heart {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    flex-basis: 24px !important;
+    background-size: 24px 24px !important;
+  }
+}
+
+
+/* =========================================================
+   МОЙ МАРКЕТ — HOMEPAGE HEART ONLY
+   Бул блок #products ичиндеги карточкаларга гана тиешелүү.
+   Товарды ачкандагы чоң viewer/detail иконкаларына ТИЙБЕЙТ.
+   ========================================================= */
+
+#products .mm-card-actions button[data-mm-action="like"] {
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  flex: 0 0 30px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#products .mm-card-actions button[data-mm-action="like"] .mm-heart {
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  max-width: 22px !important;
+  max-height: 22px !important;
+  flex: 0 0 22px !important;
+
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  box-sizing: border-box !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  color: transparent !important;
+
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 22px 22px !important;
+
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+/* Активдүү лайк — Instagram стилиндеги кызыл жүрөк */
+#products .mm-card-actions
+button[data-mm-action="like"].liked .mm-heart,
+#products .mm-card-actions
+button[data-mm-action="like"].is-liked .mm-heart,
+#products .mm-card-actions
+button[data-mm-action="like"].mm-favorite-active .mm-heart {
+  background-size: 22px 22px !important;
+}
+
+/* Эски Unicode жүрөк чыкпасын */
+#products .mm-card-actions
+button[data-mm-action="like"] .mm-heart::before,
+#products .mm-card-actions
+button[data-mm-action="like"] .mm-heart::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Телефондо да ошол эле өлчөм */
+@media (max-width: 650px) {
+  #products .mm-card-actions button[data-mm-action="like"] {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    flex-basis: 30px !important;
+  }
+
+  #products .mm-card-actions button[data-mm-action="like"] .mm-heart {
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 22px !important;
+    min-height: 22px !important;
+    flex-basis: 22px !important;
+    background-size: 22px 22px !important;
+  }
+}
