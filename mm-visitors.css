@@ -1,0 +1,156 @@
+/* MOY MARKET — Daily visitor badge
+   TikTok-style minimal profile-visit appearance.
+*/
+
+/* Remove the old 24h / likes / comments / shares / views strip. */
+#mmEngagementStats,
+.mm-engagement-stats {
+  display: none !important;
+}
+
+/* New compact visitor badge. No extra text. */
+.mm-daily-visitors {
+  position: relative;
+  z-index: 25;
+  width: max-content;
+  min-width: 118px;
+  height: 42px;
+  margin: 10px 0 0 26px;
+  padding: 0 12px;
+  box-sizing: border-box;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(20,27,35,.96), rgba(9,14,20,.96));
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.24),
+    inset 0 1px 0 rgba(255,255,255,.04);
+
+  color: #fff;
+  font: 700 14px/1 Arial, sans-serif;
+  letter-spacing: .1px;
+  user-select: none;
+}
+
+.mm-daily-visitors::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(120deg,
+    rgba(255,122,0,.35),
+    transparent 32%,
+    transparent 68%,
+    rgba(41,130,255,.22));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 1px;
+}
+
+.mm-daily-visitors-icon {
+  width: 21px;
+  height: 21px;
+  flex: 0 0 21px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #61a9ff;
+}
+
+.mm-daily-visitors-icon svg {
+  width: 21px;
+  height: 21px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mm-daily-visitors-count {
+  min-width: 22px;
+  color: #f8fafc;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.mm-daily-visitors-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #22e879;
+  box-shadow: 0 0 9px rgba(34,232,121,.75);
+}
+
+.mm-daily-visitors-arrow {
+  width: 7px;
+  height: 12px;
+  flex: 0 0 7px;
+  position: relative;
+  margin-left: 1px;
+}
+
+.mm-daily-visitors-arrow::before,
+.mm-daily-visitors-arrow::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  width: 7px;
+  height: 1.5px;
+  border-radius: 3px;
+  background: #aeb8c5;
+  transform-origin: left center;
+}
+
+.mm-daily-visitors-arrow::before {
+  top: 4px;
+  transform: rotate(38deg);
+}
+
+.mm-daily-visitors-arrow::after {
+  top: 8px;
+  transform: rotate(-38deg);
+}
+
+.mm-daily-visitors[data-loading="1"] .mm-daily-visitors-count {
+  opacity: .55;
+}
+
+@media (max-width: 900px) {
+  .mm-daily-visitors {
+    margin: 8px 0 0 16px;
+  }
+}
+
+@media (max-width: 620px) {
+  .mm-daily-visitors {
+    height: 40px;
+    min-width: 108px;
+    margin: 8px 0 0 12px;
+    padding: 0 11px;
+    gap: 7px;
+    font-size: 13px;
+  }
+
+  .mm-daily-visitors-icon,
+  .mm-daily-visitors-icon svg {
+    width: 20px;
+    height: 20px;
+    flex-basis: 20px;
+  }
+
+  .mm-daily-visitors-dot {
+    width: 6px;
+    height: 6px;
+    flex-basis: 6px;
+  }
+}
