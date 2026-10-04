@@ -193,7 +193,7 @@
   function closeAccount(){if(!accountModal)return; accountModal.classList.remove('show'); accountModal.setAttribute('aria-hidden','true');}
 
   function start(){
-    ensureStats(); bindDelegated(); decorate(); ensureAccountButton(); ensureAccountModal();
+    ensureStats(); bindDelegated(); decorate(); ensureAccountModal();
     const root=qs('#products');
     if(root){
       const observer=new MutationObserver(()=>{
