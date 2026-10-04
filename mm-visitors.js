@@ -18,7 +18,7 @@
     The existing admin Worker is NOT overwritten by this file.
   */
   const VISITOR_API =
-  "https://moy-market-visitors.moimarketjibekjolu.workers.dev/api/visitors";
+  "https://moi-market-visitors.moimarketjibekjolu.workers.dev/api/visitors";
     
 
   const BADGE_ID = 'mmDailyVisitors';
