@@ -80,80 +80,184 @@ body.mm-viewer-open{overflow:hidden!important}
 #products .mm-card-actions .mm-social-btn.liked .mm-heart{color:#ff4d55!important}
 @media(max-width:650px){#products .mm-card-actions{gap:14px;padding-left:0;padding-right:0}.mm-card-actions .mm-social-icon{flex:0 0 auto}.mm-card-actions button.mm-social-btn,.mm-card-actions .mm-social-view{min-width:44px;height:40px}}
 
-/* STEP 9.2 — compact social bar: small, clean, mobile-safe */
+/* FINAL SOCIAL ICON ROW — precise 4-column glossy layout */
 #products .mm-card-actions{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:space-between!important;
-  gap:4px!important;
-  min-height:50px!important;
-  height:50px!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  align-items:start!important;
+  justify-items:center!important;
+  gap:8px!important;
+  width:100%!important;
+  min-height:88px!important;
+  height:88px!important;
   margin:14px 0 0!important;
-  padding:4px 8px!important;
+  padding:9px 8px 6px!important;
   box-sizing:border-box!important;
   border-top:1px solid rgba(255,255,255,.08)!important;
   overflow:hidden!important;
 }
 #products .mm-card-actions button.mm-social-btn,
 #products .mm-card-actions .mm-social-view{
-  flex:1 1 0!important;
-  min-width:0!important;
-  width:auto!important;
-  height:40px!important;
-  min-height:40px!important;
-  padding:0 4px!important;
+  width:62px!important;
+  max-width:62px!important;
+  min-width:62px!important;
+  height:72px!important;
+  min-height:72px!important;
   margin:0!important;
-  gap:5px!important;
+  padding:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:4px!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  color:#fff!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  font:inherit!important;
+  line-height:1!important;
+  cursor:pointer!important;
+}
+#products .mm-card-actions .mm-social-icon{
+  position:relative!important;
   display:flex!important;
   align-items:center!important;
   justify-content:center!important;
-  background:transparent!important;
-  border:0!important;
-  border-radius:8px!important;
-  color:#f4f6f8!important;
-  box-shadow:none!important;
-  appearance:none!important;
-  -webkit-appearance:none!important;
-  font-size:12px!important;
-  line-height:1!important;
-}
-#products .mm-card-actions .mm-social-icon{
-  width:auto!important;
-  height:auto!important;
-  flex:0 0 auto!important;
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  color:#f4f6f8!important;
+  flex:0 0 54px!important;
+  width:54px!important;
+  height:54px!important;
+  box-sizing:border-box!important;
+  color:#fff!important;
   font-family:Arial,sans-serif!important;
-  font-weight:400!important;
   line-height:1!important;
-}
-#products .mm-card-actions .mm-heart{font-size:27px!important}
-#products .mm-card-actions .mm-comment-icon{
-  width:21px!important;
-  height:16px!important;
   font-size:0!important;
-  border:2px solid #f4f6f8!important;
-  border-radius:50%!important;
-  position:relative!important;
+  border-radius:15px!important;
+  overflow:hidden!important;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.38),inset 0 -5px 9px rgba(0,0,0,.20),0 5px 10px rgba(0,0,0,.30)!important;
 }
-#products .mm-card-actions .mm-comment-icon:after{
-  content:""!important;
+/* Like — glossy red square */
+#products .mm-card-actions .mm-heart{
+  background:linear-gradient(145deg,#ff6b78 0%,#f51f35 45%,#c80720 100%)!important;
+  border:1px solid rgba(255,255,255,.20)!important;
+}
+#products .mm-card-actions .mm-heart::before{
+  content:'♥';
+  color:#fff;
+  font-size:31px;
+  line-height:1;
+  transform:translateY(-1px);
+  text-shadow:0 2px 2px rgba(0,0,0,.18);
+}
+/* Comment — glossy blue square + speech bubble */
+#products .mm-card-actions .mm-comment-icon{
+  background:linear-gradient(145deg,#69c3ff 0%,#1689ee 50%,#0057b9 100%)!important;
+  border:1px solid rgba(255,255,255,.20)!important;
+}
+#products .mm-card-actions .mm-comment-icon::before{
+  content:'';
+  width:31px;
+  height:22px;
+  border-radius:50%;
+  background:#fff;
+  position:absolute;
+  left:11px;
+  top:13px;
+  box-shadow:0 1px 2px rgba(0,0,0,.15);
+}
+#products .mm-card-actions .mm-comment-icon::after{
+  content:''!important;
   position:absolute!important;
-  right:-1px!important;
-  bottom:-5px!important;
   width:0!important;
   height:0!important;
-  border-width:4px 0 0 5px!important;
-  border-style:solid!important;
-  border-color:transparent transparent transparent #f4f6f8!important;
+  left:34px!important;
+  top:32px!important;
+  right:auto!important;
+  bottom:auto!important;
+  border:7px solid transparent!important;
+  border-top-color:#fff!important;
+  border-right:0!important;
   transform:rotate(8deg)!important;
 }
-#products .mm-card-actions .mm-share-icon{font-size:27px!important;transform:rotate(-32deg)!important}
-#products .mm-card-actions .mm-eye-icon{font-size:20px!important}
-#products .mm-card-actions b{font-size:12px!important;font-weight:700!important;color:#f4f6f8!important}
-#products .mm-card-actions button.mm-social-btn.liked .mm-heart{color:#ff4d55!important}
+/* Share — glossy green square + straight paper plane */
+#products .mm-card-actions .mm-share-icon{
+  background:linear-gradient(145deg,#59ed9a 0%,#08c96d 48%,#00904c 100%)!important;
+  border:1px solid rgba(255,255,255,.20)!important;
+  transform:none!important;
+}
+#products .mm-card-actions .mm-share-icon::before{
+  content:'';
+  width:34px;
+  height:30px;
+  background:#fff;
+  clip-path:polygon(0 0,100% 38%,0 100%,22% 56%);
+  display:block;
+  transform:translate(1px,-1px);
+  filter:drop-shadow(0 2px 1px rgba(0,0,0,.14));
+}
+/* View — glossy graphite square + clean eye */
+#products .mm-card-actions .mm-eye-icon{
+  background:linear-gradient(145deg,#8992a5 0%,#596273 48%,#303847 100%)!important;
+  border:1px solid rgba(255,255,255,.20)!important;
+}
+#products .mm-card-actions .mm-eye-icon::before{
+  content:'';
+  width:30px;
+  height:19px;
+  border:3px solid #fff;
+  border-radius:75% 10%;
+  transform:rotate(45deg);
+  box-sizing:border-box;
+}
+#products .mm-card-actions .mm-eye-icon::after{
+  content:'';
+  position:absolute;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(255,255,255,.14);
+}
+#products .mm-card-actions b{
+  display:block!important;
+  width:100%!important;
+  height:14px!important;
+  margin:0!important;
+  padding:0!important;
+  text-align:center!important;
+  color:#fff!important;
+  font-size:13px!important;
+  font-weight:800!important;
+  line-height:14px!important;
+}
+#products .mm-card-actions button.mm-social-btn.liked .mm-heart{
+  filter:saturate(1.18) brightness(1.06)!important;
+}
+@media(max-width:650px){
+  #products .mm-card-actions{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:3px!important;
+    min-height:88px!important;
+    height:88px!important;
+    padding:9px 4px 6px!important;
+  }
+  #products .mm-card-actions button.mm-social-btn,
+  #products .mm-card-actions .mm-social-view{
+    width:58px!important;
+    max-width:58px!important;
+    min-width:58px!important;
+    height:72px!important;
+    min-height:72px!important;
+  }
+  #products .mm-card-actions .mm-social-icon{
+    flex-basis:54px!important;
+    width:54px!important;
+    height:54px!important;
+    border-radius:15px!important;
+  }
+}
 
 /* Keep the assistant clear of the bottom navigation and reduce accidental product overlap. */
 .market-robot{z-index:1200!important}
@@ -169,167 +273,4 @@ body.mm-viewer-open{overflow:hidden!important}
   #products .mm-card-actions .mm-eye-icon{font-size:19px!important}
   #products .mm-card-actions b{font-size:11px!important}
   .assistant-figure,#assistantImage{max-width:100px!important}
-}
-
-/* STEP 10 — Customer account */
-.mm-account-button{position:fixed;left:14px;bottom:150px;z-index:9996;display:flex;align-items:center;gap:7px;border:1px solid rgba(255,122,0,.38);background:rgba(9,13,18,.94);color:#fff;border-radius:999px;padding:9px 12px;box-shadow:0 8px 24px rgba(0,0,0,.3);font:800 12px/1 system-ui,-apple-system,Segoe UI,sans-serif;backdrop-filter:blur(10px);cursor:pointer;-webkit-tap-highlight-color:transparent}
-.mm-account-button:active{transform:scale(.98)}
-.mm-account-button.mm-account-filled{border-color:rgba(255,122,0,.75)}
-.mm-account-icon{font-size:17px;line-height:1}.mm-account-label{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mm-account-modal{position:fixed;inset:0;z-index:10020;display:none;align-items:center;justify-content:center;padding:18px}.mm-account-modal.show{display:flex}
-.mm-account-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(5px)}
-.mm-account-panel{position:relative;width:min(420px,100%);border:1px solid rgba(255,122,0,.28);border-radius:22px;background:linear-gradient(180deg,#111820,#0a0f14);box-shadow:0 24px 70px rgba(0,0,0,.55);padding:20px;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
-.mm-account-close{position:absolute;right:12px;top:10px;width:36px;height:36px;border:0;border-radius:50%;background:rgba(255,255,255,.07);color:#fff;font-size:25px;line-height:1;cursor:pointer}
-.mm-account-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}.mm-account-avatar{width:46px;height:46px;display:grid;place-items:center;border-radius:14px;background:rgba(255,122,0,.14);font-size:24px}.mm-account-kicker{font-size:10px;font-weight:900;letter-spacing:1.4px;color:#ff7a00}.mm-account-head h3{margin:3px 0 0;font-size:22px}
-.mm-account-panel label{display:block;margin:12px 0 0;font-size:12px;font-weight:800;color:#cbd2da}.mm-account-panel input{display:block;width:100%;box-sizing:border-box;margin-top:7px;padding:13px 14px;border-radius:13px;border:1px solid rgba(255,255,255,.12);outline:0;background:#080d12;color:#fff;font:600 14px system-ui}.mm-account-panel input:focus{border-color:rgba(255,122,0,.75)}
-.mm-account-note{margin:14px 0;color:#89939f;font-size:11px;line-height:1.45}.mm-account-save{width:100%;border:0;border-radius:13px;padding:13px;background:#ff7a00;color:#111;font-weight:900;font-size:14px;cursor:pointer}.mm-account-clear{width:100%;margin-top:8px;border:1px solid rgba(255,255,255,.1);border-radius:13px;padding:11px;background:transparent;color:#9ca6b1;font-weight:700;font-size:12px;cursor:pointer}
-@media(max-width:650px){.mm-account-button{left:10px;bottom:148px;padding:8px 10px}.mm-account-label{max-width:72px}.mm-account-panel{border-radius:20px;padding:18px}}
-
-/* FINAL — exact 4-icon product action row. Do not let theme styles resize these controls. */
-#products .mm-card-actions.mm-final-icons,
-#products .mm-card-actions{
-  display:grid!important;
-  grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  align-items:center!important;
-  justify-items:center!important;
-  gap:2px!important;
-  width:100%!important;
-  height:62px!important;
-  min-height:62px!important;
-  margin:14px 0 0!important;
-  padding:6px 5px 4px!important;
-  box-sizing:border-box!important;
-  overflow:hidden!important;
-  border-top:1px solid rgba(255,255,255,.08)!important;
-  background:transparent!important;
-}
-#products .mm-card-actions button.mm-social-btn,
-#products .mm-card-actions .mm-social-view{
-  position:relative!important;
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
-  width:100%!important;
-  min-width:0!important;
-  max-width:58px!important;
-  height:56px!important;
-  min-height:56px!important;
-  padding:0!important;
-  margin:0!important;
-  gap:1px!important;
-  background:transparent!important;
-  border:0!important;
-  border-radius:0!important;
-  box-shadow:none!important;
-  color:#fff!important;
-  font-size:11px!important;
-  line-height:1!important;
-  overflow:visible!important;
-}
-#products .mm-card-actions .mm-social-icon{
-  position:relative!important;
-  flex:0 0 42px!important;
-  width:42px!important;
-  height:42px!important;
-  min-width:42px!important;
-  min-height:42px!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  box-sizing:border-box!important;
-  margin:0!important;
-  padding:0!important;
-  color:#fff!important;
-  font-family:Arial,sans-serif!important;
-  font-weight:900!important;
-  line-height:1!important;
-  text-shadow:0 1px 2px rgba(0,0,0,.45)!important;
-  border:0!important;
-}
-#products .mm-card-actions .mm-heart{
-  font-size:31px!important;
-  border-radius:12px!important;
-  background:linear-gradient(145deg,#ff5664,#c90020)!important;
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.35),0 3px 7px rgba(0,0,0,.28)!important;
-}
-#products .mm-card-actions .mm-comment-icon{
-  width:42px!important;
-  height:42px!important;
-  border:0!important;
-  border-radius:12px!important;
-  background:linear-gradient(145deg,#62c2ff,#006fd1)!important;
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.35),0 3px 7px rgba(0,0,0,.28)!important;
-}
-#products .mm-card-actions .mm-comment-icon:before{
-  content:""!important;
-  position:absolute!important;
-  width:23px!important;
-  height:17px!important;
-  left:9px!important;
-  top:10px!important;
-  background:#fff!important;
-  border-radius:50%!important;
-}
-#products .mm-card-actions .mm-comment-icon:after{
-  content:""!important;
-  position:absolute!important;
-  left:25px!important;
-  top:24px!important;
-  width:0!important;
-  height:0!important;
-  border-left:7px solid #fff!important;
-  border-top:5px solid transparent!important;
-  border-bottom:0!important;
-  transform:rotate(12deg)!important;
-}
-#products .mm-card-actions .mm-share-icon{
-  font-size:27px!important;
-  transform:rotate(-32deg)!important;
-  border-radius:12px!important;
-  background:linear-gradient(145deg,#56ed9a,#05a85b)!important;
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.35),0 3px 7px rgba(0,0,0,.28)!important;
-}
-#products .mm-card-actions .mm-eye-icon{
-  font-size:0!important;
-  border-radius:12px!important;
-  background:linear-gradient(145deg,#9aa3b4,#414a5b)!important;
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.35),0 3px 7px rgba(0,0,0,.28)!important;
-}
-#products .mm-card-actions .mm-eye-icon:before{
-  content:""!important;
-  width:23px!important;
-  height:14px!important;
-  border:3px solid #fff!important;
-  border-radius:50%/60%!important;
-  box-sizing:border-box!important;
-}
-#products .mm-card-actions .mm-eye-icon:after{
-  content:""!important;
-  position:absolute!important;
-  width:7px!important;
-  height:7px!important;
-  border-radius:50%!important;
-  background:#fff!important;
-}
-#products .mm-card-actions b{
-  display:block!important;
-  width:auto!important;
-  height:12px!important;
-  min-height:12px!important;
-  margin:0!important;
-  padding:0!important;
-  color:#fff!important;
-  font-size:11px!important;
-  font-weight:800!important;
-  line-height:12px!important;
-}
-#products .mm-card-actions button.mm-social-btn.liked .mm-heart{
-  color:#fff!important;
-  background:linear-gradient(145deg,#ff304d,#a80019)!important;
-}
-@media(max-width:650px){
-  #products .mm-card-actions{height:62px!important;min-height:62px!important;padding:6px 3px 4px!important;gap:1px!important}
-  #products .mm-card-actions button.mm-social-btn,#products .mm-card-actions .mm-social-view{height:56px!important;min-height:56px!important;max-width:52px!important}
-  #products .mm-card-actions .mm-social-icon{width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important}
 }
