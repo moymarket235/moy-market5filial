@@ -1,0 +1,123 @@
+/* МОЙ МАРКЕТ — FINAL HOME FIX 2026-10-04
+   Scope:
+   1) Hide product characteristics ONLY in homepage product cards.
+   2) Repair ONLY the homepage Like icon, including liked state.
+   3) Do NOT modify comment/share/view icons.
+*/
+
+/* =========================================================
+   1. HOMEPAGE: characteristics must not appear in cards
+   ========================================================= */
+#products .product .specs,
+#products .product-card .specs,
+#products [data-product-card] .specs {
+  display: none !important;
+}
+
+/* =========================================================
+   2. HOMEPAGE LIKE — isolated from all other icons
+   ========================================================= */
+
+/* Like button footprint only */
+#products .mm-card-actions > .mm-social-btn[data-mm-action="like"] {
+  position: relative !important;
+  box-sizing: border-box !important;
+  width: 30px !important;
+  min-width: 30px !important;
+  max-width: 30px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  flex: 0 0 30px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Heart drawing: 20x20, always visible */
+#products .mm-card-actions
+> .mm-social-btn[data-mm-action="like"]
+> .mm-heart {
+  position: relative !important;
+  display: block !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
+  flex: 0 0 20px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  color: transparent !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+/* Remove any legacy text/pseudo implementation first */
+#products .mm-card-actions
+> .mm-social-btn[data-mm-action="like"]
+> .mm-heart::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Unliked: clean Instagram-style outline */
+#products .mm-card-actions
+> .mm-social-btn[data-mm-action="like"]
+> .mm-heart::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 20px !important;
+  height: 20px !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z' fill='none' stroke='%23f4f6f8' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 20px 20px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+/* Liked: same geometry, solid red */
+#products .mm-card-actions
+> .mm-social-btn[data-mm-action="like"].liked
+> .mm-heart::before,
+#products .mm-card-actions
+> .mm-social-btn[data-mm-action="like"].is-liked
+> .mm-heart::before,
+#products .mm-card-actions
+> .mm-social-btn[data-mm-action="like"].mm-favorite-active
+> .mm-heart::before {
+  content: "" !important;
+  width: 20px !important;
+  height: 20px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z' fill='%23ff4d55'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 20px 20px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+/* IMPORTANT: leave comment/share/view completely untouched. */
