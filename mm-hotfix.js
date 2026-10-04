@@ -1,4 +1,4 @@
-/* MOY MARKET — FINAL FUNCTIONAL FIX v3.0
+/* MOY MARKET — FINAL FUNCTIONAL FIX v4.0 SAFE
    - keeps the existing engagement logic
    - removes the duplicate heart SVG so only one clean heart is visible
    - makes homepage Like persistent across refreshes
@@ -10,7 +10,7 @@
 (() => {
   'use strict';
 
-  const ICON_VERSION = '3';
+  const ICON_VERSION = '4';
   const ACCOUNT_MODAL_ID = 'mmAccountModal';
   const LIKE_KEY = 'mmHomepageLikesV1';
   const ENGAGEMENT_KEY = 'mmEngagementV20';
@@ -324,27 +324,24 @@
     bindLikePersistence();
     processProducts();
 
-    const products = qs('#products');
-
-    if (products) {
-      const observer = new MutationObserver(() => {
-        ensureBrokenAccountIsGone();
-        processProducts();
-      });
-
-      observer.observe(products, { childList: true, subtree: true });
-    }
-
-    const accountObserver = new MutationObserver(() => {
-      ensureBrokenAccountIsGone();
-    });
-
-    accountObserver.observe(document.body, { childList: true, subtree: true });
+    // IMPORTANT: No MutationObserver on #products.
+    // The catalog is rendered by other site code; observing it here can
+    // create a DOM/render loop and freeze the catalog on "Жүктөлүүдө...".
 
     setTimeout(() => {
       ensureBrokenAccountIsGone();
       processProducts();
-    }, 80);
+    }, 120);
+
+    // Safe periodic restore for async product loading. No DOM observer.
+    if (document.documentElement.dataset.mmHotfixTimerBound !== '1') {
+      document.documentElement.dataset.mmHotfixTimerBound = '1';
+
+      setInterval(() => {
+        ensureBrokenAccountIsGone();
+        processProducts();
+      }, 2500);
+    }
   }
 
   if (document.readyState === 'loading') {
