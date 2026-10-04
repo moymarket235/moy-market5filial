@@ -1,6 +1,7 @@
-/* MOY MARKET — Favorites / Избранное
-   Uses the existing Like button as the favorite trigger.
-   Existing engagement, cart and WhatsApp systems remain untouched.
+/* MOY MARKET — Favorites / Избранное — FIXED
+   • Uses the existing Like button as the favorite trigger.
+   • Places the Favorites button directly under the header cart (#cartBtn).
+   • Does not modify the existing cart/engagement/viewer systems.
 */
 (() => {
   'use strict';
@@ -22,9 +23,7 @@
   }
 
   function save() {
-    try {
-      localStorage.setItem(KEY, JSON.stringify([...favorites]));
-    } catch (_) {}
+    try { localStorage.setItem(KEY, JSON.stringify([...favorites])); } catch (_) {}
   }
 
   function productId(card) {
@@ -49,16 +48,12 @@
   }
 
   function moneySafe(n) {
-    try {
-      if (typeof money === 'function') return money(n);
-    } catch (_) {}
+    try { if (typeof money === 'function') return money(n); } catch (_) {}
     return `${Number(n) || 0} сом`;
   }
 
   function escSafe(v) {
-    try {
-      if (typeof esc === 'function') return esc(v);
-    } catch (_) {}
+    try { if (typeof esc === 'function') return esc(v); } catch (_) {}
     return String(v ?? '').replace(/[&<>"']/g, c => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[c]));
@@ -71,8 +66,9 @@
     button.type = 'button';
     button.className = 'mm-favorites-open';
     button.setAttribute('aria-label', 'Избранное');
+    button.title = 'Избранное';
     button.innerHTML = `
-      <span class="mm-favorites-heart">♡</span>
+      <span class="mm-favorites-hex" aria-hidden="true"><svg class="mm-favorites-hex-svg" viewBox="0 0 48 48" aria-hidden="true"><path class="hex-shape" d="M24 3.5 42 13.8v20.4L24 44.5 6 34.2V13.8L24 3.5Z"></path><path class="hex-heart" d="M24 33.2c-.5-.5-9.2-7.1-9.2-12.7 0-3.1 2.1-5.4 5-5.4 1.9 0 3.5 1 4.2 2.4.7-1.4 2.3-2.4 4.2-2.4 2.9 0 5 2.3 5 5.4 0 5.6-8.7 12.2-9.2 12.7Z"></path></svg></span>
       <span class="mm-favorites-label">Избранное</span>
       <b class="mm-favorites-count">0</b>
     `;
@@ -81,6 +77,37 @@
     document.body.appendChild(button);
     countEl = $('.mm-favorites-count', button);
     syncButton();
+    positionButton();
+
+    window.addEventListener('resize', positionButton, { passive: true });
+    window.addEventListener('scroll', positionButton, { passive: true });
+    setInterval(positionButton, 1200);
+  }
+
+  function positionButton() {
+    if (!button) return;
+    const cart = document.getElementById('cartBtn');
+    if (!cart) return;
+
+    const rect = cart.getBoundingClientRect();
+    const width = button.offsetWidth || 52;
+    const gap = 8;
+
+    let left = rect.left + (rect.width - width) / 2;
+    let top = rect.bottom + gap;
+
+    const maxLeft = window.innerWidth - width - 8;
+    left = Math.max(8, Math.min(left, maxLeft));
+
+    // Keep it inside the viewport when a very tall header is used.
+    if (top + button.offsetHeight > window.innerHeight - 8) {
+      top = Math.max(8, window.innerHeight - button.offsetHeight - 8);
+    }
+
+    button.style.left = `${Math.round(left)}px`;
+    button.style.top = `${Math.round(top)}px`;
+    button.style.right = 'auto';
+    button.style.bottom = 'auto';
   }
 
   function ensurePanel() {
@@ -129,7 +156,7 @@
   }
 
   function syncButton() {
-    if (!countEl) return;
+    if (!countEl || !button) return;
     countEl.textContent = String(favorites.size);
     button.classList.toggle('has-items', favorites.size > 0);
     $('.mm-favorites-heart', button).textContent = favorites.size ? '♥' : '♡';
@@ -140,14 +167,14 @@
     renderFavorites();
     panel.classList.add('show');
     panel.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('mm-favorites-open');
+    document.body.classList.add('mm-favorites-lock');
   }
 
   function closeFavorites() {
     if (!panel) return;
     panel.classList.remove('show');
     panel.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('mm-favorites-open');
+    document.body.classList.remove('mm-favorites-lock');
   }
 
   function renderFavorites() {
@@ -160,9 +187,7 @@
 
     const lang = currentLang();
     $('.mm-favorites-subtitle', panel).textContent =
-      lang === 'ru'
-        ? `${items.length} избранных товаров`
-        : `${items.length} тандалган товар`;
+      lang === 'ru' ? `${items.length} избранных товаров` : `${items.length} тандалган товар`;
 
     if (!items.length) {
       listEl.innerHTML = `
@@ -192,7 +217,7 @@
           <strong>${moneySafe(p.price)}</strong>
           <div class="mm-fav-actions">
             <button type="button" data-fav-add="${escSafe(p.id)}">🛒 ${lang === 'ru' ? 'В корзину' : 'Себетке'}</button>
-            <button type="button" class="mm-fav-remove" data-fav-remove="${escSafe(p.id)}">♡</button>
+            <button type="button" class="mm-fav-remove" data-fav-remove="${escSafe(p.id)}" aria-label="Удалить">♡</button>
           </div>
         </div>
       </article>
@@ -223,9 +248,7 @@
 
     const card = $(`#products .photo[data-product-id="${CSS.escape(sid)}"]`)?.closest('.product');
     const like = card?.querySelector('[data-mm-action="like"]');
-    if (like?.classList.contains('liked')) {
-      like.click();
-    }
+    if (like?.classList.contains('liked')) like.click();
 
     if (panel?.classList.contains('show')) renderFavorites();
   }
@@ -247,7 +270,6 @@
       }
     }, true);
 
-    // Keep favorites visually in sync when the catalog is re-rendered.
     const root = $('#products');
     if (root) {
       const observer = new MutationObserver(() => {
@@ -277,10 +299,12 @@
     ensurePanel();
     bindLikeWatcher();
     restoreLikeState();
+    positionButton();
 
     setInterval(() => {
       restoreLikeState();
       syncButton();
+      positionButton();
       if (panel?.classList.contains('show')) renderFavorites();
     }, 1200);
 
