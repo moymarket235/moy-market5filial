@@ -1,11 +1,11 @@
-/* MOY MARKET — detailed product information inside the existing product viewer.
-   This file does NOT replace the existing engagement viewer.
-   Like / Comment / Share / View remain handled by mm-engagement.js + mm-viewer-hotfix.js.
+/* MOY MARKET — product details for the EXISTING engagement viewer.
+   Safe version: no MutationObserver loop. Existing like/comment/share/view stay intact.
 */
 (() => {
   'use strict';
 
-  const $ = (s, r = document) => r.querySelector(s);
+  const qs = (s, r = document) => r.querySelector(s);
+  let lastProductKey = '';
 
   function getProductFromViewer(viewer) {
     const card = viewer?._card;
@@ -40,21 +40,17 @@
 
   function getSpecs(product) {
     if (!product) return [];
-    let lang = 'ky';
-    try {
-      if (typeof window.lang === 'string') lang = window.lang;
-    } catch (_) {}
 
-    // app.js stores language in localStorage, so use that as the reliable fallback.
-    try {
-      lang = localStorage.getItem('moyLang') || lang;
-    } catch (_) {}
+    let lang = 'ky';
+    try { lang = localStorage.getItem('moyLang') || 'ky'; } catch (_) {}
 
     const specs = lang === 'ru'
       ? (product.characteristicsRu || product.characteristics || [])
       : (product.characteristics || product.characteristicsRu || []);
 
-    if (Array.isArray(specs) && specs.length) return specs.filter(Boolean).map(String);
+    if (Array.isArray(specs) && specs.length) {
+      return specs.filter(Boolean).map(String);
+    }
 
     const desc = lang === 'ru'
       ? (product.descriptionRu || product.description || '')
@@ -63,16 +59,25 @@
     return desc ? [String(desc)] : [];
   }
 
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>\"']/g, ch => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[ch]);
+  }
+
   function ensureDetailBox(viewer) {
-    const body = $('.mm-viewer-body', viewer);
-    const actions = $('.mm-viewer-actions', viewer);
+    const body = qs('.mm-viewer-body', viewer);
+    const actions = qs('.mm-viewer-actions', viewer);
     if (!body) return null;
 
-    let box = $('.mm-product-detail-box', viewer);
+    let box = qs('.mm-product-detail-box', viewer);
     if (!box) {
       box = document.createElement('section');
       box.className = 'mm-product-detail-box';
-      box.setAttribute('aria-label', 'Product characteristics');
       box.innerHTML = `
         <b class="mm-product-detail-title">Характеристикалары:</b>
         <ul class="mm-product-detail-list"></ul>
@@ -87,50 +92,51 @@
   function refresh(viewer) {
     if (!viewer || !viewer.classList.contains('show')) return;
 
-    const box = ensureDetailBox(viewer);
-    if (!box) return;
+    const card = viewer._card;
+    if (!card) return;
 
     const product = getProductFromViewer(viewer);
-    const list = getSpecs(product);
-    const title = $('.mm-product-detail-title', box);
-    const ul = $('.mm-product-detail-list', box);
+    const key = product
+      ? String(product.id || product.name || product.nameRu || '')
+      : ((card.querySelector('.pname, h3, .product-name, .product-title')?.textContent || '').trim());
+
+    if (key === lastProductKey && qs('.mm-product-detail-box', viewer)) return;
+    lastProductKey = key;
+
+    const box = ensureDetailBox(viewer);
+    if (!box) return;
 
     const lang = (() => {
       try { return localStorage.getItem('moyLang') || 'ky'; } catch (_) { return 'ky'; }
     })();
 
+    const specs = getSpecs(product);
+    const title = qs('.mm-product-detail-title', box);
+    const ul = qs('.mm-product-detail-list', box);
+
     if (title) title.textContent = lang === 'ru' ? 'Характеристики:' : 'Характеристикалары:';
     if (ul) {
-      ul.innerHTML = list.length
-        ? list.map(x => `<li>${escapeHtml(x)}</li>`).join('')
+      ul.innerHTML = specs.length
+        ? specs.map(x => `<li>${escapeHtml(x)}</li>`).join('')
         : `<li>${lang === 'ru' ? 'Дополнительная информация отсутствует.' : 'Кошумча маалымат жок.'}</li>`;
     }
   }
 
-  function escapeHtml(value) {
-    return String(value ?? '').replace(/[&<>"']/g, ch => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    })[ch]);
-  }
-
   function boot() {
-    const observer = new MutationObserver(() => {
-      const viewer = $('#mmProductViewer');
-      if (!viewer) return;
-      refresh(viewer);
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
-
-    // The viewer is created only after the first product click.
+    // The existing engagement viewer is created only after a product is opened.
+    // Polling is intentionally used instead of a DOM observer to avoid a mutation loop.
     setInterval(() => {
-      const viewer = $('#mmProductViewer');
-      if (viewer) refresh(viewer);
-    }, 400);
+      const viewer = qs('#mmProductViewer');
+      if (!viewer) {
+        lastProductKey = '';
+        return;
+      }
+      if (!viewer.classList.contains('show')) {
+        lastProductKey = '';
+        return;
+      }
+      refresh(viewer);
+    }, 350);
   }
 
   if (document.readyState === 'loading') {

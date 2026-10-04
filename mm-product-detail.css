@@ -1,29 +1,25 @@
-/* MOY MARKET — Product cards + detailed product viewer
-   Keeps the existing Like / Comment / Share / View engagement bar.
-*/
+/* MOY MARKET — product cards + existing viewer details */
 
-/* MAIN PAGE: show only product image + price + engagement icons. */
+/* MAIN PAGE: image + engagement icons + price only.
+   Do NOT remove the existing like/comment/share/view bar. */
 #products .product .pname,
 #products .product .desc,
+#products .product .specs,
 #products .product .buy {
   display: none !important;
 }
 
 #products .product .pbody {
-  padding: 10px 11px 8px !important;
+  padding: 8px 10px 9px !important;
 }
 
 #products .product .price {
-  margin: 0 0 7px !important;
+  margin: 0 !important;
   text-align: center;
   width: 100%;
 }
 
-#products .product .mm-card-actions {
-  margin-top: 0 !important;
-}
-
-/* VIEWER: product details panel */
+/* EXISTING LARGE VIEWER: add a clean characteristics panel. */
 #mmProductViewer .mm-viewer-body {
   display: flex !important;
   flex-direction: column !important;
@@ -36,11 +32,14 @@
   background: rgba(255,255,255,.055) !important;
   border: 1px solid rgba(255,255,255,.10) !important;
   color: #fff !important;
+  max-height: 34vh !important;
+  overflow: auto !important;
 }
 
 #mmProductViewer .mm-product-detail-title {
   display: block !important;
   margin: 0 0 8px !important;
+  color: #fff !important;
   font-size: 14px !important;
   font-weight: 900 !important;
 }
@@ -59,7 +58,7 @@
 
 @media (max-width: 650px) {
   #products .product .pbody {
-    padding: 8px 8px 6px !important;
+    padding: 7px 8px 6px !important;
   }
 
   #products .product .price {
@@ -67,7 +66,9 @@
   }
 
   #mmProductViewer .mm-product-detail-box {
-    padding: 12px 13px !important;
+    margin: 8px 0 7px !important;
+    padding: 11px 12px !important;
+    max-height: 31vh !important;
   }
 
   #mmProductViewer .mm-product-detail-title {
@@ -76,5 +77,6 @@
 
   #mmProductViewer .mm-product-detail-list {
     font-size: 11px !important;
+    line-height: 1.45 !important;
   }
 }
