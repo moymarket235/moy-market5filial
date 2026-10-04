@@ -1,63 +1,74 @@
-/* =========================================================
-   МОЙ МАРКЕТ — Избранное V12
-   Стиль: шестигранник + сердце
-   Тёмная тема + фирменный оранжевый
-   ========================================================= */
+/* МОЙ МАРКЕТ — ИЗБРАННОЕ FINAL V14
+   Кнопка находится физически сразу ПОД корзиной.
+   Не требует fixed-positioning и не зависит от вычисления координат.
+*/
 
-/* Не блокируем страницу без необходимости */
-body.mm-favorites-lock {
-  overflow: hidden;
+.mm-cart-favorites-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 7px;
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 20;
 }
 
-/* =========================================================
-   КНОПКА «ИЗБРАННОЕ»
-   JS позиционирует её прямо под корзиной #cartBtn
-   ========================================================= */
+.mm-cart-favorites-stack .cart-mini {
+  flex: 0 0 auto;
+}
+
+/* ------------------ FAVORITES BUTTON ------------------ */
 
 .mm-favorites-open {
-  position: fixed;
-  z-index: 1395;
-  width: 52px;
-  height: 52px;
+  position: relative;
+  flex: 0 0 46px;
+
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  min-height: 46px;
+
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
 
-  border: 1px solid rgba(255, 122, 0, 0.32);
-  border-radius: 16px;
+  border: 1px solid rgba(255,122,0,.34);
+  border-radius: 14px;
 
-  background:
-    radial-gradient(circle at 50% 35%, rgba(255,122,0,.07), transparent 58%),
-    rgba(8, 14, 20, .96);
+  background: linear-gradient(
+    180deg,
+    rgba(18,28,37,.98),
+    rgba(7,13,19,.98)
+  );
 
   color: #fff;
+  cursor: pointer;
+
+  box-sizing: border-box;
+  overflow: visible;
+
   box-shadow:
-    0 10px 28px rgba(0,0,0,.36),
+    0 7px 20px rgba(0,0,0,.30),
     inset 0 0 0 1px rgba(255,255,255,.025);
 
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  cursor: pointer;
-  user-select: none;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 
   transition:
-    transform .18s ease,
-    border-color .18s ease,
-    box-shadow .18s ease,
-    background .18s ease;
+    transform .16s ease,
+    border-color .16s ease,
+    box-shadow .16s ease,
+    background .16s ease;
 }
 
 .mm-favorites-open:hover {
   border-color: rgba(255,122,0,.78);
   box-shadow:
-    0 12px 30px rgba(0,0,0,.4),
-    0 0 18px rgba(255,122,0,.13);
+    0 9px 24px rgba(0,0,0,.36),
+    0 0 17px rgba(255,122,0,.13);
 }
 
 .mm-favorites-open:active {
@@ -69,7 +80,6 @@ body.mm-favorites-lock {
   outline-offset: 2px;
 }
 
-/* Шестигранник V12 */
 .mm-favorites-hex {
   width: 31px;
   height: 31px;
@@ -86,56 +96,47 @@ body.mm-favorites-lock {
 
 .mm-favorites-hex-svg .hex-shape {
   fill: none;
-  stroke: #e8edf2;
+  stroke: #e9eef3;
   stroke-width: 2.5;
   stroke-linejoin: round;
-  transition:
-    fill .18s ease,
-    stroke .18s ease,
-    filter .18s ease;
+  transition: .18s ease;
 }
 
 .mm-favorites-hex-svg .hex-heart {
-  fill: #e8edf2;
-  transition:
-    fill .18s ease,
-    filter .18s ease;
+  fill: #e9eef3;
+  transition: .18s ease;
 }
 
-/* Выбранное состояние */
 .mm-favorites-open.has-items {
-  border-color: rgba(255,122,0,.66);
+  border-color: rgba(255,122,0,.76);
   background:
     radial-gradient(circle at 50% 35%, rgba(255,122,0,.18), transparent 62%),
     rgba(8,14,20,.98);
+
   box-shadow:
-    0 10px 28px rgba(0,0,0,.4),
-    0 0 20px rgba(255,122,0,.12);
+    0 8px 23px rgba(0,0,0,.35),
+    0 0 18px rgba(255,122,0,.14);
 }
 
-.mm-favorites-open.has-items .mm-favorites-hex-svg .hex-shape {
+.mm-favorites-open.has-items .hex-shape {
   fill: #ff7a00;
   stroke: #ff7a00;
-  filter: drop-shadow(0 0 7px rgba(255,122,0,.38));
+  filter: drop-shadow(0 0 7px rgba(255,122,0,.36));
 }
 
-.mm-favorites-open.has-items .mm-favorites-hex-svg .hex-heart {
+.mm-favorites-open.has-items .hex-heart {
   fill: #111820;
 }
 
-/* Старый тексттик көрүнбөйт */
-.mm-favorites-label {
-  display: none !important;
-}
-
-/* Сан */
+/* Санды кичинекей badge кылып көрсөтөбүз */
 .mm-favorites-count {
   position: absolute;
-  top: -5px;
-  right: -5px;
+  top: -7px;
+  right: -7px;
 
   min-width: 19px;
   height: 19px;
+
   padding: 0 5px;
   box-sizing: border-box;
 
@@ -148,30 +149,28 @@ body.mm-favorites-lock {
   background: #ff7a00;
   color: #fff;
 
-  font-family: inherit;
-  font-size: 10px;
-  font-weight: 900;
-  line-height: 1;
-
+  font: 900 10px/1 inherit;
   box-shadow: 0 4px 12px rgba(255,122,0,.28);
 }
 
-/* =========================================================
-   ИЗБРАННОЕ — ОҢ ЖАКТАН ЧЫККАН PANEL
-   ========================================================= */
+/* ------------------ PANEL ------------------ */
+
+body.mm-favorites-lock {
+  overflow: hidden;
+}
 
 .mm-favorites-panel {
   position: fixed;
   inset: 0;
-  z-index: 1400;
+  z-index: 1500;
 
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 
   transition:
-    opacity .2s ease,
-    visibility .2s ease;
+    opacity .20s ease,
+    visibility .20s ease;
 }
 
 .mm-favorites-panel.show {
@@ -180,18 +179,15 @@ body.mm-favorites-lock {
   pointer-events: auto;
 }
 
-/* Фон */
 .mm-favorites-backdrop {
   position: absolute;
   inset: 0;
-
-  background: rgba(2, 6, 10, .74);
+  background: rgba(2,6,10,.76);
 
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
 }
 
-/* Drawer */
 .mm-favorites-drawer {
   position: absolute;
   top: 0;
@@ -201,21 +197,19 @@ body.mm-favorites-lock {
   width: min(430px, 94vw);
   max-width: 100vw;
 
+  padding: 20px 15px 18px;
   box-sizing: border-box;
-  padding: 22px 16px 20px;
 
   overflow-x: hidden;
   overflow-y: auto;
-  overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 
   background:
-    radial-gradient(circle at 100% 0, rgba(255,122,0,.08), transparent 28%),
-    linear-gradient(180deg, #101820 0%, #070d13 100%);
+    radial-gradient(circle at 100% 0, rgba(255,122,0,.10), transparent 30%),
+    linear-gradient(180deg,#101820 0%,#070d13 100%);
 
   border-left: 1px solid rgba(255,255,255,.10);
-
-  box-shadow: -20px 0 70px rgba(0,0,0,.42);
+  box-shadow: -22px 0 75px rgba(0,0,0,.44);
 
   transform: translateX(100%);
   transition: transform .28s ease;
@@ -225,102 +219,85 @@ body.mm-favorites-lock {
   transform: translateX(0);
 }
 
-/* Башы */
 .mm-favorites-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 15px;
-  margin-bottom: 16px;
+  gap: 12px;
+  margin-bottom: 15px;
 }
 
-.mm-favorites-kicker {
-  display: block;
-  margin-bottom: 4px;
-
-  color: #ff8b1c;
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  line-height: 1.2;
-}
-
-.mm-favorites-head h2 {
+.mm-favorites-title {
   margin: 0;
   color: #fff;
   font-size: 25px;
   font-weight: 900;
-  line-height: 1.15;
+  line-height: 1.12;
 }
 
 .mm-favorites-subtitle {
   display: block;
   margin-top: 6px;
-  color: #8997a5;
+  color: #8e9aa6;
   font-size: 11px;
   line-height: 1.35;
 }
 
 .mm-favorites-close {
-  flex: 0 0 auto;
-
   width: 42px;
   height: 42px;
-  margin: 0;
-  padding: 0;
+  flex: 0 0 42px;
 
-  border: 1px solid rgba(255,255,255,.08);
+  padding: 0;
+  margin: 0;
+
+  border: 1px solid rgba(255,255,255,.09);
   border-radius: 50%;
 
   background: rgba(255,255,255,.07);
   color: #fff;
 
-  font-size: 27px;
+  font-size: 28px;
   line-height: 1;
-
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
 }
 
-.mm-favorites-close:active {
-  transform: scale(.94);
-}
-
-/* Тизмеси */
 .mm-favorites-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-/* Товар карточкасы */
 .mm-fav-card {
   display: grid;
-  grid-template-columns: 92px minmax(0, 1fr);
-  gap: 11px;
+  grid-template-columns: 88px minmax(0,1fr);
+  gap: 10px;
   align-items: center;
 
-  width: 100%;
+  padding: 9px;
   box-sizing: border-box;
-  padding: 10px;
 
   border: 1px solid rgba(255,255,255,.08);
   border-radius: 16px;
 
-  background: linear-gradient(180deg, #111c25 0%, #0b1218 100%);
+  background: linear-gradient(
+    180deg,
+    #111c25 0%,
+    #0b1218 100%
+  );
 }
 
 .mm-fav-image {
-  width: 92px;
-  height: 92px;
+  width: 88px;
+  height: 88px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   overflow: hidden;
-
   border-radius: 13px;
+
   background: #f5f5f4;
 }
 
@@ -329,7 +306,6 @@ body.mm-favorites-lock {
   height: 100%;
   padding: 5px;
   box-sizing: border-box;
-
   display: block;
   object-fit: contain;
 }
@@ -338,57 +314,47 @@ body.mm-favorites-lock {
   min-width: 0;
 }
 
-.mm-fav-info > b {
-  display: block;
-  margin: 0 0 6px;
-
-  overflow: hidden;
-
+.mm-fav-name {
+  margin: 0 0 7px;
   color: #fff;
+
   font-size: 12px;
   font-weight: 800;
-  line-height: 1.3;
+  line-height: 1.32;
 
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.mm-fav-info > strong {
+.mm-fav-price {
   display: block;
   margin: 0 0 9px;
 
   color: #ff8b1c;
   font-size: 17px;
   font-weight: 900;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
-/* Кнопкалар */
 .mm-fav-actions {
   display: flex;
   align-items: center;
   gap: 7px;
-  flex-wrap: wrap;
 }
 
 .mm-fav-actions button {
-  min-height: 36px;
+  min-height: 35px;
   border: 0;
   border-radius: 10px;
+  padding: 0 10px;
 
   background: #ff7a00;
   color: #fff;
 
-  padding: 0 10px;
-
-  font-family: inherit;
-  font-size: 10px;
-  font-weight: 900;
-  line-height: 1;
-
+  font: 900 10px/1 inherit;
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
 
   transition: transform .15s ease, filter .15s ease;
 }
@@ -397,154 +363,127 @@ body.mm-favorites-lock {
   transform: scale(.96);
 }
 
-.mm-fav-actions button:hover {
-  filter: brightness(1.06);
-}
-
 .mm-fav-actions .mm-fav-remove {
-  width: 38px;
+  width: 37px;
   padding: 0;
 
   background: rgba(255,255,255,.08);
-  color: #ff6670;
+  color: #ff6b73;
 
-  font-size: 21px;
+  font-size: 20px;
 }
 
-/* Бош абалы */
 .mm-favorites-empty {
-  padding: 65px 18px;
+  padding: 62px 18px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   text-align: center;
 
-  border: 1px dashed rgba(255,255,255,.12);
+  border: 1px dashed rgba(255,255,255,.13);
   border-radius: 18px;
 
-  color: #9aa7b3;
+  background: rgba(255,255,255,.025);
 }
 
 .mm-favorites-empty-icon {
-  margin-bottom: 12px;
+  width: 66px;
+  height: 66px;
+  margin-bottom: 13px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 20px;
+  background: rgba(255,122,0,.10);
+
   color: #ff7a00;
-  font-size: 58px;
-  line-height: 1;
+  font-size: 37px;
 }
 
-.mm-favorites-empty h3 {
-  margin: 0 0 7px;
+.mm-favorites-empty strong {
+  margin-bottom: 7px;
   color: #fff;
-  font-size: 18px;
-  font-weight: 900;
+  font-size: 14px;
 }
 
-.mm-favorites-empty p {
-  max-width: 310px;
-  margin: 0 auto 16px;
-
+.mm-favorites-empty span {
+  max-width: 280px;
+  color: #8d99a4;
   font-size: 11px;
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
-.mm-favorites-go {
-  min-height: 42px;
-  border: 0;
-  border-radius: 11px;
-
-  background: #ff7a00;
-  color: #fff;
-
-  padding: 0 16px;
-
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 900;
-
-  cursor: pointer;
+/* Лайк баскычы менен бирдей көрүнсүн */
+[data-mm-action="like"].mm-favorite-active,
+[data-mm-action="like"].is-liked {
+  color: #ff6670 !important;
 }
 
-/* =========================================================
-   MOBILE
-   ========================================================= */
+/* ------------------ MOBILE ------------------ */
 
-@media (max-width: 650px) {
+@media (max-width: 760px) {
+  .mm-cart-favorites-stack {
+    gap: 6px;
+  }
+
   .mm-favorites-open {
-    width: 48px;
-    height: 48px;
-    border-radius: 15px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    flex-basis: 44px;
+    border-radius: 13px;
   }
 
   .mm-favorites-hex,
   .mm-favorites-hex-svg {
-    width: 28px;
-    height: 28px;
-  }
-
-  .mm-favorites-count {
-    top: -4px;
-    right: -4px;
-    min-width: 17px;
-    height: 17px;
-    padding: 0 4px;
-    font-size: 9px;
+    width: 29px;
+    height: 29px;
   }
 
   .mm-favorites-drawer {
-    width: 100%;
-    max-width: none;
-    padding: 16px 11px 85px;
-    border-left: 0;
+    width: min(430px, 96vw);
+    padding: 17px 12px 16px;
   }
 
-  .mm-favorites-head h2 {
-    font-size: 22px;
+  .mm-favorites-title {
+    font-size: 23px;
   }
 
   .mm-fav-card {
-    grid-template-columns: 82px minmax(0, 1fr);
+    grid-template-columns: 82px minmax(0,1fr);
   }
 
   .mm-fav-image {
     width: 82px;
     height: 82px;
   }
-
-  .mm-fav-info > b {
-    font-size: 11px;
-  }
-
-  .mm-fav-info > strong {
-    font-size: 16px;
-  }
 }
 
-/* Өтө кичине экрандар */
-@media (max-width: 380px) {
+@media (max-width: 430px) {
+  .mm-cart-favorites-stack {
+    gap: 5px;
+  }
+
   .mm-favorites-open {
-    width: 46px;
-    height: 46px;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    flex-basis: 42px;
   }
 
-  .mm-fav-card {
-    grid-template-columns: 74px minmax(0, 1fr);
-    gap: 9px;
+  .mm-favorites-count {
+    top: -6px;
+    right: -6px;
   }
 
-  .mm-fav-image {
-    width: 74px;
-    height: 74px;
-  }
-
-  .mm-fav-actions button {
-    min-height: 34px;
-    padding: 0 8px;
-  }
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .mm-favorites-open,
-  .mm-favorites-panel,
-  .mm-favorites-drawer,
-  .mm-fav-actions button {
-    transition: none !important;
+  .mm-favorites-drawer {
+    width: 100vw;
+    padding-left: 11px;
+    padding-right: 11px;
   }
 }
