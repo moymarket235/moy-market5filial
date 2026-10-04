@@ -388,3 +388,208 @@ body.mm-viewer-open{overflow:hidden!important}
   #products .mm-card-actions .mm-eye-icon{font-size:16px!important;}
   #products .mm-card-actions b{font-size:9px!important;line-height:11px!important;height:11px!important;}
 }
+
+/* STEP 10.7 — OPTION 9 EXACT / MOBILE ORDER LOCK
+   Only the social-action row is overridden. Everything else stays unchanged.
+*/
+#products .mm-card-actions{
+  width:100%!important;
+  height:76px!important;
+  min-height:76px!important;
+  margin:12px 0 0!important;
+  padding:7px 8px 8px!important;
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,1fr)!important;
+  align-items:start!important;
+  justify-items:center!important;
+  column-gap:2px!important;
+  row-gap:0!important;
+  border-top:0!important;
+  border-bottom:0!important;
+  background:transparent!important;
+  overflow:hidden!important;
+}
+
+#products .mm-card-actions button.mm-social-btn,
+#products .mm-card-actions .mm-social-view{
+  position:relative!important;
+  width:54px!important;
+  min-width:54px!important;
+  max-width:54px!important;
+  height:62px!important;
+  min-height:62px!important;
+  margin:0!important;
+  padding:0!important;
+  flex:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:4px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:#fff!important;
+  overflow:visible!important;
+  line-height:1!important;
+}
+
+#products .mm-card-actions .mm-social-icon{
+  position:relative!important;
+  width:52px!important;
+  height:52px!important;
+  min-width:52px!important;
+  min-height:52px!important;
+  max-width:52px!important;
+  max-height:52px!important;
+  flex:0 0 52px!important;
+  margin:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+  border-radius:14px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  color:#fff!important;
+}
+
+/* Heart */
+#products .mm-card-actions .mm-heart{
+  font-size:31px!important;
+  line-height:52px!important;
+  background:linear-gradient(180deg,#ff5b69 0%,#ef2438 52%,#c9001e 100%)!important;
+  border:1px solid rgba(255,255,255,.22)!important;
+  box-shadow:inset 0 2px 2px rgba(255,255,255,.34),inset 0 -5px 8px rgba(80,0,10,.28),0 5px 10px rgba(0,0,0,.28)!important;
+  text-shadow:0 2px 2px rgba(120,0,10,.32)!important;
+}
+
+/* Comment */
+#products .mm-card-actions .mm-comment-icon{
+  font-size:0!important;
+  background:linear-gradient(180deg,#57b8ff 0%,#1684ec 52%,#0756b4 100%)!important;
+  border:1px solid rgba(255,255,255,.22)!important;
+  box-shadow:inset 0 2px 2px rgba(255,255,255,.34),inset 0 -5px 8px rgba(0,35,100,.28),0 5px 10px rgba(0,0,0,.28)!important;
+}
+#products .mm-card-actions .mm-comment-icon:before{
+  content:""!important;
+  position:absolute!important;
+  width:29px!important;
+  height:21px!important;
+  left:11px!important;
+  top:14px!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+#products .mm-card-actions .mm-comment-icon:after{
+  content:""!important;
+  position:absolute!important;
+  width:10px!important;
+  height:9px!important;
+  left:31px!important;
+  top:30px!important;
+  background:#fff!important;
+  border:0!important;
+  clip-path:polygon(0 0,100% 0,100% 100%)!important;
+  transform:none!important;
+}
+
+/* Share */
+#products .mm-card-actions .mm-share-icon{
+  font-size:31px!important;
+  line-height:52px!important;
+  transform:rotate(-32deg)!important;
+  background:linear-gradient(180deg,#54ed8d 0%,#12be65 52%,#078442 100%)!important;
+  border:1px solid rgba(255,255,255,.22)!important;
+  box-shadow:inset 0 2px 2px rgba(255,255,255,.34),inset 0 -5px 8px rgba(0,65,35,.28),0 5px 10px rgba(0,0,0,.28)!important;
+  text-shadow:0 2px 2px rgba(0,80,35,.3)!important;
+}
+
+/* View */
+#products .mm-card-actions .mm-eye-icon{
+  font-size:0!important;
+  background:linear-gradient(180deg,#9aa3b6 0%,#5d687d 55%,#303746 100%)!important;
+  border:1px solid rgba(255,255,255,.2)!important;
+  box-shadow:inset 0 2px 2px rgba(255,255,255,.28),inset 0 -5px 8px rgba(0,0,0,.28),0 5px 10px rgba(0,0,0,.28)!important;
+}
+#products .mm-card-actions .mm-eye-icon:before{
+  content:""!important;
+  position:absolute!important;
+  width:29px!important;
+  height:19px!important;
+  left:11px!important;
+  top:16px!important;
+  border:0!important;
+  border-radius:70% 30% 70% 30%!important;
+  background:#fff!important;
+  transform:rotate(45deg)!important;
+  box-shadow:none!important;
+}
+#products .mm-card-actions .mm-eye-icon:after{
+  content:""!important;
+  position:absolute!important;
+  width:9px!important;
+  height:9px!important;
+  left:21px!important;
+  top:21px!important;
+  border-radius:50%!important;
+  background:#586174!important;
+  z-index:2!important;
+}
+
+/* Counts sit directly under each icon, centered and never outside the card. */
+#products .mm-card-actions b{
+  position:static!important;
+  width:100%!important;
+  min-width:0!important;
+  height:13px!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  font-size:12px!important;
+  line-height:13px!important;
+  font-weight:800!important;
+  color:#fff!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.45)!important;
+}
+
+#products .mm-card-actions .mm-social-btn.liked .mm-heart{
+  filter:brightness(1.08)!important;
+  box-shadow:inset 0 2px 2px rgba(255,255,255,.4),inset 0 -5px 8px rgba(80,0,10,.25),0 0 14px rgba(255,55,70,.45)!important;
+}
+
+@media(max-width:650px){
+  #products .mm-card-actions{
+    height:76px!important;
+    min-height:76px!important;
+    padding:7px 5px 8px!important;
+    column-gap:0!important;
+  }
+  #products .mm-card-actions button.mm-social-btn,
+  #products .mm-card-actions .mm-social-view{
+    width:54px!important;
+    min-width:54px!important;
+    max-width:54px!important;
+    height:62px!important;
+    min-height:62px!important;
+  }
+  #products .mm-card-actions .mm-social-icon{
+    width:52px!important;
+    height:52px!important;
+    min-width:52px!important;
+    min-height:52px!important;
+    max-width:52px!important;
+    max-height:52px!important;
+    flex-basis:52px!important;
+    border-radius:14px!important;
+  }
+  #products .mm-card-actions .mm-heart{font-size:31px!important}
+  #products .mm-card-actions .mm-share-icon{font-size:31px!important}
+  #products .mm-card-actions b{font-size:12px!important;line-height:13px!important;height:13px!important}
+}
