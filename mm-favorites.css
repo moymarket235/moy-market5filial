@@ -628,3 +628,48 @@ body.mm-favorites-lock {
     height: 82px !important;
   }
 }
+
+
+/* ---------- FINAL LIKE ICON SIZE FIX ---------- */
+/* The like icon is an inline SVG inside .mm-heart.
+   Keep the SVG itself the same visual size as the other icons. */
+#products .mm-card-actions .mm-heart {
+  width: 23px !important;
+  height: 23px !important;
+  min-width: 23px !important;
+  min-height: 23px !important;
+  flex: 0 0 23px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background-image: none !important;
+  overflow: hidden !important;
+}
+
+#products .mm-card-actions .mm-heart svg {
+  width: 23px !important;
+  height: 23px !important;
+  min-width: 23px !important;
+  min-height: 23px !important;
+  max-width: 23px !important;
+  max-height: 23px !important;
+  display: block !important;
+  flex: 0 0 23px !important;
+}
+
+#products .mm-card-actions .mm-heart svg path {
+  vector-effect: non-scaling-stroke !important;
+}
+
+#products .mm-card-actions .mm-social-btn.liked .mm-heart svg,
+#products .mm-card-actions .mm-social-btn.is-liked .mm-heart svg,
+#products .mm-card-actions .mm-social-btn.mm-favorite-active .mm-heart svg {
+  width: 23px !important;
+  height: 23px !important;
+  min-width: 23px !important;
+  min-height: 23px !important;
+  max-width: 23px !important;
+  max-height: 23px !important;
+}
