@@ -1,23 +1,595 @@
-/* Мой Маркет — Instagram-like heart size fix V17 */
-.mm-social-btn[data-mm-action="like"] .mm-heart,
-.mm-social-btn[data-mm-action="like"] .mm-social-icon.mm-heart {
+/* МОЙ МАРКЕТ — ИЗБРАННОЕ FINAL V15 */
+
+/* ---------- CART + FAVORITES ---------- */
+
+.mm-cart-favorites-stack {
+  position: relative !important;
+  display: block !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 40px !important;
+}
+
+.mm-cart-favorites-stack .cart-mini {
+  flex: 0 0 auto !important;
+}
+
+/* Избранное: корзинанын астында */
+.mm-cart-favorites-stack .mm-favorites-open {
+  position: absolute !important;
+
+  left: 50% !important;
+  top: calc(100% + 12px) !important;
+
+  width: 46px !important;
+  height: 46px !important;
+
+  min-width: 46px !important;
+  min-height: 46px !important;
+
+  transform: translateX(-50%) !important;
+
+  z-index: 1400 !important;
+}
+
+/* ---------- FAVORITES BUTTON ---------- */
+
+.mm-favorites-open {
+  box-sizing: border-box !important;
+
+  display: grid !important;
+  place-items: center !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  border: 1px solid rgba(
+    255,122,0,.34
+  ) !important;
+
+  border-radius: 14px !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,28,37,.98),
+      rgba(7,13,19,.98)
+    ) !important;
+
+  color: #fff !important;
+
+  cursor: pointer !important;
+
+  overflow: visible !important;
+
+  box-shadow:
+    0 7px 20px rgba(0,0,0,.30),
+    inset 0 0 0 1px
+    rgba(255,255,255,.025) !important;
+
+  -webkit-tap-highlight-color: transparent !important;
+  touch-action: manipulation !important;
+}
+
+.mm-favorites-open:active {
+  transform:
+    translateX(-50%)
+    scale(.94) !important;
+}
+
+.mm-favorites-open.has-items {
+  border-color:
+    rgba(255,122,0,.78) !important;
+
+  box-shadow:
+    0 8px 23px rgba(0,0,0,.35),
+    0 0 18px rgba(255,122,0,.15) !important;
+}
+
+/* ---------- HEXAGON ICON ---------- */
+
+.mm-favorites-hex {
+  width: 31px !important;
+  height: 31px !important;
+
+  display: grid !important;
+  place-items: center !important;
+}
+
+.mm-favorites-hex-svg {
+  width: 31px !important;
+  height: 31px !important;
+
+  display: block !important;
+  overflow: visible !important;
+}
+
+.mm-favorites-hex-svg .hex-shape {
+  fill: none !important;
+  stroke: #e9eef3 !important;
+
+  stroke-width: 2.5 !important;
+  stroke-linejoin: round !important;
+}
+
+.mm-favorites-hex-svg .hex-heart {
+  fill: #e9eef3 !important;
+}
+
+.mm-favorites-open.has-items
+.mm-favorites-hex-svg
+.hex-shape {
+  fill: #ff7a00 !important;
+  stroke: #ff7a00 !important;
+}
+
+.mm-favorites-open.has-items
+.mm-favorites-hex-svg
+.hex-heart {
+  fill: #111820 !important;
+}
+
+/* ---------- COUNT ---------- */
+
+.mm-favorites-count {
+  position: absolute !important;
+
+  top: -7px !important;
+  right: -7px !important;
+
+  min-width: 19px !important;
+  height: 19px !important;
+
+  padding: 0 5px !important;
+
+  box-sizing: border-box !important;
+
+  display: grid !important;
+  place-items: center !important;
+
+  border-radius: 999px !important;
+  border: 1px solid
+    rgba(255,255,255,.18) !important;
+
+  background: #ff7a00 !important;
+  color: #fff !important;
+
+  font:
+    900 10px/1 Arial,
+    sans-serif !important;
+
+  box-shadow:
+    0 4px 12px
+    rgba(255,122,0,.28) !important;
+}
+
+/* ---------- PRODUCT LIKE HEART — INSTAGRAM STYLE ---------- */
+
+/* Instagram-style: small clean outline heart, same visual size as nearby icons. */
+#products .mm-card-actions .mm-heart {
   width: 28px !important;
   height: 28px !important;
   min-width: 28px !important;
   min-height: 28px !important;
+  flex: 0 0 28px !important;
+
+  display: inline-block !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  font-size: 0 !important;
+  line-height: 0 !important;
+  color: transparent !important;
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 27px 27px !important;
+  border: 0 !important;
+  overflow: visible !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+
+  /* clean Instagram-like outline heart */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z' fill='none' stroke='%23f6f7f8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+}
+
+#products .mm-card-actions .mm-heart::before,
+#products .mm-card-actions .mm-heart::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Liked state: Instagram-style solid heart, same size. */
+#products .mm-card-actions .mm-social-btn.is-liked .mm-heart,
+#products .mm-card-actions .mm-social-btn.liked .mm-heart,
+#products .mm-card-actions .mm-social-btn.mm-favorite-active .mm-heart {
+  color: transparent !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z' fill='%23ff4d55'/%3E%3C/svg%3E") !important;
+}
+
+/* ---------- PANEL ---------- */
+
+body.mm-favorites-lock {
+  overflow: hidden !important;
+}
+
+.mm-favorites-panel {
+  position: fixed !important;
+  inset: 0 !important;
+
+  z-index: 1500 !important;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition:
+    opacity .2s ease,
+    visibility .2s ease;
+}
+
+.mm-favorites-panel.show {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.mm-favorites-backdrop {
+  position: absolute !important;
+  inset: 0 !important;
+
+  background:
+    rgba(2,6,10,.76) !important;
+
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
+.mm-favorites-drawer {
+  position: absolute !important;
+
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+
+  width: min(430px,96vw) !important;
+  max-width: 100vw !important;
+
+  box-sizing: border-box !important;
+
+  padding: 19px 14px 18px !important;
+
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+
+  background:
+    radial-gradient(
+      circle at 100% 0,
+      rgba(255,122,0,.10),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #101820 0%,
+      #070d13 100%
+    ) !important;
+
+  border-left:
+    1px solid
+    rgba(255,255,255,.10) !important;
+
+  box-shadow:
+    -22px 0 75px
+    rgba(0,0,0,.44) !important;
+
+  transform: translateX(100%);
+  transition: transform .28s ease;
+}
+
+.mm-favorites-panel.show
+.mm-favorites-drawer {
+  transform: translateX(0);
+}
+
+.mm-favorites-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+
+  gap: 12px !important;
+
+  margin-bottom: 15px !important;
+}
+
+.mm-favorites-title {
+  margin: 0 !important;
+
+  color: #fff !important;
+
+  font-size: 25px !important;
+  font-weight: 900 !important;
+
+  line-height: 1.12 !important;
+}
+
+.mm-favorites-subtitle {
+  display: block !important;
+
+  margin-top: 6px !important;
+
+  color: #8e9aa6 !important;
+
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+}
+
+.mm-favorites-close {
+  width: 42px !important;
+  height: 42px !important;
+
+  flex: 0 0 42px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  border:
+    1px solid
+    rgba(255,255,255,.09) !important;
+
+  border-radius: 50% !important;
+
+  background:
+    rgba(255,255,255,.07) !important;
+
+  color: #fff !important;
+
   font-size: 28px !important;
-  line-height: 28px !important;
-  display: inline-flex !important;
+  line-height: 1 !important;
+
+  cursor: pointer !important;
+}
+
+.mm-favorites-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.mm-fav-card {
+  display: grid !important;
+
+  grid-template-columns:
+    88px minmax(0,1fr) !important;
+
+  gap: 10px !important;
+
+  align-items: center !important;
+
+  padding: 9px !important;
+
+  box-sizing: border-box !important;
+
+  border:
+    1px solid
+    rgba(255,255,255,.08) !important;
+
+  border-radius: 16px !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      #111c25,
+      #0b1218
+    ) !important;
+}
+
+.mm-fav-image {
+  width: 88px !important;
+  height: 88px !important;
+
+  display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  flex: 0 0 28px !important;
+
+  overflow: hidden !important;
+
+  border-radius: 13px !important;
+
+  background: #f5f5f4 !important;
 }
 
-/* Контур жүрөк башка иконкалардай компакт болсун */
-.mm-social-btn[data-mm-action="like"] .mm-heart svg,
-.mm-social-btn[data-mm-action="like"] .mm-social-icon.mm-heart svg {
-  width: 28px !important;
-  height: 28px !important;
+.mm-fav-image img {
+  width: 100% !important;
+  height: 100% !important;
+
+  padding: 5px !important;
+
+  box-sizing: border-box !important;
+
+  object-fit: contain !important;
+
+  display: block !important;
 }
 
-/* Сан жана башка engagement иконкаларына тийбейт */
+.mm-fav-info {
+  min-width: 0 !important;
+}
+
+.mm-fav-name {
+  margin: 0 0 7px !important;
+
+  color: #fff !important;
+
+  font-size: 12px !important;
+  font-weight: 800 !important;
+
+  line-height: 1.32 !important;
+
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+
+  overflow: hidden !important;
+}
+
+.mm-fav-price {
+  display: block !important;
+
+  margin: 0 0 9px !important;
+
+  color: #ff8b1c !important;
+
+  font-size: 17px !important;
+  font-weight: 900 !important;
+
+  line-height: 1.15 !important;
+}
+
+.mm-fav-actions {
+  display: flex !important;
+
+  align-items: center !important;
+
+  gap: 7px !important;
+}
+
+.mm-fav-actions button {
+  min-height: 35px !important;
+
+  padding: 0 10px !important;
+
+  border: 0 !important;
+  border-radius: 10px !important;
+
+  background: #ff7a00 !important;
+  color: #fff !important;
+
+  font:
+    900 10px/1
+    Arial,
+    sans-serif !important;
+
+  cursor: pointer !important;
+}
+
+.mm-fav-actions
+.mm-fav-remove {
+  width: 37px !important;
+
+  padding: 0 !important;
+
+  background:
+    rgba(255,255,255,.08) !important;
+
+  color: #ff6b73 !important;
+
+  font-size: 20px !important;
+}
+
+.mm-favorites-empty {
+  padding: 62px 18px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+
+  text-align: center !important;
+
+  border:
+    1px dashed
+    rgba(255,255,255,.13) !important;
+
+  border-radius: 18px !important;
+
+  background:
+    rgba(255,255,255,.025) !important;
+}
+
+.mm-favorites-empty-icon {
+  width: 66px !important;
+  height: 66px !important;
+
+  margin-bottom: 13px !important;
+
+  display: grid !important;
+  place-items: center !important;
+
+  border-radius: 20px !important;
+
+  background:
+    rgba(255,122,0,.10) !important;
+
+  color: #ff7a00 !important;
+
+  font-size: 37px !important;
+}
+
+.mm-favorites-empty strong {
+  margin-bottom: 7px !important;
+
+  color: #fff !important;
+
+  font-size: 14px !important;
+}
+
+.mm-favorites-empty span {
+  max-width: 280px !important;
+
+  color: #8d99a4 !important;
+
+  font-size: 11px !important;
+  line-height: 1.45 !important;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 600px) {
+  .mm-cart-favorites-stack {
+    min-width: 40px !important;
+  }
+
+  .mm-cart-favorites-stack
+  .mm-favorites-open {
+    top:
+      calc(100% + 12px)
+      !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .mm-favorites-open {
+    width: 44px !important;
+    height: 44px !important;
+
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .mm-favorites-hex,
+  .mm-favorites-hex-svg {
+    width: 29px !important;
+    height: 29px !important;
+  }
+
+  .mm-favorites-count {
+    top: -6px !important;
+    right: -6px !important;
+  }
+
+  .mm-favorites-drawer {
+    width: 100vw !important;
+    padding-left: 11px !important;
+    padding-right: 11px !important;
+  }
+
+  .mm-fav-card {
+    grid-template-columns:
+      82px minmax(0,1fr) !important;
+  }
+
+  .mm-fav-image {
+    width: 82px !important;
+    height: 82px !important;
+  }
+}
