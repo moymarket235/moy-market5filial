@@ -823,3 +823,117 @@ button[data-mm-action="like"]
     background-size: 20px 20px !important;
   }
 }
+
+
+/* =========================================================
+   MOY MARKET — V20 FINAL HOMEPAGE LIKE FIX
+   IMPORTANT:
+   - Targets the actual mm-engagement.js markup:
+     .mm-social-btn[data-mm-action="like"] .mm-heart
+   - 20x20 in BOTH states
+   - Instagram-style outline / solid red
+   - Does NOT target #mmProductViewer
+   ========================================================= */
+
+/* Homepage product cards only — actual markup from mm-engagement.js */
+#products .mm-social-btn[data-mm-action="like"] {
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  max-width: 30px !important;
+  max-height: 30px !important;
+  flex: 0 0 30px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+/* Kill the old text glyph and draw our own 20px heart. */
+#products .mm-social-btn[data-mm-action="like"] .mm-heart {
+  position: relative !important;
+  display: block !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
+  flex: 0 0 20px !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  color: transparent !important;
+  background: transparent !important;
+  border: 0 !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+
+/* Outline heart */
+#products .mm-social-btn[data-mm-action="like"] .mm-heart::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 20px !important;
+  height: 20px !important;
+  box-sizing: border-box !important;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z' fill='none' stroke='%23f6f7f8' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 20px 20px no-repeat !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Solid Instagram-style red heart — SAME 20x20 footprint. */
+#products .mm-social-btn[data-mm-action="like"].liked .mm-heart::before,
+#products .mm-social-btn[data-mm-action="like"].is-liked .mm-heart::before,
+#products .mm-social-btn[data-mm-action="like"].mm-favorite-active .mm-heart::before {
+  width: 20px !important;
+  height: 20px !important;
+  background-size: 20px 20px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z' fill='%23ff4d55'/%3E%3C/svg%3E") center / 20px 20px no-repeat !important;
+}
+
+/* Never let the old text/pseudo glyph reappear. */
+#products .mm-social-btn[data-mm-action="like"] .mm-heart::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Detail/viewer remains untouched. */
+#mmProductViewer .mm-viewer-actions [data-vaction="like"],
+#mmProductViewer .mm-viewer-actions [data-vaction="like"] * {
+  all: revert !important;
+}
+
+/* Extra mobile protection. */
+@media (max-width: 650px) {
+  #products .mm-social-btn[data-mm-action="like"] {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    max-width: 30px !important;
+    max-height: 30px !important;
+    flex-basis: 30px !important;
+  }
+
+  #products .mm-social-btn[data-mm-action="like"] .mm-heart,
+  #products .mm-social-btn[data-mm-action="like"] .mm-heart::before {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    max-width: 20px !important;
+    max-height: 20px !important;
+    flex-basis: 20px !important;
+  }
+}
