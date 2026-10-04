@@ -311,3 +311,80 @@ body.mm-viewer-open{overflow:hidden!important}
   #products .mm-card-actions .mm-social-icon{width:36px!important;height:36px!important;border-radius:11px!important;}
   #products .mm-card-actions b{right:0!important;bottom:-1px!important;font-size:10px!important;}
 }
+
+/* STEP 10.6 — OPTION 9 COMPACT / ORDERED FIX
+   Keep the glossy 3D look, but fit all four actions inside every product card.
+*/
+#products .mm-card-actions{
+  width:100%!important;
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  align-items:center!important;
+  justify-items:center!important;
+  gap:4px!important;
+  height:58px!important;
+  min-height:58px!important;
+  margin:14px 0 0!important;
+  padding:5px 4px 7px!important;
+  overflow:hidden!important;
+  border-top:1px solid rgba(255,255,255,.08)!important;
+}
+#products .mm-card-actions button.mm-social-btn,
+#products .mm-card-actions .mm-social-view{
+  position:relative!important;
+  width:42px!important;
+  min-width:42px!important;
+  max-width:42px!important;
+  height:46px!important;
+  min-height:46px!important;
+  padding:0!important;
+  margin:0!important;
+  flex:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:1px!important;
+  border-radius:10px!important;
+  overflow:visible!important;
+}
+#products .mm-card-actions .mm-social-icon{
+  width:32px!important;
+  height:32px!important;
+  min-width:32px!important;
+  min-height:32px!important;
+  border-radius:10px!important;
+  flex:0 0 32px!important;
+  box-sizing:border-box!important;
+}
+#products .mm-card-actions .mm-heart{font-size:22px!important;}
+#products .mm-card-actions .mm-comment-icon{width:32px!important;height:32px!important;border-radius:10px!important;}
+#products .mm-card-actions .mm-share-icon{font-size:20px!important;width:32px!important;height:32px!important;border-radius:10px!important;}
+#products .mm-card-actions .mm-eye-icon{font-size:17px!important;width:32px!important;height:32px!important;border-radius:10px!important;}
+#products .mm-card-actions b{
+  position:static!important;
+  display:block!important;
+  min-width:0!important;
+  height:12px!important;
+  line-height:12px!important;
+  margin:0!important;
+  padding:0!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  color:#fff!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+#products .mm-card-actions .mm-eye-icon:before{width:17px!important;height:11px!important;}
+#products .mm-card-actions .mm-eye-icon:after{width:6px!important;height:6px!important;}
+@media(max-width:650px){
+  #products .mm-card-actions{height:56px!important;min-height:56px!important;padding:4px 3px 6px!important;gap:2px!important;}
+  #products .mm-card-actions button.mm-social-btn,
+  #products .mm-card-actions .mm-social-view{width:40px!important;min-width:40px!important;max-width:40px!important;height:44px!important;min-height:44px!important;}
+  #products .mm-card-actions .mm-social-icon{width:31px!important;height:31px!important;min-width:31px!important;min-height:31px!important;border-radius:9px!important;flex-basis:31px!important;}
+  #products .mm-card-actions .mm-heart{font-size:21px!important;}
+  #products .mm-card-actions .mm-share-icon{font-size:19px!important;}
+  #products .mm-card-actions .mm-eye-icon{font-size:16px!important;}
+  #products .mm-card-actions b{font-size:9px!important;line-height:11px!important;height:11px!important;}
+}
