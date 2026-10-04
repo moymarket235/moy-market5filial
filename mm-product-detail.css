@@ -1,0 +1,80 @@
+/* MOY MARKET — Product cards + detailed product viewer
+   Keeps the existing Like / Comment / Share / View engagement bar.
+*/
+
+/* MAIN PAGE: show only product image + price + engagement icons. */
+#products .product .pname,
+#products .product .desc,
+#products .product .buy {
+  display: none !important;
+}
+
+#products .product .pbody {
+  padding: 10px 11px 8px !important;
+}
+
+#products .product .price {
+  margin: 0 0 7px !important;
+  text-align: center;
+  width: 100%;
+}
+
+#products .product .mm-card-actions {
+  margin-top: 0 !important;
+}
+
+/* VIEWER: product details panel */
+#mmProductViewer .mm-viewer-body {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+#mmProductViewer .mm-product-detail-box {
+  margin: 10px 0 8px !important;
+  padding: 14px 15px !important;
+  border-radius: 15px !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  color: #fff !important;
+}
+
+#mmProductViewer .mm-product-detail-title {
+  display: block !important;
+  margin: 0 0 8px !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+}
+
+#mmProductViewer .mm-product-detail-list {
+  margin: 0 !important;
+  padding: 0 0 0 18px !important;
+  color: #c8d0d8 !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}
+
+#mmProductViewer .mm-product-detail-list li {
+  margin: 3px 0 !important;
+}
+
+@media (max-width: 650px) {
+  #products .product .pbody {
+    padding: 8px 8px 6px !important;
+  }
+
+  #products .product .price {
+    font-size: 17px !important;
+  }
+
+  #mmProductViewer .mm-product-detail-box {
+    padding: 12px 13px !important;
+  }
+
+  #mmProductViewer .mm-product-detail-title {
+    font-size: 13px !important;
+  }
+
+  #mmProductViewer .mm-product-detail-list {
+    font-size: 11px !important;
+  }
+}
