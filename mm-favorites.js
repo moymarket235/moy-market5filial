@@ -1,9 +1,8 @@
-/* MOY MARKET — Favorites / Избранное — V13 FIX
-   - Uses the existing Like button as the favorite trigger.
-   - Places the Favorites button directly under the header cart (#cartBtn).
-   - Uses V12 hexagon + heart icon.
-   - Safe initialization and localStorage.
-   - Does not modify existing cart/viewer systems.
+/* MOY MARKET — Favorites / Избранное — FINAL V14
+   Favorites button: directly under the header cart.
+   Icon: hexagon + heart.
+   Uses existing product like buttons as favorite triggers.
+   Safe initialization, localStorage, no MutationObserver loops.
 */
 
 (() => {
@@ -51,7 +50,9 @@
       document.documentElement.lang ||
       'ru';
 
-    return String(lang).toLowerCase().startsWith('ky')
+    return String(lang)
+      .toLowerCase()
+      .startsWith('ky')
       ? 'ky'
       : 'ru';
   }
@@ -92,9 +93,7 @@
   function productName(product) {
     if (!product) return '';
 
-    const lang = getLanguage();
-
-    if (lang === 'ky') {
+    if (getLanguage() === 'ky') {
       return String(
         product.nameKg ??
         product.nameKG ??
@@ -124,7 +123,7 @@
   function productImage(product) {
     if (!product) return '';
 
-    const image =
+    const value =
       product.image ??
       product.img ??
       product.photo ??
@@ -136,7 +135,7 @@
           : ''
       );
 
-    return String(image || '');
+    return String(value || '');
   }
 
   function productPrice(product) {
@@ -171,12 +170,18 @@
       document.getElementById('cartBtn') ||
       $('[data-cart-button]') ||
       $('.cart-mini') ||
-      $('button[aria-label*="Корзина"]')
+      $('button[aria-label*="Корзина"]') ||
+      $('button[aria-label*="корзина"]')
     );
   }
 
   function ensureButton() {
-    if (button && document.body.contains(button)) {
+    if (
+      button &&
+      document.body.contains(button)
+    ) {
+      syncButton();
+      positionButton();
       return;
     }
 
@@ -187,19 +192,29 @@
 
     button.setAttribute(
       'aria-label',
-      t('Избранное', 'Тандалангандар')
+      t(
+        'Избранное',
+        'Тандалангандар'
+      )
     );
 
     button.title =
-      t('Избранное', 'Тандалангандар');
+      t(
+        'Избранное',
+        'Тандалангандар'
+      );
 
     button.innerHTML = `
-      <span class="mm-favorites-hex" aria-hidden="true">
+      <span
+        class="mm-favorites-hex"
+        aria-hidden="true"
+      >
         <svg
           class="mm-favorites-hex-svg"
           viewBox="0 0 48 48"
           aria-hidden="true"
         >
+
           <path
             class="hex-shape"
             d="M24 3.5 41.5 13.75v20.5L24 44.5 6.5 34.25v-20.5L24 3.5Z">
@@ -209,14 +224,20 @@
             class="hex-heart"
             d="M24 33.2s-10.1-6.15-10.1-12.7c0-3.4 2.35-5.75 5.35-5.75 2.08 0 3.8 1.17 4.75 2.83.95-1.66 2.67-2.83 4.75-2.83 3 0 5.35 2.35 5.35 5.75C34.1 27.05 24 33.2 24 33.2Z">
           </path>
+
         </svg>
       </span>
 
       <span class="mm-favorites-label">
-        ${t('Избранное', 'Тандалангандар')}
+        ${t(
+          'Избранное',
+          'Тандалангандар'
+        )}
       </span>
 
-      <b class="mm-favorites-count">0</b>
+      <b class="mm-favorites-count">
+        0
+      </b>
     `;
 
     button.addEventListener(
@@ -234,9 +255,15 @@
   }
 
   function positionButton() {
-    if (!button) return;
+    if (
+      !button ||
+      !document.body.contains(button)
+    ) {
+      return;
+    }
 
-    const cart = findCartButton();
+    const cart =
+      findCartButton();
 
     if (!cart) {
       button.style.left = '14px';
@@ -270,7 +297,10 @@
     left =
       Math.max(
         8,
-        Math.min(left, maxLeft)
+        Math.min(
+          left,
+          maxLeft
+        )
       );
 
     if (
@@ -291,6 +321,31 @@
 
     button.style.top =
       `${Math.round(top)}px`;
+  }
+
+  function syncButton() {
+    if (
+      !countEl ||
+      !button
+    ) {
+      return;
+    }
+
+    countEl.textContent =
+      String(favorites.size);
+
+    button.classList.toggle(
+      'has-items',
+      favorites.size > 0
+    );
+
+    button.setAttribute(
+      'aria-label',
+      `${t(
+        'Избранное',
+        'Тандалангандар'
+      )}: ${favorites.size}`
+    );
   }
 
   function ensurePanel() {
@@ -328,6 +383,7 @@
         <div class="mm-favorites-head">
 
           <div>
+
             <h2 class="mm-favorites-title">
               ${t(
                 'Избранное',
@@ -341,6 +397,7 @@
                 'Сиз тандаган товарлар'
               )}
             </small>
+
           </div>
 
           <button
@@ -366,29 +423,34 @@
     listEl =
       $('.mm-favorites-list', panel);
 
-    $('.mm-favorites-backdrop', panel)
-      .addEventListener(
-        'click',
-        closeFavorites
-      );
+    $(
+      '.mm-favorites-backdrop',
+      panel
+    ).addEventListener(
+      'click',
+      closeFavorites
+    );
 
-    $('.mm-favorites-close', panel)
-      .addEventListener(
-        'click',
-        closeFavorites
-      );
+    $(
+      '.mm-favorites-close',
+      panel
+    ).addEventListener(
+      'click',
+      closeFavorites
+    );
 
     panel.addEventListener(
       'click',
-      e => {
+      (event) => {
 
         const remove =
-          e.target.closest(
+          event.target.closest(
             '[data-fav-remove]'
           );
 
         if (remove) {
-          e.preventDefault();
+
+          event.preventDefault();
 
           removeFavorite(
             remove.dataset.favRemove
@@ -398,24 +460,24 @@
         }
 
         const add =
-          e.target.closest(
+          event.target.closest(
             '[data-fav-add]'
           );
 
         if (add) {
-          e.preventDefault();
+
+          event.preventDefault();
 
           const id =
             String(
-              add.dataset.favAdd
+              add.dataset.favAdd || ''
             );
 
           const product =
-            currentProducts()
-              .find(
-                p =>
-                  productId(p) === id
-              );
+            currentProducts().find(
+              (item) =>
+                productId(item) === id
+            );
 
           if (
             product &&
@@ -423,13 +485,6 @@
               'function'
           ) {
             window.addToCart(product);
-
-          } else if (
-            product &&
-            typeof addToCart ===
-              'function'
-          ) {
-            addToCart(product);
           }
         }
 
@@ -437,21 +492,8 @@
     );
   }
 
-  function syncButton() {
-    if (!countEl || !button) {
-      return;
-    }
-
-    countEl.textContent =
-      String(favorites.size);
-
-    button.classList.toggle(
-      'has-items',
-      favorites.size > 0
-    );
-  }
-
   function openFavorites() {
+
     ensurePanel();
 
     renderFavorites();
@@ -469,7 +511,10 @@
   }
 
   function closeFavorites() {
-    if (!panel) return;
+
+    if (!panel) {
+      return;
+    }
 
     panel.classList.remove('show');
 
@@ -484,13 +529,16 @@
   }
 
   function renderFavorites() {
-    if (!listEl) return;
+
+    if (!listEl) {
+      return;
+    }
 
     const products =
       currentProducts().filter(
-        p =>
+        (item) =>
           favorites.has(
-            productId(p)
+            productId(item)
           )
       );
 
@@ -524,235 +572,85 @@
     }
 
     listEl.innerHTML =
-      products.map(
-        product => {
+      products
+        .map(
+          (product) => {
 
-          const id =
-            productId(product);
+            const id =
+              productId(product);
 
-          const name =
-            productName(product);
+            const name =
+              productName(product) ||
+              t(
+                'Товар',
+                'Товар'
+              );
 
-          const image =
-            productImage(product);
+            const image =
+              productImage(product);
 
-          const price =
-            productPrice(product);
+            const price =
+              productPrice(product);
 
-          return `
-            <article class="mm-favorite-item">
-
-              <div class="mm-favorite-item-image">
-                ${
-                  image
-                    ? `
-                      <img
-                        src="${escapeHtml(image)}"
-                        alt="${escapeHtml(name)}"
-                        loading="lazy"
-                      >
-                    `
-                    : ''
-                }
-              </div>
-
-              <div class="mm-favorite-item-info">
-
-                <strong>
-                  ${escapeHtml(
-                    name ||
-                    t('Товар', 'Товар')
-                  )}
-                </strong>
-
-                ${
-                  price
-                    ? `
-                      <b>
-                        ${escapeHtml(price)}
-                      </b>
-                    `
-                    : ''
-                }
+            return `
+              <article
+                class="mm-favorite-item"
+              >
 
                 <div
-                  class="mm-favorite-item-actions"
+                  class="mm-favorite-item-image"
                 >
-
-                  <button
-                    type="button"
-                    data-fav-add="${escapeHtml(id)}"
-                  >
-                    ${t(
-                      'В корзину',
-                      'Себетке'
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    data-fav-remove="${escapeHtml(id)}"
-                    aria-label="${t(
-                      'Удалить',
-                      'Өчүрүү'
-                    )}"
-                  >
-                    ♡
-                  </button>
-
+                  ${
+                    image
+                      ? `
+                        <img
+                          src="${escapeHtml(image)}"
+                          alt="${escapeHtml(name)}"
+                          loading="lazy"
+                        >
+                      `
+                      : ''
+                  }
                 </div>
 
-              </div>
+                <div
+                  class="mm-favorite-item-info"
+                >
 
-            </article>
-          `;
-        }
-      ).join('');
-  }
+                  <strong>
+                    ${escapeHtml(name)}
+                  </strong>
 
-  function escapeHtml(value) {
-    return String(value ?? '')
-      .replace(
-        /&/g,
-        '&amp;'
-      )
-      .replace(
-        /</g,
-        '&lt;'
-      )
-      .replace(
-        />/g,
-        '&gt;'
-      )
-      .replace(
-        /"/g,
-        '&quot;'
-      )
-      .replace(
-        /'/g,
-        '&#039;'
-      );
-  }
+                  ${
+                    price
+                      ? `
+                        <b>
+                          ${escapeHtml(price)}
+                        </b>
+                      `
+                      : ''
+                  }
 
-  function getProductIdFromCard(card) {
-    if (!card) return '';
+                  <div
+                    class="mm-favorite-item-actions"
+                  >
 
-    const selectors = [
-      '[data-product-id]',
-      '[data-id]',
-      '[data-product]',
-      '[data-pid]'
-    ];
+                    <button
+                      type="button"
+                      data-fav-add="${escapeHtml(id)}"
+                    >
+                      ${t(
+                        'В корзину',
+                        'Себетке'
+                      )}
+                    </button>
 
-    for (
-      const selector of selectors
-    ) {
-
-      const el =
-        card.matches(selector)
-          ? card
-          : card.querySelector(
-              selector
-            );
-
-      if (el) {
-
-        const value =
-          el.dataset.productId ??
-          el.dataset.id ??
-          el.dataset.product ??
-          el.dataset.pid;
-
-        if (
-          value != null &&
-          String(value) !== ''
-        ) {
-          return String(value);
-        }
-      }
-    }
-
-    const value =
-      card.dataset.productId ??
-      card.dataset.id ??
-      card.dataset.product ??
-      card.dataset.pid;
-
-    return value != null
-      ? String(value)
-      : '';
-  }
-
-  function toggleFavorite(id) {
-    id =
-      String(id || '');
-
-    if (!id) return;
-
-    if (
-      favorites.has(id)
-    ) {
-      favorites.delete(id);
-    } else {
-      favorites.add(id);
-    }
-
-    saveFavorites();
-    syncButton();
-
-    if (
-      panel &&
-      panel.classList.contains('show')
-    ) {
-      renderFavorites();
-    }
-  }
-
-  function removeFavorite(id) {
-    id =
-      String(id || '');
-
-    if (!id) return;
-
-    favorites.delete(id);
-
-    saveFavorites();
-
-    syncButton();
-
-    syncLikeButtons();
-
-    if (
-      panel &&
-      panel.classList.contains('show')
-    ) {
-      renderFavorites();
-    }
-  }
-
-  function syncLikeButtons() {
-    $all(
-      '[data-mm-action="like"]'
-    ).forEach(
-      btn => {
-
-        const card =
-          btn.closest(
-            '[data-product-id], [data-id], [data-product], [data-pid], .product-card, .card'
-          );
-
-        const id =
-          getProductIdFromCard(card);
-
-        if (!id) return;
-
-        const active =
-          favorites.has(id);
-
-        btn.classList.toggle(
-          'is-liked',
-          active
-        );
-
-        const icon =
-          $('.mm-heart, .
+                    <button
+                      type="button"
+                      data-fav-remove="${escapeHtml(id)}"
+                      aria-label="${t(
+                        'Удалить',
+                        'Өчүрүү'
+                      )}"
+                    >
+                      ♡
