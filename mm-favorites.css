@@ -634,11 +634,11 @@ body.mm-favorites-lock {
 /* The like icon is an inline SVG inside .mm-heart.
    Keep the SVG itself the same visual size as the other icons. */
 #products .mm-card-actions .mm-heart {
-  width: 23px !important;
-  height: 23px !important;
-  min-width: 23px !important;
-  min-height: 23px !important;
-  flex: 0 0 23px !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  flex: 0 0 20px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -649,14 +649,14 @@ body.mm-favorites-lock {
 }
 
 #products .mm-card-actions .mm-heart svg {
-  width: 23px !important;
-  height: 23px !important;
-  min-width: 23px !important;
-  min-height: 23px !important;
-  max-width: 23px !important;
-  max-height: 23px !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
   display: block !important;
-  flex: 0 0 23px !important;
+  flex: 0 0 20px !important;
 }
 
 #products .mm-card-actions .mm-heart svg path {
@@ -666,119 +666,10 @@ body.mm-favorites-lock {
 #products .mm-card-actions .mm-social-btn.liked .mm-heart svg,
 #products .mm-card-actions .mm-social-btn.is-liked .mm-heart svg,
 #products .mm-card-actions .mm-social-btn.mm-favorite-active .mm-heart svg {
-  width: 23px !important;
-  height: 23px !important;
-  min-width: 23px !important;
-  min-height: 23px !important;
-  max-width: 23px !important;
-  max-height: 23px !important;
-}
-
-
-/* ==========================================================
-   МОЙ МАРКЕТ — LIKE ICON FINAL FIX v4
-   Fixes:
-   1) unliked heart was invisible
-   2) liked heart was oversized
-   3) old heart shape did not look like Instagram
-   4) force the heart to match neighboring action icons
-   ========================================================== */
-
-/* Keep the like action itself in the same compact visual footprint. */
-#products .mm-card-actions .mm-social-btn[data-mm-action="like"] {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 5px !important;
-}
-
-/* The span is now the actual heart drawing. */
-#products .mm-card-actions .mm-social-icon.mm-heart {
-  width: 23px !important;
-  height: 23px !important;
-  min-width: 23px !important;
-  min-height: 23px !important;
-  max-width: 23px !important;
-  max-height: 23px !important;
-  flex: 0 0 23px !important;
-
-  display: inline-block !important;
-  position: relative !important;
-
-  margin: 0 !important;
-  padding: 0 !important;
-
-  box-sizing: border-box !important;
-
-  color: #f6f7f8 !important;
-  font-size: 0 !important;
-  line-height: 0 !important;
-
-  background-color: transparent !important;
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-  background-size: 22px 22px !important;
-
-  border: 0 !important;
-  overflow: hidden !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-
-  /* Clean Instagram-like outline heart. */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z' fill='none' stroke='%23f6f7f8' stroke-width='2.05' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
-}
-
-/* Disable the old inline SVG completely.
-   This prevents the old oversized heart from appearing over the new one. */
-#products .mm-card-actions .mm-social-icon.mm-heart svg {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  max-width: 0 !important;
-  max-height: 0 !important;
-  visibility: hidden !important;
-}
-
-/* Do not allow pseudo-elements to create another heart. */
-#products .mm-card-actions .mm-social-icon.mm-heart::before,
-#products .mm-card-actions .mm-social-icon.mm-heart::after {
-  content: none !important;
-  display: none !important;
-}
-
-/* Liked = compact solid red heart, same 22px visual size. */
-#products .mm-card-actions .mm-social-btn.liked .mm-social-icon.mm-heart,
-#products .mm-card-actions .mm-social-btn.is-liked .mm-social-icon.mm-heart,
-#products .mm-card-actions .mm-social-btn.mm-favorite-active .mm-social-icon.mm-heart {
-  width: 23px !important;
-  height: 23px !important;
-  min-width: 23px !important;
-  min-height: 23px !important;
-  max-width: 23px !important;
-  max-height: 23px !important;
-  flex-basis: 23px !important;
-
-  background-size: 22px 22px !important;
-
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z' fill='%23ff4d55'/%3E%3C/svg%3E") !important;
-}
-
-/* Mobile: keep exactly the same size — no enlargement on phones. */
-@media (max-width: 650px) {
-  #products .mm-card-actions .mm-social-icon.mm-heart,
-  #products .mm-card-actions .mm-social-icon.mm-heart svg {
-    width: 23px !important;
-    height: 23px !important;
-    min-width: 23px !important;
-    min-height: 23px !important;
-    max-width: 23px !important;
-    max-height: 23px !important;
-    flex: 0 0 23px !important;
-  }
-
-  #products .mm-card-actions .mm-social-icon.mm-heart {
-    background-size: 22px 22px !important;
-  }
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
 }
