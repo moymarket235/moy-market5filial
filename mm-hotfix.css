@@ -1,21 +1,227 @@
-/* MOY MARKET — SAFE VISUAL HOTFIX */
+/* MOY MARKET — FINAL PRODUCT / ICON VISUAL FIX v2 */
 
-/* Товар карточкасынын мурунку фонун кайтаруу */
+/* 1) Remove the white frame around every product image.
+      Keep one identical product-photo format everywhere. */
 #products .product .photo,
 #products .product-card .photo,
 #products [data-product-card] .photo {
-  background: linear-gradient(180deg,#f8f8f7,#eeeeed) !important;
+  position: relative !important;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* The white background is replaced with the site's dark product background. */
+  background: #0b1118 !important;
 }
 
-/* Товар сүрөтүнүн мурунку өлчөмүн кайтаруу */
+/* No white padding/frame. The whole product image stays visible. */
 #products .product .photo img,
 #products .product-card .photo img,
 #products [data-product-card] .photo img {
+  display: block !important;
   width: 100% !important;
   height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
   object-fit: contain !important;
   object-position: center center !important;
-  padding: 9px !important;
+  background: #0b1118 !important;
+  border-radius: 0 !important;
+}
+
+/* Product image itself must never get a white browser/CSS panel. */
+#products .product > img,
+#products .product-card > img,
+#products [data-product-card] > img {
+  background: #0b1118 !important;
+}
+
+/* Large preview: keep the same dark presentation. */
+.preview-img {
+  background: #0b1118 !important;
+}
+
+/* 2) Instagram-style action row:
+      Like → Comment → Share → Views */
+#products .mm-card-actions {
+  width: 100% !important;
+  min-height: 50px !important;
+  height: 50px !important;
   margin: 0 !important;
+  padding: 3px 8px !important;
+  box-sizing: border-box !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 2px !important;
+
+  background: #080d13 !important;
+  border-top: 1px solid rgba(255,255,255,.08) !important;
+  border-bottom: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Four equal positions = clean, ordered Instagram-like layout. */
+#products .mm-card-actions > button.mm-social-btn,
+#products .mm-card-actions > .mm-social-view {
+  flex: 1 1 0 !important;
+  width: 25% !important;
+  min-width: 0 !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  margin: 0 !important;
+  padding: 0 3px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #f6f7f8 !important;
+
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+}
+
+/* Inline SVG icons */
+#products .mm-card-actions .mm-social-icon {
+  width: 23px !important;
+  height: 23px !important;
+  flex: 0 0 23px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #f6f7f8 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+
+#products .mm-card-actions .mm-social-icon svg {
+  width: 23px !important;
+  height: 23px !important;
   display: block !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* Instagram-like sizing */
+#products .mm-card-actions .mm-heart svg {
+  width: 25px !important;
+  height: 25px !important;
+}
+
+#products .mm-card-actions .mm-comment-icon svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+#products .mm-card-actions .mm-share-icon svg {
+  width: 25px !important;
+  height: 25px !important;
+}
+
+#products .mm-card-actions .mm-eye-icon svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+/* Counts */
+#products .mm-card-actions b {
+  display: inline-block !important;
+  min-width: 10px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #f6f7f8 !important;
+  font: 600 12px/1 Arial, sans-serif !important;
+}
+
+/* Liked state */
+#products .mm-card-actions button.mm-social-btn.liked,
+#products .mm-card-actions button.mm-social-btn.liked .mm-social-icon {
+  color: #ff4d55 !important;
+}
+
+#products .mm-card-actions button.mm-social-btn.liked svg {
+  stroke: currentColor !important;
+}
+
+/* Subtle press effect, no white button background. */
+#products .mm-card-actions button.mm-social-btn:active,
+#products .mm-card-actions .mm-social-view:active {
+  transform: scale(.94) !important;
+  background: transparent !important;
+}
+
+/* Make sure old Unicode-only icon styles do not enlarge the row. */
+#products .mm-card-actions .mm-share-icon,
+#products .mm-card-actions .mm-eye-icon,
+#products .mm-card-actions .mm-comment-icon {
+  font-size: 0 !important;
+  line-height: 0 !important;
+  border: 0 !important;
+  width: 23px !important;
+  height: 23px !important;
+}
+
+/* Badges remain inside the image and never alter the product background. */
+#products .mm-product-badges {
+  z-index: 8 !important;
+}
+
+/* Mobile */
+@media (max-width: 650px) {
+  #products .product .photo,
+  #products .product-card .photo,
+  #products [data-product-card] .photo {
+    aspect-ratio: 1 / 1 !important;
+  }
+
+  #products .mm-card-actions {
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 2px 4px !important;
+  }
+
+  #products .mm-card-actions > button.mm-social-btn,
+  #products .mm-card-actions > .mm-social-view {
+    height: 42px !important;
+    min-height: 42px !important;
+    gap: 4px !important;
+    padding: 0 2px !important;
+  }
+
+  #products .mm-card-actions .mm-social-icon,
+  #products .mm-card-actions .mm-social-icon svg {
+    width: 22px !important;
+    height: 22px !important;
+    flex-basis: 22px !important;
+  }
+
+  #products .mm-card-actions .mm-heart svg,
+  #products .mm-card-actions .mm-share-icon svg {
+    width: 23px !important;
+    height: 23px !important;
+  }
+
+  #products .mm-card-actions b {
+    font-size: 11px !important;
+  }
 }
