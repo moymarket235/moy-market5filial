@@ -1,18 +1,17 @@
-/* МОЙ МАРКЕТ — ИЗБРАННОЕ FINAL V14
-   НОВАЯ СТАБИЛЬНАЯ ВЕРСИЯ
-   - Кнопка уже барда index.html ичинде турат.
-   - Кнопка корзинанын түз астында.
-   - Товарды Like (❤️) басканда Избранное кошулат/өчөт.
-   - Маалымат localStorage'да сакталат.
-   - Иштөө window.products'ке көз каранды эмес.
-   - MutationObserver жок.
+/* MOY MARKET — ИЗБРАННОЕ FINAL V15
+   FIX:
+   - Like click тың capture phase'да кармалат.
+   - Избранное localStorage'да сакталат.
+   - Existing Like button'дар автоматтык түрдө favorite катары иштейт.
+   - Даяр #mmFavoritesBtn болсо, кайра кнопка түзүлбөйт.
+   - Панель: Избранное.
 */
 
 (() => {
   'use strict';
 
-  const FAVORITES_KEY = 'mmFavoritesV14';
-  const ITEMS_KEY = 'mmFavoritesItemsV14';
+  const FAVORITES_KEY = 'mmFavoritesV15';
+  const ITEMS_KEY = 'mmFavoritesItemsV15';
 
   const $ = (selector, root = document) =>
     root.querySelector(selector);
@@ -20,21 +19,25 @@
   const $$ = (selector, root = document) =>
     Array.from(root.querySelectorAll(selector));
 
-  let favorites = loadSet();
+  let favorites = loadFavorites();
   let items = loadItems();
   let panel = null;
 
-  function loadSet() {
+  function loadFavorites() {
     try {
       const raw = localStorage.getItem(FAVORITES_KEY);
       const value = raw ? JSON.parse(raw) : [];
-      return new Set(Array.isArray(value) ? value.map(String) : []);
+      return new Set(
+        Array.isArray(value)
+          ? value.map(String)
+          : []
+      );
     } catch (_) {
       return new Set();
     }
   }
 
-  function saveSet() {
+  function saveFavorites() {
     try {
       localStorage.setItem(
         FAVORITES_KEY,
@@ -47,7 +50,13 @@
     try {
       const raw = localStorage.getItem(ITEMS_KEY);
       const value = raw ? JSON.parse(raw) : {};
-      return value && typeof value === 'object' ? value : {};
+
+      return (
+        value &&
+        typeof value === 'object'
+      )
+        ? value
+        : {};
     } catch (_) {
       return {};
     }
@@ -69,9 +78,21 @@
       document.documentElement.lang ||
       'ru';
 
-    return String(value).toLowerCase().startsWith('ky')
+    return String(value)
+      .toLowerCase()
+      .startsWith('ky')
       ? 'ky'
       : 'ru';
+  }
+
+  function isKy() {
+    return getLang() === 'ky';
+  }
+
+  function productCards() {
+    return $$(
+      '#products .product, #products .product-card, #products [data-product-card]'
+    );
   }
 
   function text(value) {
@@ -89,38 +110,44 @@
       .replace(/'/g, '&#039;');
   }
 
-  function cardId(card) {
+  function getCardFromLike(button) {
+    if (!button) return null;
+
+    return button.closest(
+      '[data-product-id], [data-id], [data-product], [data-pid], .product, .product-card, [data-product-card], .card'
+    );
+  }
+
+  function getCardId(card) {
     if (!card) return '';
 
-    if (card.dataset.mmId) {
-      return String(card.dataset.mmId);
-    }
-
-    const explicit =
+    const direct =
       card.dataset.productId ||
       card.dataset.id ||
       card.dataset.product ||
       card.dataset.pid;
 
-    if (explicit) {
-      const id = String(explicit);
-      card.dataset.mmId = id;
+    if (direct) {
+      const id = String(direct);
+      card.dataset.mmFavoriteId = id;
       return id;
+    }
+
+    if (card.dataset.mmFavoriteId) {
+      return String(card.dataset.mmFavoriteId);
     }
 
     const name =
       text(
         $(
-          'h3,.pname,.product-name,.product-title,[data-product-name]',
+          'h3, .pname, .product-name, .product-title, [data-product-name]',
           card
         )
       ) || 'Товар';
 
-    const img = $('img', card);
-
     const image =
-      img?.currentSrc ||
-      img?.src ||
+      $('img', card)?.currentSrc ||
+      $('img', card)?.src ||
       '';
 
     const source =
@@ -128,72 +155,69 @@
 
     let hash = 2166136261;
 
-    for (let i = 0; i < source.length; i += 1) {
+    for (
+      let i = 0;
+      i < source.length;
+      i += 1
+    ) {
       hash ^= source.charCodeAt(i);
-      hash = Math.imul(hash, 16777619);
+      hash = Math.imul(
+        hash,
+        16777619
+      );
     }
 
     const id =
       `mm_${(hash >>> 0).toString(36)}`;
 
-    card.dataset.mmId = id;
+    card.dataset.mmFavoriteId = id;
 
     return id;
   }
 
-  function cardTitle(card) {
+  function getCardName(card) {
     return (
       text(
         $(
-          'h3,.pname,.product-name,.product-title,[data-product-name]',
+          'h3, .pname, .product-name, .product-title, [data-product-name]',
           card
         )
       ) || 'Товар'
     );
   }
 
-  function cardPrice(card) {
-    const priceEl = $(
-      '.price,.product-price,[data-price]',
-      card
-    );
+  function getCardPrice(card) {
+    const price =
+      $(
+        '.price, .product-price, [data-price]',
+        card
+      );
 
-    if (priceEl) {
-      return text(priceEl);
-    }
-
-    const fallback = $$(
-      'b,strong',
-      card
-    ).find(
-      (el) =>
-        /\d/.test(text(el)) &&
-        /сом|₸|₽|\$/.test(text(el))
-    );
-
-    return fallback
-      ? text(fallback)
+    return price
+      ? text(price)
       : '';
   }
 
-  function cardImage(card) {
-    const img = $('img', card);
-
+  function getCardImage(card) {
     return (
-      img?.currentSrc ||
-      img?.src ||
+      $('img', card)?.currentSrc ||
+      $('img', card)?.src ||
       'assets/products/placeholder.svg'
     );
   }
 
-  function cardData(card) {
-    const id = cardId(card);
+  function saveCard(card) {
+    const id = getCardId(card);
+
+    if (!id) {
+      return null;
+    }
 
     const record = {
       id,
-      name: cardTitle(card),
-      price: cardPrice(card),
-      image: cardImage(card),
+      name: getCardName(card),
+      price: getCardPrice(card),
+      image: getCardImage(card),
       updatedAt: Date.now()
     };
 
@@ -203,35 +227,36 @@
     return record;
   }
 
-  function productCards() {
-    return $$('#products .product, #products .product-card, #products [data-product-card]');
-  }
-
-  function getCardFromLike(button) {
-    return button.closest(
-      '[data-product-id], [data-id], [data-product], [data-pid], .product, .product-card, [data-product-card], .card'
+  function getFavoriteButton() {
+    return (
+      $('#mmFavoritesBtn') ||
+      $('.mm-favorites-open')
     );
   }
 
-  function getButton() {
-    return $('#mmFavoritesBtn') ||
-      $('.mm-favorites-open');
+  function getFavoriteCount() {
+    return (
+      $('#mmFavoritesCount') ||
+      $('.mm-favorites-count')
+    );
   }
 
-  function getCount() {
-    return $('#mmFavoritesCount') ||
-      $('.mm-favorites-count');
-  }
+  function syncFavoriteButton() {
+    const button =
+      getFavoriteButton();
 
-  function syncButton() {
-    const button = getButton();
-    const count = getCount();
+    const count =
+      getFavoriteCount();
 
-    if (!button || !count) return;
+    if (!button || !count) {
+      return;
+    }
 
-    const total = favorites.size;
+    const total =
+      favorites.size;
 
-    count.textContent = String(total);
+    count.textContent =
+      String(total);
 
     button.classList.toggle(
       'has-items',
@@ -240,27 +265,36 @@
 
     button.setAttribute(
       'aria-label',
-      getLang() === 'ky'
+      isKy()
         ? `Тандалгандар: ${total}`
         : `Избранное: ${total}`
     );
 
     button.title =
-      getLang() === 'ky'
+      isKy()
         ? 'Тандалгандар'
         : 'Избранное';
   }
 
-  function syncLikes() {
-    $$('[data-mm-action="like"]').forEach(
+  function syncLikeState() {
+    $$(
+      '[data-mm-action="like"]'
+    ).forEach(
       (button) => {
+
         const card =
           getCardFromLike(button);
 
-        if (!card) return;
+        if (!card) {
+          return;
+        }
 
         const id =
-          cardId(card);
+          getCardId(card);
+
+        if (!id) {
+          return;
+        }
 
         const active =
           favorites.has(id);
@@ -271,13 +305,20 @@
         );
 
         button.classList.toggle(
+          'liked',
+          active
+        );
+
+        button.classList.toggle(
           'mm-favorite-active',
           active
         );
 
         button.setAttribute(
           'aria-pressed',
-          active ? 'true' : 'false'
+          active
+            ? 'true'
+            : 'false'
         );
 
         const icon =
@@ -285,32 +326,41 @@
 
         if (icon) {
           icon.textContent =
-            active ? '♥' : '♡';
+            active
+              ? '♥'
+              : '♡';
         }
       }
     );
   }
 
   function toggleFavorite(card) {
-    if (!card) return;
+    if (!card) {
+      return;
+    }
 
-    const data =
-      cardData(card);
+    const record =
+      saveCard(card);
+
+    if (!record) {
+      return;
+    }
 
     const id =
-      data.id;
+      record.id;
 
-    if (!id) return;
-
-    if (favorites.has(id)) {
+    if (
+      favorites.has(id)
+    ) {
       favorites.delete(id);
     } else {
       favorites.add(id);
     }
 
-    saveSet();
-    syncButton();
-    syncLikes();
+    saveFavorites();
+
+    syncFavoriteButton();
+    syncLikeState();
 
     if (
       panel &&
@@ -321,15 +371,19 @@
   }
 
   function removeFavorite(id) {
-    const key = String(id || '');
+    const key =
+      String(id || '');
 
-    if (!key) return;
+    if (!key) {
+      return;
+    }
 
     favorites.delete(key);
 
-    saveSet();
-    syncButton();
-    syncLikes();
+    saveFavorites();
+
+    syncFavoriteButton();
+    syncLikeState();
     renderPanel();
   }
 
@@ -350,7 +404,9 @@
   }
 
   function closePanel() {
-    if (!panel) return;
+    if (!panel) {
+      return;
+    }
 
     panel.classList.remove('show');
 
@@ -384,32 +440,39 @@
     );
 
     panel.innerHTML = `
-      <div class="mm-favorites-backdrop"></div>
+      <div
+        class="mm-favorites-backdrop"
+      ></div>
 
       <div
         class="mm-favorites-drawer"
         role="dialog"
         aria-modal="true"
         aria-label="${
-          getLang() === 'ky'
+          isKy()
             ? 'Тандалгандар'
             : 'Избранное'
         }"
       >
+
         <div class="mm-favorites-head">
 
           <div>
-            <h2 class="mm-favorites-title">
+            <h2
+              class="mm-favorites-title"
+            >
               ${
-                getLang() === 'ky'
+                isKy()
                   ? 'Тандалгандар'
                   : 'Избранное'
               }
             </h2>
 
-            <span class="mm-favorites-subtitle">
+            <span
+              class="mm-favorites-subtitle"
+            >
               ${
-                getLang() === 'ky'
+                isKy()
                   ? 'Сиз тандаган товарлар'
                   : 'Ваши любимые товары'
               }
@@ -420,7 +483,7 @@
             type="button"
             class="mm-favorites-close"
             aria-label="${
-              getLang() === 'ky'
+              isKy()
                 ? 'Жабуу'
                 : 'Закрыть'
             }"
@@ -430,11 +493,16 @@
 
         </div>
 
-        <div class="mm-favorites-list"></div>
+        <div
+          class="mm-favorites-list"
+        ></div>
+
       </div>
     `;
 
-    document.body.appendChild(panel);
+    document.body.appendChild(
+      panel
+    );
 
     $(
       '.mm-favorites-backdrop',
@@ -459,12 +527,14 @@
   }
 
   function handlePanelClick(event) {
+
     const remove =
       event.target.closest(
         '[data-fav-remove]'
       );
 
     if (remove) {
+
       event.preventDefault();
       event.stopPropagation();
 
@@ -481,6 +551,7 @@
       );
 
     if (add) {
+
       event.preventDefault();
       event.stopPropagation();
 
@@ -489,33 +560,36 @@
           add.dataset.favAdd || ''
         );
 
-      const info =
-        items[id];
-
-      if (!info) return;
-
-      addItemToCart(info);
-
-      return;
+      addToCartFromFavorite(
+        items[id]
+      );
     }
   }
 
-  function addItemToCart(info) {
+  function addToCartFromFavorite(
+    item
+  ) {
+    if (!item) {
+      return;
+    }
+
     const card =
       productCards().find(
-        (item) =>
-          cardId(item) === String(info.id)
+        (candidate) =>
+          getCardId(candidate) ===
+          String(item.id)
       );
 
     if (card) {
-      const add =
+
+      const addButton =
         $(
-          '.cart-add,.add-to-cart,[data-add-cart]',
+          '.cart-add, .add-to-cart, [data-add-cart], .buy',
           card
         );
 
-      if (add) {
-        add.click();
+      if (addButton) {
+        addButton.click();
         return;
       }
     }
@@ -524,28 +598,37 @@
       typeof window.addToCart ===
       'function'
     ) {
+
       window.addToCart({
-        id: info.id,
-        name: info.name,
-        title: info.name,
-        price: info.price,
-        image: info.image
+        id: item.id,
+        name: item.name,
+        title: item.name,
+        price: item.price,
+        image: item.image
       });
     }
   }
 
   function renderPanel() {
-    if (!panel) return;
+    if (!panel) {
+      return;
+    }
 
     const list =
-      $('.mm-favorites-list', panel);
+      $(
+        '.mm-favorites-list',
+        panel
+      );
 
-    if (!list) return;
+    if (!list) {
+      return;
+    }
 
     const selected =
       Array.from(favorites)
         .map(
-          (id) => items[String(id)]
+          (id) =>
+            items[String(id)]
         )
         .filter(Boolean);
 
@@ -554,13 +637,15 @@
       list.innerHTML = `
         <div class="mm-favorites-empty">
 
-          <div class="mm-favorites-empty-icon">
+          <div
+            class="mm-favorites-empty-icon"
+          >
             ♡
           </div>
 
           <strong>
             ${
-              getLang() === 'ky'
+              isKy()
                 ? 'Азырынча тандалган товар жок'
                 : 'Пока нет избранных товаров'
             }
@@ -568,7 +653,7 @@
 
           <span>
             ${
-              getLang() === 'ky'
+              isKy()
                 ? 'Товардагы ❤️ белгисин басып, товарды ушул жерге кошуңуз.'
                 : 'Нажмите ❤️ на товаре, чтобы добавить его сюда.'
             }
@@ -584,9 +669,13 @@
       selected
         .map(
           (item) => `
-            <article class="mm-fav-card">
+            <article
+              class="mm-fav-card"
+            >
 
-              <div class="mm-fav-image">
+              <div
+                class="mm-fav-image"
+              >
                 <img
                   src="${escapeHtml(item.image)}"
                   alt="${escapeHtml(item.name)}"
@@ -594,30 +683,42 @@
                 >
               </div>
 
-              <div class="mm-fav-info">
+              <div
+                class="mm-fav-info"
+              >
 
-                <div class="mm-fav-name">
-                  ${escapeHtml(item.name)}
+                <div
+                  class="mm-fav-name"
+                >
+                  ${escapeHtml(
+                    item.name
+                  )}
                 </div>
 
                 ${
                   item.price
                     ? `
-                      <strong class="mm-fav-price">
-                        ${escapeHtml(item.price)}
+                      <strong
+                        class="mm-fav-price"
+                      >
+                        ${escapeHtml(
+                          item.price
+                        )}
                       </strong>
                     `
                     : ''
                 }
 
-                <div class="mm-fav-actions">
+                <div
+                  class="mm-fav-actions"
+                >
 
                   <button
                     type="button"
                     data-fav-add="${escapeHtml(item.id)}"
                   >
                     ${
-                      getLang() === 'ky'
+                      isKy()
                         ? 'Себетке'
                         : 'В корзину'
                     }
@@ -628,7 +729,7 @@
                     class="mm-fav-remove"
                     data-fav-remove="${escapeHtml(item.id)}"
                     aria-label="${
-                      getLang() === 'ky'
+                      isKy()
                         ? 'Өчүрүү'
                         : 'Удалить'
                     }"
@@ -637,7 +738,6 @@
                   </button>
 
                 </div>
-
               </div>
 
             </article>
@@ -646,29 +746,44 @@
         .join('');
   }
 
+  /*
+    ВАЖНО:
+    capture=true.
+    mm-engagement.js документтин capture фазасында
+    Like'ты кармайт. Ошондуктан Favorites да capture
+    фазасында угат.
+  */
   function handleLikeClick(event) {
     const like =
       event.target.closest(
         '[data-mm-action="like"]'
       );
 
-    if (!like) return;
+    if (!like) {
+      return;
+    }
 
     const card =
       getCardFromLike(like);
 
-    if (!card) return;
+    if (!card) {
+      return;
+    }
 
     toggleFavorite(card);
   }
 
-  function handleFavoriteButtonClick(event) {
+  function handleFavoriteButtonClick(
+    event
+  ) {
     const button =
       event.target.closest(
-        '#mmFavoritesBtn,.mm-favorites-open'
+        '#mmFavoritesBtn, .mm-favorites-open'
       );
 
-    if (!button) return;
+    if (!button) {
+      return;
+    }
 
     event.preventDefault();
     event.stopPropagation();
@@ -676,158 +791,99 @@
     openPanel();
   }
 
-  function syncExistingCards() {
-  productCards().forEach(
-    (card) => {
-      if (favorites.has(cardId(card))) {
-        cardData(card);
-      }
+  function watchProducts() {
+    const root =
+      $('#products');
+
+    if (!root) {
+      return;
     }
-  );
 
-  syncLikes();
-  syncButton();
-}
+    let lastSignature = '';
 
-function init() {
-  const button = getButton();
+    setInterval(
+      () => {
 
-  if (!button) {
-    createFallbackButton();
+        const cards =
+          productCards();
+
+        const signature =
+          cards.length +
+          ':' +
+          cards
+            .map(
+              (card) =>
+                getCardId(card)
+            )
+            .join('|');
+
+        if (
+          signature !==
+          lastSignature
+        ) {
+          lastSignature =
+            signature;
+
+          syncLikeState();
+          syncFavoriteButton();
+        }
+
+      },
+      900
+    );
   }
 
-  const actualButton =
-    getButton();
+  function init() {
 
-  if (actualButton) {
-    actualButton.addEventListener(
+    ensurePanel();
+
+    const button =
+      getFavoriteButton();
+
+    if (button) {
+      button.addEventListener(
+        'click',
+        handleFavoriteButtonClick,
+        true
+      );
+    }
+
+    /*
+      Критикалык оңдоо:
+      true = capture phase.
+    */
+    document.addEventListener(
       'click',
-      handleFavoriteButtonClick,
+      handleLikeClick,
       true
     );
+
+    syncLikeState();
+    syncFavoriteButton();
+    watchProducts();
+
+    window.addEventListener(
+      'resize',
+      syncFavoriteButton,
+      { passive: true }
+    );
   }
 
-  document.addEventListener(
-    'click',
-    handleLikeClick,
-    false
-  );
+  if (
+    document.readyState ===
+    'loading'
+  ) {
 
-  window.addEventListener(
-    'resize',
-    syncButton,
-    { passive: true }
-  );
-
-  syncExistingCards();
-
-  setInterval(
-    syncExistingCards,
-    1500
-  );
-}
-
-function createFallbackButton() {
-  const cart =
-    document.getElementById('cartBtn');
-
-  const headerMeta =
-    cart?.parentElement;
-
-  if (!headerMeta) return;
-
-  const wrapper =
-    document.createElement('div');
-
-  wrapper.className =
-    'mm-cart-favorites-stack';
-
-  if (cart) {
-    headerMeta.insertBefore(
-      wrapper,
-      cart
+    document.addEventListener(
+      'DOMContentLoaded',
+      init,
+      { once: true }
     );
 
-    wrapper.appendChild(
-      cart
-    );
   } else {
-    headerMeta.appendChild(
-      wrapper
-    );
+
+    init();
+
   }
-
-  const button =
-    document.createElement('button');
-
-  button.type = 'button';
-
-  button.id =
-    'mmFavoritesBtn';
-
-  button.className =
-    'mm-favorites-open';
-
-  button.setAttribute(
-    'aria-label',
-    'Избранное'
-  );
-
-  button.title =
-    'Избранное';
-
-  button.innerHTML = `
-    <span
-      class="mm-favorites-hex"
-      aria-hidden="true"
-    >
-      <svg
-        class="mm-favorites-hex-svg"
-        viewBox="0 0 48 48"
-        aria-hidden="true"
-      >
-
-        <path
-          class="hex-shape"
-          d="M24 3.5 41.5 13.75v20.5L24 44.5 6.5 34.25v-20.5L24 3.5Z"
-        ></path>
-
-        <path
-          class="hex-heart"
-          d="M24 33.2s-10.1-6.15-10.1-12.7c0-3.4 2.35-5.75 5.35-5.75 2.08 0 3.8 1.17 4.75 2.83.95-1.66 2.67-2.83 4.75-2.83 3 0 5.35 2.35 5.35 5.75C34.1 27.05 24 33.2 24 33.2Z"
-        ></path>
-
-      </svg>
-    </span>
-
-    <b
-      class="mm-favorites-count"
-      id="mmFavoritesCount"
-    >
-      0
-    </b>
-  `;
-
-  wrapper.appendChild(
-    button
-  );
-}
-
-if (
-  document.readyState ===
-  'loading'
-) {
-
-  document.addEventListener(
-    'DOMContentLoaded',
-    init,
-    { once: true }
-  );
-
-} else {
-
-  init();
-
-}
 
 })();

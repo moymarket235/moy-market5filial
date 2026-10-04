@@ -1,509 +1,29 @@
-/* МОЙ МАРКЕТ — ИЗБРАННОЕ FINAL V14
-   Кнопка находится физически сразу ПОД корзиной.
-   Не требует fixed-positioning и не зависит от вычисления координат.
-*/
+/* МОЙ МАРКЕТ — ИЗБРАННОЕ FINAL V15 */
 
-.mm-cart-favorites-stack {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 7px;
-  flex: 0 0 auto;
-  position: relative;
-  z-index: 20;
-}
-
-.mm-cart-favorites-stack .cart-mini {
-  flex: 0 0 auto;
-}
-
-/* ------------------ FAVORITES BUTTON ------------------ */
-
-.mm-favorites-open {
-  position: relative;
-  flex: 0 0 46px;
-
-  width: 46px;
-  height: 46px;
-  min-width: 46px;
-  min-height: 46px;
-
-  margin: 0;
-  padding: 0;
-
-  display: grid;
-  place-items: center;
-
-  border: 1px solid rgba(255,122,0,.34);
-  border-radius: 14px;
-
-  background: linear-gradient(
-    180deg,
-    rgba(18,28,37,.98),
-    rgba(7,13,19,.98)
-  );
-
-  color: #fff;
-  cursor: pointer;
-
-  box-sizing: border-box;
-  overflow: visible;
-
-  box-shadow:
-    0 7px 20px rgba(0,0,0,.30),
-    inset 0 0 0 1px rgba(255,255,255,.025);
-
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-
-  transition:
-    transform .16s ease,
-    border-color .16s ease,
-    box-shadow .16s ease,
-    background .16s ease;
-}
-
-.mm-favorites-open:hover {
-  border-color: rgba(255,122,0,.78);
-  box-shadow:
-    0 9px 24px rgba(0,0,0,.36),
-    0 0 17px rgba(255,122,0,.13);
-}
-
-.mm-favorites-open:active {
-  transform: scale(.94);
-}
-
-.mm-favorites-open:focus-visible {
-  outline: 2px solid #ff7a00;
-  outline-offset: 2px;
-}
-
-.mm-favorites-hex {
-  width: 31px;
-  height: 31px;
-  display: grid;
-  place-items: center;
-}
-
-.mm-favorites-hex-svg {
-  width: 31px;
-  height: 31px;
-  display: block;
-  overflow: visible;
-}
-
-.mm-favorites-hex-svg .hex-shape {
-  fill: none;
-  stroke: #e9eef3;
-  stroke-width: 2.5;
-  stroke-linejoin: round;
-  transition: .18s ease;
-}
-
-.mm-favorites-hex-svg .hex-heart {
-  fill: #e9eef3;
-  transition: .18s ease;
-}
-
-.mm-favorites-open.has-items {
-  border-color: rgba(255,122,0,.76);
-  background:
-    radial-gradient(circle at 50% 35%, rgba(255,122,0,.18), transparent 62%),
-    rgba(8,14,20,.98);
-
-  box-shadow:
-    0 8px 23px rgba(0,0,0,.35),
-    0 0 18px rgba(255,122,0,.14);
-}
-
-.mm-favorites-open.has-items .hex-shape {
-  fill: #ff7a00;
-  stroke: #ff7a00;
-  filter: drop-shadow(0 0 7px rgba(255,122,0,.36));
-}
-
-.mm-favorites-open.has-items .hex-heart {
-  fill: #111820;
-}
-
-/* Санды кичинекей badge кылып көрсөтөбүз */
-.mm-favorites-count {
-  position: absolute;
-  top: -7px;
-  right: -7px;
-
-  min-width: 19px;
-  height: 19px;
-
-  padding: 0 5px;
-  box-sizing: border-box;
-
-  display: grid;
-  place-items: center;
-
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: 999px;
-
-  background: #ff7a00;
-  color: #fff;
-
-  font: 900 10px/1 inherit;
-  box-shadow: 0 4px 12px rgba(255,122,0,.28);
-}
-
-/* ------------------ PANEL ------------------ */
-
-body.mm-favorites-lock {
-  overflow: hidden;
-}
-
-.mm-favorites-panel {
-  position: fixed;
-  inset: 0;
-  z-index: 1500;
-
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-
-  transition:
-    opacity .20s ease,
-    visibility .20s ease;
-}
-
-.mm-favorites-panel.show {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.mm-favorites-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(2,6,10,.76);
-
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
-}
-
-.mm-favorites-drawer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-
-  width: min(430px, 94vw);
-  max-width: 100vw;
-
-  padding: 20px 15px 18px;
-  box-sizing: border-box;
-
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-
-  background:
-    radial-gradient(circle at 100% 0, rgba(255,122,0,.10), transparent 30%),
-    linear-gradient(180deg,#101820 0%,#070d13 100%);
-
-  border-left: 1px solid rgba(255,255,255,.10);
-  box-shadow: -22px 0 75px rgba(0,0,0,.44);
-
-  transform: translateX(100%);
-  transition: transform .28s ease;
-}
-
-.mm-favorites-panel.show .mm-favorites-drawer {
-  transform: translateX(0);
-}
-
-.mm-favorites-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 15px;
-}
-
-.mm-favorites-title {
-  margin: 0;
-  color: #fff;
-  font-size: 25px;
-  font-weight: 900;
-  line-height: 1.12;
-}
-
-.mm-favorites-subtitle {
-  display: block;
-  margin-top: 6px;
-  color: #8e9aa6;
-  font-size: 11px;
-  line-height: 1.35;
-}
-
-.mm-favorites-close {
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
-
-  padding: 0;
-  margin: 0;
-
-  border: 1px solid rgba(255,255,255,.09);
-  border-radius: 50%;
-
-  background: rgba(255,255,255,.07);
-  color: #fff;
-
-  font-size: 28px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.mm-favorites-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.mm-fav-card {
-  display: grid;
-  grid-template-columns: 88px minmax(0,1fr);
-  gap: 10px;
-  align-items: center;
-
-  padding: 9px;
-  box-sizing: border-box;
-
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 16px;
-
-  background: linear-gradient(
-    180deg,
-    #111c25 0%,
-    #0b1218 100%
-  );
-}
-
-.mm-fav-image {
-  width: 88px;
-  height: 88px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  overflow: hidden;
-  border-radius: 13px;
-
-  background: #f5f5f4;
-}
-
-.mm-fav-image img {
-  width: 100%;
-  height: 100%;
-  padding: 5px;
-  box-sizing: border-box;
-  display: block;
-  object-fit: contain;
-}
-
-.mm-fav-info {
-  min-width: 0;
-}
-
-.mm-fav-name {
-  margin: 0 0 7px;
-  color: #fff;
-
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1.32;
-
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.mm-fav-price {
-  display: block;
-  margin: 0 0 9px;
-
-  color: #ff8b1c;
-  font-size: 17px;
-  font-weight: 900;
-  line-height: 1.15;
-}
-
-.mm-fav-actions {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.mm-fav-actions button {
-  min-height: 35px;
-  border: 0;
-  border-radius: 10px;
-  padding: 0 10px;
-
-  background: #ff7a00;
-  color: #fff;
-
-  font: 900 10px/1 inherit;
-  cursor: pointer;
-
-  transition: transform .15s ease, filter .15s ease;
-}
-
-.mm-fav-actions button:active {
-  transform: scale(.96);
-}
-
-.mm-fav-actions .mm-fav-remove {
-  width: 37px;
-  padding: 0;
-
-  background: rgba(255,255,255,.08);
-  color: #ff6b73;
-
-  font-size: 20px;
-}
-
-.mm-favorites-empty {
-  padding: 62px 18px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  text-align: center;
-
-  border: 1px dashed rgba(255,255,255,.13);
-  border-radius: 18px;
-
-  background: rgba(255,255,255,.025);
-}
-
-.mm-favorites-empty-icon {
-  width: 66px;
-  height: 66px;
-  margin-bottom: 13px;
-
-  display: grid;
-  place-items: center;
-
-  border-radius: 20px;
-  background: rgba(255,122,0,.10);
-
-  color: #ff7a00;
-  font-size: 37px;
-}
-
-.mm-favorites-empty strong {
-  margin-bottom: 7px;
-  color: #fff;
-  font-size: 14px;
-}
-
-.mm-favorites-empty span {
-  max-width: 280px;
-  color: #8d99a4;
-  font-size: 11px;
-  line-height: 1.45;
-}
-
-/* Лайк баскычы менен бирдей көрүнсүн */
-[data-mm-action="like"].mm-favorite-active,
-[data-mm-action="like"].is-liked {
-  color: #ff6670 !important;
-}
-
-/* ------------------ MOBILE ------------------ */
-
-@media (max-width: 760px) {
-  .mm-cart-favorites-stack {
-    gap: 6px;
-  }
-
-  .mm-favorites-open {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
-    flex-basis: 44px;
-    border-radius: 13px;
-  }
-
-  .mm-favorites-hex,
-  .mm-favorites-hex-svg {
-    width: 29px;
-    height: 29px;
-  }
-
-  .mm-favorites-drawer {
-    width: min(430px, 96vw);
-    padding: 17px 12px 16px;
-  }
-
-  .mm-favorites-title {
-    font-size: 23px;
-  }
-
-  .mm-fav-card {
-    grid-template-columns: 82px minmax(0,1fr);
-  }
-
-  .mm-fav-image {
-    width: 82px;
-    height: 82px;
-  }
-}
-
-@media (max-width: 430px) {
-  .mm-cart-favorites-stack {
-    gap: 5px;
-  }
-
-  .mm-favorites-open {
-    width: 42px;
-    height: 42px;
-    min-width: 42px;
-    min-height: 42px;
-    flex-basis: 42px;
-  }
-
-  .mm-favorites-count {
-    top: -6px;
-    right: -6px;
-  }
-
-  .mm-favorites-drawer {
-    width: 100vw;
-    padding-left: 11px;
-    padding-right: 11px;
-  }
-}
-/* === КОРЗИНАНЫН ОРДУН САКТАЙБЫЗ === */
+/* ---------- CART + FAVORITES ---------- */
 
 .mm-cart-favorites-stack {
   position: relative !important;
   display: block !important;
   flex: 0 0 auto !important;
-  gap: 0 !important;
+  width: auto !important;
+  min-width: 40px !important;
 }
 
-/* Избранное корзинанын астына чыгат */
+.mm-cart-favorites-stack .cart-mini {
+  flex: 0 0 auto !important;
+}
+
+/* Избранное: корзинанын астында */
 .mm-cart-favorites-stack .mm-favorites-open {
   position: absolute !important;
+
   left: 50% !important;
-  top: calc(100% + 10px) !important;
+  top: calc(100% + 12px) !important;
 
   width: 46px !important;
   height: 46px !important;
+
   min-width: 46px !important;
   min-height: 46px !important;
 
@@ -512,9 +32,609 @@ body.mm-favorites-lock {
   z-index: 1400 !important;
 }
 
-/* Телефон */
+/* ---------- FAVORITES BUTTON ---------- */
+
+.mm-favorites-open {
+  box-sizing: border-box !important;
+
+  display: grid !important;
+  place-items: center !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  border: 1px solid rgba(
+    255,122,0,.34
+  ) !important;
+
+  border-radius: 14px !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,28,37,.98),
+      rgba(7,13,19,.98)
+    ) !important;
+
+  color: #fff !important;
+
+  cursor: pointer !important;
+
+  overflow: visible !important;
+
+  box-shadow:
+    0 7px 20px rgba(0,0,0,.30),
+    inset 0 0 0 1px
+    rgba(255,255,255,.025) !important;
+
+  -webkit-tap-highlight-color: transparent !important;
+  touch-action: manipulation !important;
+}
+
+.mm-favorites-open:active {
+  transform:
+    translateX(-50%)
+    scale(.94) !important;
+}
+
+.mm-favorites-open.has-items {
+  border-color:
+    rgba(255,122,0,.78) !important;
+
+  box-shadow:
+    0 8px 23px rgba(0,0,0,.35),
+    0 0 18px rgba(255,122,0,.15) !important;
+}
+
+/* ---------- HEXAGON ICON ---------- */
+
+.mm-favorites-hex {
+  width: 31px !important;
+  height: 31px !important;
+
+  display: grid !important;
+  place-items: center !important;
+}
+
+.mm-favorites-hex-svg {
+  width: 31px !important;
+  height: 31px !important;
+
+  display: block !important;
+  overflow: visible !important;
+}
+
+.mm-favorites-hex-svg .hex-shape {
+  fill: none !important;
+  stroke: #e9eef3 !important;
+
+  stroke-width: 2.5 !important;
+  stroke-linejoin: round !important;
+}
+
+.mm-favorites-hex-svg .hex-heart {
+  fill: #e9eef3 !important;
+}
+
+.mm-favorites-open.has-items
+.mm-favorites-hex-svg
+.hex-shape {
+  fill: #ff7a00 !important;
+  stroke: #ff7a00 !important;
+}
+
+.mm-favorites-open.has-items
+.mm-favorites-hex-svg
+.hex-heart {
+  fill: #111820 !important;
+}
+
+/* ---------- COUNT ---------- */
+
+.mm-favorites-count {
+  position: absolute !important;
+
+  top: -7px !important;
+  right: -7px !important;
+
+  min-width: 19px !important;
+  height: 19px !important;
+
+  padding: 0 5px !important;
+
+  box-sizing: border-box !important;
+
+  display: grid !important;
+  place-items: center !important;
+
+  border-radius: 999px !important;
+  border: 1px solid
+    rgba(255,255,255,.18) !important;
+
+  background: #ff7a00 !important;
+  color: #fff !important;
+
+  font:
+    900 10px/1 Arial,
+    sans-serif !important;
+
+  box-shadow:
+    0 4px 12px
+    rgba(255,122,0,.28) !important;
+}
+
+/* ---------- PRODUCT LIKE HEART FIX ---------- */
+
+/*
+  mm-engagement.js Unicode жүрөк түзөт:
+  <span class="mm-social-icon mm-heart">♡</span>
+
+  Бул CSS аны сөзсүз көрүнүктүү кылат.
+*/
+#products .mm-card-actions
+.mm-heart {
+  width: 27px !important;
+  height: 27px !important;
+
+  flex: 0 0 27px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  color: #f6f7f8 !important;
+
+  font-family:
+    Arial,
+    sans-serif !important;
+
+  font-size: 30px !important;
+  font-weight: 400 !important;
+  line-height: 27px !important;
+
+  visibility: visible !important;
+  opacity: 1 !important;
+
+  background: transparent !important;
+  border: 0 !important;
+
+  overflow: visible !important;
+}
+
+/* Жүрөк кодун өзү көрүнсүн */
+#products .mm-card-actions
+.mm-heart::before {
+  content: '♡' !important;
+
+  display: block !important;
+
+  color: currentColor !important;
+
+  font-size: 30px !important;
+  line-height: 27px !important;
+}
+
+/* JS текстин жашырабыз */
+#products .mm-card-actions
+.mm-heart {
+  font-size: 0 !important;
+}
+
+#products .mm-card-actions
+.mm-heart::before {
+  font-size: 30px !important;
+}
+
+#products .mm-card-actions
+.mm-social-btn.is-liked
+.mm-heart,
+#products .mm-card-actions
+.mm-social-btn.liked
+.mm-heart,
+#products .mm-card-actions
+.mm-social-btn.mm-favorite-active
+.mm-heart {
+  color: #ff4d55 !important;
+}
+
+#products .mm-card-actions
+.mm-social-btn.is-liked
+.mm-heart::before,
+#products .mm-card-actions
+.mm-social-btn.liked
+.mm-heart::before,
+#products .mm-card-actions
+.mm-social-btn.mm-favorite-active
+.mm-heart::before {
+  content: '♥' !important;
+  color: #ff4d55 !important;
+}
+
+/* ---------- PANEL ---------- */
+
+body.mm-favorites-lock {
+  overflow: hidden !important;
+}
+
+.mm-favorites-panel {
+  position: fixed !important;
+  inset: 0 !important;
+
+  z-index: 1500 !important;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition:
+    opacity .2s ease,
+    visibility .2s ease;
+}
+
+.mm-favorites-panel.show {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.mm-favorites-backdrop {
+  position: absolute !important;
+  inset: 0 !important;
+
+  background:
+    rgba(2,6,10,.76) !important;
+
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
+.mm-favorites-drawer {
+  position: absolute !important;
+
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+
+  width: min(430px,96vw) !important;
+  max-width: 100vw !important;
+
+  box-sizing: border-box !important;
+
+  padding: 19px 14px 18px !important;
+
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+
+  background:
+    radial-gradient(
+      circle at 100% 0,
+      rgba(255,122,0,.10),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #101820 0%,
+      #070d13 100%
+    ) !important;
+
+  border-left:
+    1px solid
+    rgba(255,255,255,.10) !important;
+
+  box-shadow:
+    -22px 0 75px
+    rgba(0,0,0,.44) !important;
+
+  transform: translateX(100%);
+  transition: transform .28s ease;
+}
+
+.mm-favorites-panel.show
+.mm-favorites-drawer {
+  transform: translateX(0);
+}
+
+.mm-favorites-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+
+  gap: 12px !important;
+
+  margin-bottom: 15px !important;
+}
+
+.mm-favorites-title {
+  margin: 0 !important;
+
+  color: #fff !important;
+
+  font-size: 25px !important;
+  font-weight: 900 !important;
+
+  line-height: 1.12 !important;
+}
+
+.mm-favorites-subtitle {
+  display: block !important;
+
+  margin-top: 6px !important;
+
+  color: #8e9aa6 !important;
+
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+}
+
+.mm-favorites-close {
+  width: 42px !important;
+  height: 42px !important;
+
+  flex: 0 0 42px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  border:
+    1px solid
+    rgba(255,255,255,.09) !important;
+
+  border-radius: 50% !important;
+
+  background:
+    rgba(255,255,255,.07) !important;
+
+  color: #fff !important;
+
+  font-size: 28px !important;
+  line-height: 1 !important;
+
+  cursor: pointer !important;
+}
+
+.mm-favorites-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.mm-fav-card {
+  display: grid !important;
+
+  grid-template-columns:
+    88px minmax(0,1fr) !important;
+
+  gap: 10px !important;
+
+  align-items: center !important;
+
+  padding: 9px !important;
+
+  box-sizing: border-box !important;
+
+  border:
+    1px solid
+    rgba(255,255,255,.08) !important;
+
+  border-radius: 16px !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      #111c25,
+      #0b1218
+    ) !important;
+}
+
+.mm-fav-image {
+  width: 88px !important;
+  height: 88px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  overflow: hidden !important;
+
+  border-radius: 13px !important;
+
+  background: #f5f5f4 !important;
+}
+
+.mm-fav-image img {
+  width: 100% !important;
+  height: 100% !important;
+
+  padding: 5px !important;
+
+  box-sizing: border-box !important;
+
+  object-fit: contain !important;
+
+  display: block !important;
+}
+
+.mm-fav-info {
+  min-width: 0 !important;
+}
+
+.mm-fav-name {
+  margin: 0 0 7px !important;
+
+  color: #fff !important;
+
+  font-size: 12px !important;
+  font-weight: 800 !important;
+
+  line-height: 1.32 !important;
+
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+
+  overflow: hidden !important;
+}
+
+.mm-fav-price {
+  display: block !important;
+
+  margin: 0 0 9px !important;
+
+  color: #ff8b1c !important;
+
+  font-size: 17px !important;
+  font-weight: 900 !important;
+
+  line-height: 1.15 !important;
+}
+
+.mm-fav-actions {
+  display: flex !important;
+
+  align-items: center !important;
+
+  gap: 7px !important;
+}
+
+.mm-fav-actions button {
+  min-height: 35px !important;
+
+  padding: 0 10px !important;
+
+  border: 0 !important;
+  border-radius: 10px !important;
+
+  background: #ff7a00 !important;
+  color: #fff !important;
+
+  font:
+    900 10px/1
+    Arial,
+    sans-serif !important;
+
+  cursor: pointer !important;
+}
+
+.mm-fav-actions
+.mm-fav-remove {
+  width: 37px !important;
+
+  padding: 0 !important;
+
+  background:
+    rgba(255,255,255,.08) !important;
+
+  color: #ff6b73 !important;
+
+  font-size: 20px !important;
+}
+
+.mm-favorites-empty {
+  padding: 62px 18px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+
+  text-align: center !important;
+
+  border:
+    1px dashed
+    rgba(255,255,255,.13) !important;
+
+  border-radius: 18px !important;
+
+  background:
+    rgba(255,255,255,.025) !important;
+}
+
+.mm-favorites-empty-icon {
+  width: 66px !important;
+  height: 66px !important;
+
+  margin-bottom: 13px !important;
+
+  display: grid !important;
+  place-items: center !important;
+
+  border-radius: 20px !important;
+
+  background:
+    rgba(255,122,0,.10) !important;
+
+  color: #ff7a00 !important;
+
+  font-size: 37px !important;
+}
+
+.mm-favorites-empty strong {
+  margin-bottom: 7px !important;
+
+  color: #fff !important;
+
+  font-size: 14px !important;
+}
+
+.mm-favorites-empty span {
+  max-width: 280px !important;
+
+  color: #8d99a4 !important;
+
+  font-size: 11px !important;
+  line-height: 1.45 !important;
+}
+
+/* ---------- MOBILE ---------- */
+
 @media (max-width: 600px) {
-  .mm-cart-favorites-stack .mm-favorites-open {
-    top: calc(100% + 12px) !important;
+  .mm-cart-favorites-stack {
+    min-width: 40px !important;
+  }
+
+  .mm-cart-favorites-stack
+  .mm-favorites-open {
+    top:
+      calc(100% + 12px)
+      !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .mm-favorites-open {
+    width: 44px !important;
+    height: 44px !important;
+
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .mm-favorites-hex,
+  .mm-favorites-hex-svg {
+    width: 29px !important;
+    height: 29px !important;
+  }
+
+  .mm-favorites-count {
+    top: -6px !important;
+    right: -6px !important;
+  }
+
+  .mm-favorites-drawer {
+    width: 100vw !important;
+    padding-left: 11px !important;
+    padding-right: 11px !important;
+  }
+
+  .mm-fav-card {
+    grid-template-columns:
+      82px minmax(0,1fr) !important;
+  }
+
+  .mm-fav-image {
+    width: 82px !important;
+    height: 82px !important;
   }
 }
