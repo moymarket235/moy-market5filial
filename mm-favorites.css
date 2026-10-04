@@ -487,3 +487,34 @@ body.mm-favorites-lock {
     padding-right: 11px;
   }
 }
+/* === КОРЗИНАНЫН ОРДУН САКТАЙБЫЗ === */
+
+.mm-cart-favorites-stack {
+  position: relative !important;
+  display: block !important;
+  flex: 0 0 auto !important;
+  gap: 0 !important;
+}
+
+/* Избранное корзинанын астына чыгат */
+.mm-cart-favorites-stack .mm-favorites-open {
+  position: absolute !important;
+  left: 50% !important;
+  top: calc(100% + 10px) !important;
+
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px !important;
+  min-height: 46px !important;
+
+  transform: translateX(-50%) !important;
+
+  z-index: 1400 !important;
+}
+
+/* Телефон */
+@media (max-width: 600px) {
+  .mm-cart-favorites-stack .mm-favorites-open {
+    top: calc(100% + 12px) !important;
+  }
+}
