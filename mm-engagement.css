@@ -171,109 +171,12 @@ body.mm-viewer-open{overflow:hidden!important}
   .assistant-figure,#assistantImage{max-width:100px!important}
 }
 
-/* STEP 10.9 — FINAL 4-ICON GRID, EXACT MOBILE LAYOUT */
-#products .mm-card-actions{
-  display:grid!important;
-  grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  align-items:center!important;
-  justify-items:center!important;
-  width:100%!important;
-  box-sizing:border-box!important;
-  height:74px!important;
-  min-height:74px!important;
-  margin:14px 0 0!important;
-  padding:7px 6px 5px!important;
-  gap:0!important;
-  overflow:hidden!important;
-  border-top:1px solid rgba(255,255,255,.08)!important;
-}
-#products .mm-card-actions button.mm-social-btn,
-#products .mm-card-actions .mm-social-view{
-  width:100%!important;
-  min-width:0!important;
-  max-width:none!important;
-  height:62px!important;
-  min-height:62px!important;
-  margin:0!important;
-  padding:0!important;
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:2px!important;
-  box-sizing:border-box!important;
-  overflow:visible!important;
-  background:transparent!important;
-  border:0!important;
-  border-radius:0!important;
-  transform:none!important;
-}
-#products .mm-card-actions .mm-social-icon{
-  display:flex!important;
-  width:52px!important;
-  height:52px!important;
-  min-width:52px!important;
-  min-height:52px!important;
-  flex:0 0 52px!important;
-  align-items:center!important;
-  justify-content:center!important;
-  line-height:1!important;
-  margin:0!important;
-  padding:0!important;
-}
-#products .mm-card-actions .mm-heart{
-  font-size:48px!important;
-}
-#products .mm-card-actions .mm-comment-icon{
-  width:42px!important;
-  height:32px!important;
-  min-width:42px!important;
-  min-height:32px!important;
-  flex:0 0 32px!important;
-  border-width:3px!important;
-}
-#products .mm-card-actions .mm-share-icon{
-  font-size:48px!important;
-  transform:rotate(-32deg)!important;
-}
-#products .mm-card-actions .mm-eye-icon{
-  font-size:42px!important;
-}
-#products .mm-card-actions b{
-  display:block!important;
-  width:auto!important;
-  height:15px!important;
-  min-height:15px!important;
-  margin:0!important;
-  padding:0!important;
-  font-size:14px!important;
-  line-height:15px!important;
-  font-weight:800!important;
-  text-align:center!important;
-  color:#f4f6f8!important;
-}
-#products .mm-card-actions button.mm-social-btn.liked .mm-heart{color:#ff4d55!important}
-@media(max-width:650px){
-  #products .mm-card-actions{
-    height:72px!important;
-    min-height:72px!important;
-    padding:5px 3px 4px!important;
-  }
-  #products .mm-card-actions button.mm-social-btn,
-  #products .mm-card-actions .mm-social-view{
-    height:61px!important;
-    min-height:61px!important;
-  }
-  #products .mm-card-actions .mm-social-icon{
-    width:48px!important;
-    height:48px!important;
-    min-width:48px!important;
-    min-height:48px!important;
-    flex-basis:48px!important;
-  }
-  #products .mm-card-actions .mm-heart{font-size:44px!important}
-  #products .mm-card-actions .mm-comment-icon{width:39px!important;height:29px!important;min-width:39px!important;min-height:29px!important;flex-basis:29px!important}
-  #products .mm-card-actions .mm-share-icon{font-size:44px!important}
-  #products .mm-card-actions .mm-eye-icon{font-size:39px!important}
-  #products .mm-card-actions b{font-size:13px!important;height:14px!important;min-height:14px!important;line-height:14px!important}
-}
+/* STEP 10 — Customer account modal (floating button removed) */
+.mm-account-modal{position:fixed;inset:0;z-index:10020;display:none;align-items:center;justify-content:center;padding:18px}.mm-account-modal.show{display:flex}
+.mm-account-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(5px)}
+.mm-account-panel{position:relative;width:min(420px,100%);border:1px solid rgba(255,122,0,.28);border-radius:22px;background:linear-gradient(180deg,#111820,#0a0f14);box-shadow:0 24px 70px rgba(0,0,0,.55);padding:20px;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.mm-account-close{position:absolute;right:12px;top:10px;width:36px;height:36px;border:0;border-radius:50%;background:rgba(255,255,255,.07);color:#fff;font-size:25px;line-height:1;cursor:pointer}
+.mm-account-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}.mm-account-avatar{width:46px;height:46px;display:grid;place-items:center;border-radius:14px;background:rgba(255,122,0,.14);font-size:24px}.mm-account-kicker{font-size:10px;font-weight:900;letter-spacing:1.4px;color:#ff7a00}.mm-account-head h3{margin:3px 0 0;font-size:22px}
+.mm-account-panel label{display:block;margin:12px 0 0;font-size:12px;font-weight:800;color:#cbd2da}.mm-account-panel input{display:block;width:100%;box-sizing:border-box;margin-top:7px;padding:13px 14px;border-radius:13px;border:1px solid rgba(255,255,255,.12);outline:0;background:#080d12;color:#fff;font:600 14px system-ui}.mm-account-panel input:focus{border-color:rgba(255,122,0,.75)}
+.mm-account-note{margin:14px 0;color:#89939f;font-size:11px;line-height:1.45}.mm-account-save{width:100%;border:0;border-radius:13px;padding:13px;background:#ff7a00;color:#111;font-weight:900;font-size:14px;cursor:pointer}.mm-account-clear{width:100%;margin-top:8px;border:1px solid rgba(255,255,255,.1);border-radius:13px;padding:11px;background:transparent;color:#9ca6b1;font-weight:700;font-size:12px;cursor:pointer}
+@media(max-width:650px){.mm-account-panel{border-radius:20px;padding:18px}}

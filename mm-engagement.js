@@ -40,7 +40,7 @@
     const p=ensure(card);
     const bar=document.createElement('div');
     bar.className='mm-card-actions';
-    bar.innerHTML=`<button class="mm-social-btn mm-3d-like" type="button" data-mm-action="like" aria-label="Лайк"><span class="mm-social-icon mm-heart">♥</span><b>${p.likes}</b></button><button class="mm-social-btn mm-3d-comment" type="button" data-mm-action="comment" aria-label="Комментарий"><span class="mm-social-icon mm-comment-icon"></span><b>${p.comments.length}</b></button><button class="mm-social-btn mm-3d-share" type="button" data-mm-action="share" aria-label="Бөлүшүү"><span class="mm-social-icon mm-share-icon">➤</span><b>${p.shares}</b></button><span class="mm-social-view mm-3d-view" data-mm-view="1" aria-label="Көрүүлөр"><span class="mm-social-icon mm-eye-icon">●</span><b>${p.views}</b></span>`;
+    bar.innerHTML=`<button class="mm-social-btn" type="button" data-mm-action="like" aria-label="Лайк"><span class="mm-social-icon mm-heart">♡</span><b>${p.likes}</b></button><button class="mm-social-btn" type="button" data-mm-action="comment" aria-label="Комментарий"><span class="mm-social-icon mm-comment-icon"></span><b>${p.comments.length}</b></button><button class="mm-social-btn" type="button" data-mm-action="share" aria-label="Бөлүшүү"><span class="mm-social-icon mm-share-icon">➤</span><b>${p.shares}</b></button><span class="mm-social-view" data-mm-view="1" aria-label="Көрүүлөр"><span class="mm-social-icon mm-eye-icon">◉</span><b>${p.views}</b></span>`;
     card.appendChild(bar);
     card.dataset.mmActions='1';
   }
@@ -183,6 +183,10 @@
       if(name.length<2){qs('#mmAccountName',accountModal).focus(); return;}
       if(phone.length<5){qs('#mmAccountPhone',accountModal).focus(); return;}
       saveAccount({name,phone,updatedAt:Date.now()}); closeAccount();
+    });
+    qs('#mmAccountClear',accountModal).addEventListener('click',()=>{
+      try{localStorage.removeItem(ACCOUNT_KEY);}catch(_){}
+      qs('#mmAccountName',accountModal).value=''; qs('#mmAccountPhone',accountModal).value=''; updateAccountButton();
     });
   }
   function openAccount(){ensureAccountModal(); const a=loadAccount(); qs('#mmAccountName',accountModal).value=a.name||''; qs('#mmAccountPhone',accountModal).value=a.phone||''; accountModal.classList.add('show'); accountModal.setAttribute('aria-hidden','false'); setTimeout(()=>qs('#mmAccountName',accountModal).focus(),40);}
