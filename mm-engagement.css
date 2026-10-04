@@ -180,3 +180,134 @@ body.mm-viewer-open{overflow:hidden!important}
 .mm-account-panel label{display:block;margin:12px 0 0;font-size:12px;font-weight:800;color:#cbd2da}.mm-account-panel input{display:block;width:100%;box-sizing:border-box;margin-top:7px;padding:13px 14px;border-radius:13px;border:1px solid rgba(255,255,255,.12);outline:0;background:#080d12;color:#fff;font:600 14px system-ui}.mm-account-panel input:focus{border-color:rgba(255,122,0,.75)}
 .mm-account-note{margin:14px 0;color:#89939f;font-size:11px;line-height:1.45}.mm-account-save{width:100%;border:0;border-radius:13px;padding:13px;background:#ff7a00;color:#111;font-weight:900;font-size:14px;cursor:pointer}.mm-account-clear{width:100%;margin-top:8px;border:1px solid rgba(255,255,255,.1);border-radius:13px;padding:11px;background:transparent;color:#9ca6b1;font-weight:700;font-size:12px;cursor:pointer}
 @media(max-width:650px){.mm-account-panel{border-radius:20px;padding:18px}}
+
+
+/* STEP 10.5 — OPTION 9 GLOSSY 3D SOCIAL ICONS */
+#products .mm-card-actions.mm-3d-bar,
+#products .mm-card-actions{
+  overflow:visible!important;
+}
+#products .mm-card-actions button.mm-social-btn,
+#products .mm-card-actions .mm-social-view{
+  position:relative!important;
+  overflow:visible!important;
+  border-radius:14px!important;
+  width:52px!important;
+  min-width:52px!important;
+  max-width:52px!important;
+  height:48px!important;
+  min-height:48px!important;
+  padding:0!important;
+  gap:0!important;
+  flex:0 0 52px!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-items:center!important;
+  color:#fff!important;
+  text-shadow:0 1px 1px rgba(0,0,0,.45)!important;
+}
+#products .mm-card-actions .mm-social-icon{
+  width:38px!important;
+  height:38px!important;
+  border-radius:12px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-family:Arial,sans-serif!important;
+  font-weight:900!important;
+  line-height:1!important;
+  box-sizing:border-box!important;
+  color:#fff!important;
+  text-shadow:0 2px 2px rgba(0,0,0,.35)!important;
+  box-shadow:inset 0 2px 2px rgba(255,255,255,.32), inset 0 -4px 5px rgba(0,0,0,.20), 0 4px 10px rgba(0,0,0,.34)!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+}
+#products .mm-card-actions .mm-heart{
+  font-size:25px!important;
+  background:linear-gradient(180deg,#ff5b63 0%,#ef1830 55%,#b80018 100%)!important;
+}
+#products .mm-card-actions .mm-comment-icon{
+  width:38px!important;
+  height:38px!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:linear-gradient(180deg,#55b8ff 0%,#167eea 58%,#0750a9 100%)!important;
+  position:relative!important;
+}
+#products .mm-card-actions .mm-comment-icon:before{
+  content:""!important;
+  width:19px!important;
+  height:14px!important;
+  border-radius:50%!important;
+  background:#fff!important;
+  display:block!important;
+  box-shadow:0 1px 1px rgba(0,0,0,.18)!important;
+}
+#products .mm-card-actions .mm-comment-icon:after{
+  content:""!important;
+  position:absolute!important;
+  right:9px!important;
+  bottom:7px!important;
+  width:7px!important;
+  height:7px!important;
+  background:#fff!important;
+  clip-path:polygon(100% 0,0 0,100% 100%)!important;
+  border:0!important;
+  transform:none!important;
+}
+#products .mm-card-actions .mm-share-icon{
+  font-size:23px!important;
+  transform:rotate(-32deg)!important;
+  background:linear-gradient(180deg,#53e98c 0%,#11bb63 55%,#07823e 100%)!important;
+}
+#products .mm-card-actions .mm-eye-icon{
+  font-size:20px!important;
+  background:linear-gradient(180deg,#8d96aa 0%,#566075 58%,#303746 100%)!important;
+  position:relative!important;
+}
+#products .mm-card-actions .mm-eye-icon:before{
+  content:""!important;
+  position:absolute!important;
+  width:20px!important;
+  height:13px!important;
+  border-radius:70% 30% 70% 30%!important;
+  background:#fff!important;
+  transform:rotate(45deg)!important;
+}
+#products .mm-card-actions .mm-eye-icon:after{
+  content:""!important;
+  position:absolute!important;
+  width:7px!important;
+  height:7px!important;
+  border-radius:50%!important;
+  background:#586174!important;
+  z-index:2!important;
+}
+#products .mm-card-actions b{
+  position:absolute!important;
+  bottom:-1px!important;
+  right:3px!important;
+  min-width:15px!important;
+  font-size:10px!important;
+  line-height:15px!important;
+  color:#fff!important;
+  font-weight:900!important;
+  text-align:center!important;
+  z-index:4!important;
+}
+#products .mm-card-actions .mm-social-btn.liked .mm-heart{
+  filter:brightness(1.08)!important;
+  box-shadow:inset 0 2px 2px rgba(255,255,255,.38), inset 0 -4px 5px rgba(0,0,0,.2), 0 0 14px rgba(255,55,70,.42)!important;
+}
+#products .mm-card-actions button.mm-social-btn:active .mm-social-icon,
+#products .mm-card-actions .mm-social-view:active .mm-social-icon{
+  transform:translateY(1px) scale(.95)!important;
+}
+#mmAccountButton{display:none!important;}
+@media(max-width:650px){
+  #products .mm-card-actions{height:62px!important;min-height:62px!important;padding:6px 6px 8px!important;gap:0!important;justify-content:space-around!important;}
+  #products .mm-card-actions button.mm-social-btn,
+  #products .mm-card-actions .mm-social-view{width:48px!important;min-width:48px!important;max-width:48px!important;height:48px!important;min-height:48px!important;flex-basis:48px!important;}
+  #products .mm-card-actions .mm-social-icon{width:36px!important;height:36px!important;border-radius:11px!important;}
+  #products .mm-card-actions b{right:0!important;bottom:-1px!important;font-size:10px!important;}
+}
