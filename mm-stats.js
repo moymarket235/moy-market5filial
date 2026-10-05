@@ -93,48 +93,32 @@
   }
 
   function send(type, extra = {}) {
-    const payload = {
-      type,
-      visitorId,
-      ts: Date.now(),
-      lang: currentLang(),
-      device: device(),
-      trafficSource: source(),
-      referrer: document.referrer || '',
-      ...extra
-    };
+  const payload = {
+    type,
+    visitorId,
+    ts: Date.now(),
+    lang: currentLang(),
+    device: device(),
+    trafficSource: source(),
+    referrer: document.referrer || '',
+    ...extra
+  };
 
-    try {
-      const body = JSON.stringify(payload);
-
-      if (navigator.sendBeacon) {
-        const blob = new Blob(
-          [body],
-          { type: 'application/json' }
-        );
-
-        if (
-          navigator.sendBeacon(
-            EVENT_API,
-            blob
-          )
-        ) {
-          return;
-        }
-      }
-
-      fetch(EVENT_API, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json'
-        },
-        body,
-        keepalive: true,
-        mode: 'cors'
-      }).catch(() => {});
-    } catch (_) {}
+  try {
+    fetch(EVENT_API, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(payload),
+      mode: 'cors',
+      credentials: 'omit',
+      cache: 'no-store',
+      keepalive: true
+    }).catch(() => {});
+  } catch (_) {}
   }
-
+  
   function cardProduct(card) {
     if (!card) return null;
 
