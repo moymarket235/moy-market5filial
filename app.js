@@ -13,6 +13,7 @@ const nameOf=p=>lang==="ru"?(p.nameRu||p.name):(p.name||"");
 const descOf=p=>lang==="ru"?(p.descriptionRu||p.description):(p.description||"");
 const catName=c=>lang==="ru"?(c.nameRu||c.name):(c.name||"");
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+const escAttr=esc;
 function applyText(){document.querySelectorAll("[data-i18n]").forEach(e=>e.textContent=tr(e.dataset.i18n));document.querySelectorAll("[data-i18n-html]").forEach(e=>e.innerHTML=tr(e.dataset.i18nHtml));document.querySelectorAll("[data-i18n-placeholder]").forEach(e=>e.placeholder=tr(e.dataset.i18nPlaceholder));document.documentElement.lang=lang;$("#langSwitch").textContent=lang==="ky"?"KG / RU":"RU / KG"}
 function renderCats(){
  const wrap=$("#categories");
