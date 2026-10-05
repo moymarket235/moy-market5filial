@@ -16,7 +16,7 @@
     const r = await fetch(API + path, {...options, headers});
     let data = null; try { data = await r.json(); } catch (_) {}
     if (r.status === 401) { logout(); throw new Error('UNAUTHORIZED'); }
-    if (!r.ok) throw new Error(data?.error || `HTTP_${r.status}`);
+    if (!r.ok) throw new Error(data?.detail || data?.error || `HTTP_${r.status}`);
     return data;
   }
 
