@@ -1357,7 +1357,7 @@ function syncFavoritesFromHomepageLikes() {
   function init() {
     favorites = loadSet();
     items = loadItems();
-    
+    migrateDuplicates();
     ensureButton();
     ensurePanel();
 
