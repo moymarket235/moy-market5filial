@@ -27,27 +27,86 @@ function renderSubcats(){
  box.querySelectorAll(".subcat").forEach(b=>b.onclick=()=>{activeSub=b.dataset.sub;box.querySelectorAll(".subcat").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderProducts()});
 }
 function renderProducts(){
- const q=($("#searchInput")?.value||"").trim().toLowerCase();
- const cat=categories.find(c=>c.id===activeCat);
- const sub=activeSub!=="all"?cat?.subcategories?.[Number(activeSub)]:null;
- const list=products.filter(p=>{
-  const hay=[p.name,p.nameRu,p.description,p.descriptionRu,p.categoryName,p.categoryNameRu,p.subcategoryName,p.subcategoryNameRu].join(" ").toLowerCase();
-  return (activeCat==="all"||p.category===activeCat)&&(!sub||p.subcategoryName===sub||p.subcategoryNameRu===sub)&&hay.includes(q);
- });
- const resultCount=$("#resultCount"); if(resultCount) resultCount.textContent=list.length?`${list.length} ${list.length===1?tr("item"):tr("items")}`:"";
- $("#empty").hidden=list.length>0;
- const card=p=>{
-  const specs=lang==="ru"?(p.characteristicsRu||p.characteristics||[]):(p.characteristics||[]);
-  // The description is shown only for products without a specifications list.
-  return `<article class="product"><div class="photo" data-product-id="${esc(p.id)}"><img src="${esc(p.image||"assets/products/placeholder.svg")}" alt="${esc(nameOf(p))}" loading="lazy" onerror="this.onerror=null;this.src='assets/products/placeholder.svg'"></div><div class="pbody"><div class="pname">${esc(nameOf(p))}</div>${specs.length?"":`<div class="desc">${esc(descOf(p))}</div>`}<div class="price">${money(p.price)}</div>${specs.length?`<div class="specs"><b>${tr("characteristics")}</b><ul>${specs.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}<button class="buy" onclick="addToCart('${esc(p.id)}')">🛒 ${tr("addCart")}</button></div></article>`;
- };
+function renderProducts(){
+  const q=$("#searchInput").value.trim().toLowerCase();
+  const cat=categories.find(c=>c.id===activeCat);
+  const subText=activeSub!=="all"&&cat?.subcategories?.[Number(activeSub)];
 
-  // Keep the exact product order from products.json. The redesign changes presentation only.
-  $("#products").classList.remove("grouped");
-  $("#products").innerHTML=list.map(card).join("");
+  const list=products.filter(p=>{
+    const hay=[
+      p.name,
+      p.nameRu,
+      p.description,
+      p.descriptionRu,
+      p.categoryName,
+      p.categoryNameRu,
+      p.subcategoryName,
+      p.subcategoryNameRu
+    ].filter(Boolean).join(" ").toLowerCase();
 
+    const subOK=
+      activeSub==="all" ||
+      p.subcategoryName===subText ||
+      p.subcategoryNameRu===subText;
+
+    return (
+      (activeCat==="all" || p.category===activeCat) &&
+      subOK &&
+      hay.includes(q)
+    );
+  });
+
+  $("#resultCount").textContent=
+    list.length
+      ? `${list.length} ${list.length===1?tr("item"):tr("items")}`
+      : "";
+
+  $("#empty").hidden=!!list.length;
+
+  $("#products").innerHTML=list.map(p=>`
+    <article class="product">
+      <div class="photo">
+        <img
+          src="${escAttr(p.image||"assets/products/placeholder.svg")}"
+          alt="${esc(field(p,"name","nameRu"))}"
+          loading="lazy"
+          onerror="this.onerror=null;this.src='assets/products/placeholder.svg'"
+        >
+      </div>
+
+      <div class="pbody">
+        <div class="pname">
+          ${esc(field(p,"name","nameRu"))}
+        </div>
+
+        <div class="desc">
+          ${esc(
+            field(p,"description","descriptionRu") ||
+            (lang==="ru"
+              ? "Качественный товар"
+              : "Сапаттуу товар")
+          )}
+        </div>
+
+        <div class="price">
+          ${money(Number(p.price)||0)}
+        </div>
+
+        <button
+          class="buy"
+          onclick="addToCart('${escAttr(p.id)}')"
+        >
+          🛒 ${tr("addCart")}
+        </button>
+      </div>
+    </article>
+  `).join("");
+
+  document.dispatchEvent(
+    new CustomEvent("mm:products-rendered")
+  );
 }
-
+ 
 function brandOf(p){
  const n=(p.name||p.nameRu||"").trim();
  return (n.split(/\s+/)[0]||"Мой Маркет").replace(/[—–-].*$/,"" ).trim() || "Мой Маркет";
@@ -76,7 +135,89 @@ function productImageUrl(p){try{return new URL(p.image||"assets/products/placeho
 function showToast(message){let t=$("#cartToast");if(!t){t=document.createElement("div");t.id="cartToast";t.className="cart-toast";document.body.appendChild(t)}t.textContent="🛒  "+message;t.classList.add("show");clearTimeout(window.__cartToastTimer);window.__cartToastTimer=setTimeout(()=>t.classList.remove("show"),1800)}
 function addToCart(id){const x=cart.find(a=>a.id===id);x?x.qty++:cart.push({id,qty:1});save();renderCart();showToast(tr("addedToCart"))}
 function changeQty(id,n){const x=cart.find(a=>a.id===id);if(!x)return;x.qty+=n;if(x.qty<1)cart=cart.filter(a=>a.id!==id);save();renderCart()}
-function renderCart(){const rows=cart.map(x=>{const p=products.find(a=>a.id===x.id);if(!p)return"";return `<div class="cart-row"><img src="${esc(p.image)}" onerror="this.src='assets/products/placeholder.svg'"><div><b>${esc(nameOf(p))}</b><small>${money(p.price)}</small><div class="qty"><button onclick="changeQty('${esc(p.id)}',-1)">−</button><span>${x.qty}</span><button onclick="changeQty('${esc(p.id)}',1)">+</button></div></div><strong>${money(p.price*x.qty)}</strong></div>`}).join("");$("#cartItems").innerHTML=rows||`<div class="empty"><div>🛒</div><h3>${tr("emptyCart")}</h3><p>${tr("chooseProduct")}</p></div>`;const count=cart.reduce((s,x)=>s+x.qty,0),total=cart.reduce((s,x)=>{const p=products.find(a=>a.id===x.id);return s+(p?p.price*x.qty:0)},0);$("#cartCount").textContent=count;$("#mobileCartCount").textContent=count;$("#cartTotal").textContent=money(total)}
+function renderCart(){
+  const before=JSON.stringify(cart);
+
+  cart=(Array.isArray(cart)?cart:[])
+    .filter(x=>{
+      const p=products.find(a=>a.id===x?.id);
+      const qty=Number(x?.qty);
+
+      return !!p &&
+        Number.isFinite(qty) &&
+        qty>0;
+    })
+    .map(x=>({
+      id:x.id,
+      qty:Math.max(1,Math.floor(Number(x.qty)))
+    }));
+
+  if(JSON.stringify(cart)!==before){
+    save();
+  }
+
+  const rows=cart.map(x=>{
+    const p=products.find(a=>a.id===x.id);
+    if(!p)return"";
+
+    return `
+      <div class="cart-row">
+        <img
+          src="${escAttr(p.image||"assets/products/placeholder.svg")}"
+          onerror="this.src='assets/products/placeholder.svg'"
+        >
+
+        <div>
+          <b>${esc(field(p,"name","nameRu"))}</b>
+          <small>${money(Number(p.price)||0)}</small>
+
+          <div class="qty">
+            <button onclick="changeQty('${escAttr(p.id)}',-1)">−</button>
+            <span>${x.qty}</span>
+            <button onclick="changeQty('${escAttr(p.id)}',1)">+</button>
+          </div>
+        </div>
+
+        <strong>
+          ${money((Number(p.price)||0)*x.qty)}
+        </strong>
+      </div>
+    `;
+  }).join("");
+
+  $("#cartItems").innerHTML=
+    rows ||
+    `
+      <div class="empty">
+        <div>🛒</div>
+        <h3>${tr("emptyCart")}</h3>
+        <p>${tr("chooseProduct")}</p>
+      </div>
+    `;
+
+  const count=cart.reduce(
+    (s,x)=>s+x.qty,
+    0
+  );
+
+  const total=cart.reduce(
+    (s,x)=>{
+      const p=products.find(a=>a.id===x.id);
+
+      return s+
+        (
+          p
+            ? (Number(p.price)||0)*x.qty
+            : 0
+        );
+    },
+    0
+  );
+
+  $("#cartCount").textContent=String(count);
+  $("#mobileCartCount").textContent=String(count);
+  $("#cartTotal").textContent=money(total);
+}
 function openCart(){$("#cartDrawer").classList.add("open");$("#backdrop").classList.add("open")}
 function closeCart(){$("#cartDrawer").classList.remove("open");$("#backdrop").classList.remove("open")}
 function order(){if(!cart.length)return;let total=0,msg=lang==="ru"?"Здравствуйте! Хочу оформить заказ в Мой Маркет:":"Салам! Мой Маркеттен заказ бергим келет:";cart.forEach(x=>{const p=products.find(a=>a.id===x.id);if(!p)return;const sub=p.price*x.qty;total+=sub;msg+=`\n\n• ${nameOf(p)}\n${tr("qty")}: ${x.qty}\n${tr("price")}: ${p.price} сом\n${tr("subtotal")}: ${sub} сом\n🖼️ ${lang==="ru"?"Ссылка на фото":"Сүрөттүн шилтемеси"}: ${productImageUrl(p)}`});const d=document.querySelector('input[name="deliveryChoice"]:checked')?.value||"yandex";msg+=`\n\n🚚 ${lang==="ru"?"Доставка":"Жеткирүү"}: ${d==="yldam"?"Ылдам Экспресс":"Яндекс Go"}`;const a=$("#deliveryAddress").value.trim(),ph=$("#deliveryPhone").value.trim();if(a)msg+=`\n📍 ${lang==="ru"?"Адрес":"Дарек"}: ${a}`;if(ph)msg+=`\n📞 Телефон: ${ph}`;msg+=`\n\n${tr("total")} ${total} сом`;location.href=`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`}
