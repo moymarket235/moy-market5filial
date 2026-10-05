@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="mm-favorites.css?v=24.1">
 <link rel="stylesheet" href="mm-product-detail.css?v=1.1">
 <link rel="stylesheet" href="final-home-fix.css?v=1.3">
+<link rel="stylesheet" href="mm-search.css?v=1.0">
 </head>
 <body>
 <header class="topbar">
@@ -108,6 +109,133 @@
 </nav>
 
 <div class="drawer-backdrop" id="backdrop"></div>
+<div class="mm-search-overlay" id="mmSearchOverlay" aria-hidden="true">
+
+  <div class="mm-search-panel">
+
+    <div class="mm-search-top">
+
+      <div class="mm-search-input-wrap">
+
+        <span class="mm-search-main-icon">⌕</span>
+
+        <input
+          id="mmSmartSearchInput"
+          type="search"
+          autocomplete="off"
+          placeholder="Товар издеңиз..."
+        >
+
+        <button
+          class="mm-search-clear"
+          id="mmSearchClear"
+          type="button"
+          aria-label="Очистить"
+        >×</button>
+
+      </div>
+
+      <button
+        class="mm-search-close"
+        id="mmSearchClose"
+        type="button"
+        aria-label="Закрыть"
+      >×</button>
+
+    </div>
+
+    <div class="mm-search-section">
+
+      <div class="mm-search-kicker">
+        ПОПУЛЯРНОЕ
+      </div>
+
+      <div
+        class="mm-search-chips"
+        id="mmSearchPopular"
+      >
+
+        <button
+          class="mm-search-chip"
+          data-search="блендер"
+        >
+          Блендер
+        </button>
+
+        <button
+          class="mm-search-chip"
+          data-search="пылесос"
+        >
+          Пылесос
+        </button>
+
+        <button
+          class="mm-search-chip"
+          data-search="чайник"
+        >
+          Чайник
+        </button>
+
+        <button
+          class="mm-search-chip"
+          data-search="микроволновка"
+        >
+          Микроволновка
+        </button>
+
+        <button
+          class="mm-search-chip"
+          data-search="посуда"
+        >
+          Посуда
+        </button>
+
+      </div>
+
+    </div>
+
+    <div
+      class="mm-search-section"
+      id="mmSearchRecentSection"
+      hidden
+    >
+
+      <div class="mm-search-kicker">
+        ПОСЛЕДНИЕ ПОИСКИ
+      </div>
+
+      <div
+        class="mm-search-recent"
+        id="mmSearchRecent"
+      ></div>
+
+    </div>
+
+    <div class="mm-search-section">
+
+      <div class="mm-search-results-head">
+
+        <div class="mm-search-kicker">
+          РЕЗУЛЬТАТЫ
+        </div>
+
+        <span
+          class="mm-search-results-count"
+          id="mmSearchCount"
+        ></span>
+
+      </div>
+
+      <div
+        class="mm-search-results"
+        id="mmSearchResults"
+      ></div>
+
+    </div>
+
+  </div>
+
+</div>
 <div class="cart-toast" id="cartToast" aria-live="polite"></div>
 <div class="product-preview" id="productPreview" aria-hidden="true">
   <div class="preview-backdrop" id="previewBackdrop"></div>
