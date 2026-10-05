@@ -1,17 +1,19 @@
-/* МОЙ МАРКЕТ — LIKE + FAVORITES PROFESSIONAL V26
-   FIXED FAVORITES DUPLICATES
+/* МОЙ МАРКЕТ — LIKE + FAVORITES PROFESSIONAL V27
+   CLEAN / NO DOUBLE TOGGLE
 
    FIXES:
-   - Prevents duplicate favorites after refresh
-   - Cleans old duplicate favorite records
-   - Uses stable product identity
-   - Does NOT toggle Like itself
-   - Reads real .liked state from mm-engagement.js
-   - Keeps Favorites in localStorage
-   - Keeps cart position unchanged
-   - Supports homepage Like
-   - Supports Product Viewer Like
-   - Supports RU / KG
+   - mm-engagement.js owns the real .liked state
+   - Favorites never changes .liked directly
+   - Like -> Favorites is synchronized after the real Like action
+   - Unlike immediately removes the product from Favorites
+   - Removing from Favorites clicks the real homepage Like to unlike it
+   - Duplicate/stale Favorite records are cleaned safely
+   - Real product IDs are preserved
+   - Fallback ID is stable by name + price
+   - Favorite counter always follows the real Favorites Set
+   - Homepage Like counters/icons are not overwritten here
+   - Product Viewer Like syncs through the homepage Like
+   - RU / KG supported
 */
 
 (() => {
@@ -26,11 +28,11 @@
   const $$ = (selector, root = document) =>
     Array.from(root.querySelectorAll(selector));
 
-  let favorites = new Set();
-  let items = {};
+  let favorites = loadSet();
+  let items = loadItems();
   let panel = null;
   let viewerHooked = false;
-  let initialized = false;
+  let bound = false;
 
   /* =========================================================
      BASIC HELPERS
@@ -62,6 +64,7 @@
     try {
       const value =
         localStorage.getItem('moyLang') ||
+        localStorage.getItem('lang') ||
         document.documentElement.lang ||
         'ru';
 
@@ -75,9 +78,12 @@
     }
   }
 
+  function isKy() {
+    return lang() === 'ky';
+  }
+
   function hash(value) {
     let h = 2166136261;
-
     const source = String(value);
 
     for (let i = 0; i < source.length; i += 1) {
@@ -94,20 +100,13 @@
 
   function loadSet() {
     try {
-      const raw =
-        localStorage.getItem(FAVORITES_KEY);
-
-      const data =
-        raw ? JSON.parse(raw) : [];
-
-      if (!Array.isArray(data)) {
-        return new Set();
-      }
+      const raw = localStorage.getItem(FAVORITES_KEY);
+      const data = raw ? JSON.parse(raw) : [];
 
       return new Set(
-        data
-          .map(String)
-          .filter(Boolean)
+        Array.isArray(data)
+          ? data.map(String).filter(Boolean)
+          : []
       );
     } catch (_) {
       return new Set();
@@ -118,20 +117,15 @@
     try {
       localStorage.setItem(
         FAVORITES_KEY,
-        JSON.stringify(
-          Array.from(favorites)
-        )
+        JSON.stringify(Array.from(favorites))
       );
     } catch (_) {}
   }
 
   function loadItems() {
     try {
-      const raw =
-        localStorage.getItem(ITEMS_KEY);
-
-      const data =
-        raw ? JSON.parse(raw) : {};
+      const raw = localStorage.getItem(ITEMS_KEY);
+      const data = raw ? JSON.parse(raw) : {};
 
       if (
         !data ||
@@ -160,58 +154,39 @@
      PRODUCT CARDS
   ========================================================= */
 
-  function cards() {
-    return $$('#products .product, #products .product-card, #products [data-product-card]');
-  }
-
-  function getCardFromLike(button) {
-    if (!button) {
-      return null;
-    }
-
-    return button.closest(
+  function productCards() {
+    return $$(
       '#products .product, #products .product-card, #products [data-product-card]'
     );
   }
 
-  function getCardName(card) {
-    if (!card) {
-      return 'Товар';
-    }
+  function getCardFromLike(button) {
+    if (!button) return null;
 
-    const element =
+    return button.closest(
+      '#products .product, #products .product-card, #products [data-product-card], #products [data-product-id], #products [data-id], #products [data-product], #products [data-pid]'
+    );
+  }
+
+  function getCardName(card) {
+    if (!card) return 'Товар';
+
+    return cleanText(
       $(
         'h3, .pname, .product-name, .product-title, [data-product-name]',
         card
-      );
-
-    return cleanText(
-      element?.textContent || 'Товар'
+      )?.textContent || 'Товар'
     );
   }
 
   function getCardPrice(card) {
-    if (!card) {
-      return '';
-    }
+    if (!card) return '';
 
-    const element =
+    return cleanText(
       $(
         '.price, .product-price, [data-price]',
         card
-      );
-
-    if (element) {
-      return cleanText(
-        element.textContent
-      );
-    }
-
-    const fallback =
-      $('b, strong', card);
-
-    return cleanText(
-      fallback?.textContent || ''
+      )?.textContent || ''
     );
   }
 
@@ -220,8 +195,7 @@
       return 'assets/products/placeholder.svg';
     }
 
-    const image =
-      $('img', card);
+    const image = $('img', card);
 
     return (
       image?.currentSrc ||
@@ -230,39 +204,25 @@
     );
   }
 
-  /*
-    IMPORTANT:
-    We do NOT use image URL alone as the product ID.
+  function getCardId(card) {
+    if (!card) return '';
 
-    Old version used:
-      name + image
-
-    This could create another ID after refresh
-    if the image URL changed.
-
-    New version:
-      real product ID if available
-      otherwise stable name + price
-  */
-
-  function getStableProductId(card) {
-    if (!card) {
-      return '';
-    }
-
-    const realId =
+    const direct =
       card.dataset.productId ||
+      card.dataset.id ||
       card.dataset.product ||
-      card.dataset.pid ||
-      card.dataset.id;
+      card.dataset.pid;
 
-    if (realId) {
-      const id =
-        String(realId).trim();
+    if (direct) {
+      const id = String(direct).trim();
 
       card.dataset.mmFavoriteId = id;
 
       return id;
+    }
+
+    if (card.dataset.mmFavoriteId) {
+      return String(card.dataset.mmFavoriteId);
     }
 
     const name =
@@ -286,105 +246,90 @@
     return id;
   }
 
-  function getCardId(card) {
-    if (!card) {
-      return '';
-    }
-
-    if (card.dataset.mmFavoriteId) {
-      return String(
-        card.dataset.mmFavoriteId
-      );
-    }
-
-    return getStableProductId(card);
-  }
-
   function cardInfo(card) {
+    const id = getCardId(card);
+
+    if (!id) return null;
+
     return {
-      id: getCardId(card),
-
+      id,
       name: getCardName(card),
-
       price: getCardPrice(card),
-
       image: getCardImage(card),
-
       updatedAt: Date.now()
     };
+  }
+
+  function productSignature(value) {
+    if (!value) return '';
+
+    const name =
+      normalizeText(
+        value.name ||
+        value.title ||
+        ''
+      );
+
+    const price =
+      normalizeText(
+        value.price ||
+        ''
+      );
+
+    return `${name}|${price}`;
   }
 
   function saveCard(card) {
     const info =
       cardInfo(card);
 
-    if (!info.id) {
+    if (!info) {
       return null;
     }
 
-    items[info.id] = {
-      id: info.id,
-      name: info.name,
-      price: info.price,
-      image: info.image,
-      updatedAt: Date.now()
-    };
+    items[info.id] =
+      info;
 
     saveItems();
 
     return info;
   }
 
-  /* =========================================================
-     DUPLICATE CLEANER
-  ========================================================= */
-
-  function itemSignature(item) {
-    if (!item) {
-      return '';
+  function readRealLikeState(button) {
+    if (!button) {
+      return false;
     }
 
-    const name =
-      normalizeText(
-        item.name || item.title || ''
-      );
-
-    const price =
-      normalizeText(
-        item.price || ''
-      );
-
-    return `${name}|${price}`;
+    return button.classList.contains(
+      'liked'
+    );
   }
 
-  function migrateDuplicates() {
+  /* =========================================================
+     DUPLICATE / STALE CLEANUP
+  ========================================================= */
+
+  function isGeneratedId(id) {
+    return /^(mm_|mmfav_)/.test(
+      String(id || '')
+    );
+  }
+
+  function cleanupStoredDuplicates() {
     try {
-      const oldItems =
-        items &&
-        typeof items === 'object'
-          ? items
-          : {};
-
-      const oldFavorites =
-        Array.from(favorites);
-
-      const signatureToId =
+      const groups =
         new Map();
 
       const idMap =
         new Map();
 
-      const newItems = {};
+      const newItems =
+        {};
 
-      /*
-        First create one canonical ID
-        for every identical product.
-      */
-
-      Object.keys(oldItems)
+      Object.keys(items)
         .forEach((oldId) => {
           const item =
-            oldItems[oldId];
+            items[oldId];
 
           if (
             !item ||
@@ -394,22 +339,32 @@
           }
 
           const signature =
-            itemSignature(item);
+            productSignature(item);
 
           if (!signature) {
             return;
           }
 
           let canonicalId =
-            signatureToId.get(
-              signature
-            );
+            groups.get(signature);
 
           if (!canonicalId) {
             canonicalId =
-              `mmfav_${hash(signature)}`;
+              String(oldId);
 
-            signatureToId.set(
+            groups.set(
+              signature,
+              canonicalId
+            );
+
+          } else if (
+            isGeneratedId(canonicalId) &&
+            !isGeneratedId(oldId)
+          ) {
+            canonicalId =
+              String(oldId);
+
+            groups.set(
               signature,
               canonicalId
             );
@@ -417,13 +372,8 @@
 
           idMap.set(
             String(oldId),
-            canonicalId
+            String(canonicalId)
           );
-
-          /*
-            Keep only one copy.
-            Prefer the newest item.
-          */
 
           const existing =
             newItems[canonicalId];
@@ -435,44 +385,38 @@
           ) {
             newItems[canonicalId] = {
               id: canonicalId,
+
               name:
                 cleanText(
                   item.name ||
                   item.title ||
                   'Товар'
                 ),
+
               price:
                 cleanText(
-                  item.price || ''
+                  item.price ||
+                  ''
                 ),
+
               image:
                 item.image ||
                 'assets/products/placeholder.svg',
+
               updatedAt:
                 Number(
-                  item.updatedAt || 0
+                  item.updatedAt ||
+                  0
                 )
             };
           }
         });
 
-      /*
-        Rebuild Favorites from canonical IDs.
-        This is the important part that changes:
-
-          old ID 1
-          old ID 2
-
-        for the same product into:
-
-          one canonical ID
-      */
-
       const newFavorites =
         new Set();
 
-      oldFavorites.forEach(
-        (oldId) => {
+      Array.from(favorites)
+        .forEach((oldId) => {
           const key =
             String(oldId);
 
@@ -481,47 +425,191 @@
 
           if (mapped) {
             newFavorites.add(
-              mapped
+              String(mapped)
             );
-            return;
           }
+        });
 
-          /*
-            If an old favorite has no
-            corresponding item, keep it
-            temporarily only if it exists
-            as a real product later.
-          */
-          if (
-            oldItems[key] &&
-            typeof oldItems[key] ===
-              'object'
-          ) {
-            const signature =
-              itemSignature(
-                oldItems[key]
-              );
+      favorites =
+        newFavorites;
 
-            if (signature) {
-              newFavorites.add(
-                `mmfav_${hash(signature)}`
-              );
-            }
-          }
-        }
-      );
+      items =
+        newItems;
 
-      items = newItems;
-      favorites = newFavorites;
-
-      saveItems();
       saveSet();
+      saveItems();
 
     } catch (_) {
+      /* Never break the website because cleanup failed. */
+    }
+  }
+
+  function syncFavoritesFromHomepageLikes() {
+    const cards =
+      productCards();
+
+    if (!cards.length) {
+      return;
+    }
+
+    let changed =
+      false;
+
+    const currentGroups =
+      new Map();
+
+    cards.forEach((card) => {
+      const button =
+        $('[data-mm-action="like"]', card);
+
+      const info =
+        cardInfo(card);
+
+      if (
+        !button ||
+        !info
+      ) {
+        return;
+      }
+
+      const signature =
+        productSignature(info);
+
+      if (!signature) {
+        return;
+      }
+
+      const liked =
+        readRealLikeState(button);
+
+      const existing =
+        currentGroups.get(
+          signature
+        );
+
       /*
-        Never break the whole website
-        because Favorites migration failed.
+        If duplicate cards exist,
+        a liked one wins.
       */
+
+      if (
+        !existing ||
+        liked
+      ) {
+        currentGroups.set(
+          signature,
+          {
+            card,
+            button,
+            info,
+            liked
+          }
+        );
+      }
+    });
+
+    currentGroups.forEach(
+      ({
+        info,
+        liked
+      },
+      signature) => {
+
+        const id =
+          String(info.id);
+
+        /*
+          Remove old duplicate records
+          with the same product signature.
+        */
+
+        Array.from(favorites)
+          .forEach((favoriteId) => {
+            const item =
+              items[String(favoriteId)];
+
+            if (
+              String(favoriteId) !== id &&
+              item &&
+              productSignature(item) ===
+                signature
+            ) {
+              favorites.delete(
+                String(favoriteId)
+              );
+
+              delete items[
+                String(favoriteId)
+              ];
+
+              changed = true;
+            }
+          });
+
+        if (liked) {
+          const oldItem =
+            items[id];
+
+          if (!favorites.has(id)) {
+            favorites.add(id);
+            changed = true;
+          }
+
+          if (
+            !oldItem ||
+            oldItem.name !== info.name ||
+            oldItem.price !== info.price ||
+            oldItem.image !== info.image
+          ) {
+            items[id] =
+              info;
+
+            changed = true;
+          }
+
+        } else {
+          if (favorites.has(id)) {
+            favorites.delete(id);
+            changed = true;
+          }
+
+          if (items[id]) {
+            delete items[id];
+            changed = true;
+          }
+        }
+      }
+    );
+
+    /*
+      Never keep a Favorite ID
+      without an item record.
+    */
+
+    Array.from(favorites)
+      .forEach((id) => {
+        if (!items[String(id)]) {
+          favorites.delete(
+            String(id)
+          );
+
+          changed = true;
+        }
+      });
+
+    if (changed) {
+      saveSet();
+      saveItems();
+    }
+
+    applyAllFavoriteVisuals();
+    syncButton();
+
+    if (
+      panel &&
+      panel.classList.contains('show')
+    ) {
+      renderPanel();
     }
   }
 
@@ -529,10 +617,16 @@
      FAVORITES BUTTON
   ========================================================= */
 
+  function getFavoriteButton() {
+    return (
+      $('#mmFavoritesBtn') ||
+      $('.mm-favorites-open')
+    );
+  }
+
   function ensureButton() {
     let button =
-      $('#mmFavoritesBtn') ||
-      $('.mm-favorites-open');
+      getFavoriteButton();
 
     if (!button) {
       button =
@@ -540,7 +634,8 @@
           'button'
         );
 
-      button.type = 'button';
+      button.type =
+        'button';
 
       button.id =
         'mmFavoritesBtn';
@@ -587,21 +682,16 @@
       );
     }
 
-    /*
-      IMPORTANT:
-      Do not add the same click listener
-      every 700ms.
-    */
-
     if (
-      button.dataset.mmFavoritesBound !== '1'
+      button.dataset.mmFavoritesButtonBound !== '1'
     ) {
       button.addEventListener(
         'click',
-        onFavoriteButtonClick
+        handleFavoriteButtonClick,
+        true
       );
 
-      button.dataset.mmFavoritesBound =
+      button.dataset.mmFavoritesButtonBound =
         '1';
     }
 
@@ -609,21 +699,17 @@
     positionButton();
   }
 
-  function ensureExistingButton() {
-    return (
-      $('#mmFavoritesBtn') ||
-      $('.mm-favorites-open')
-    );
-  }
-
   function positionButton() {
     const button =
-      ensureExistingButton();
+      getFavoriteButton();
 
     const cart =
       $('#cartBtn');
 
-    if (!button || !cart) {
+    if (
+      !button ||
+      !cart
+    ) {
       return;
     }
 
@@ -631,7 +717,8 @@
       cart.getBoundingClientRect();
 
     const width =
-      button.offsetWidth || 46;
+      button.offsetWidth ||
+      46;
 
     button.style.position =
       'fixed';
@@ -656,15 +743,22 @@
 
   function syncButton() {
     const button =
-      ensureExistingButton();
+      getFavoriteButton();
 
     if (!button) {
       return;
     }
 
     const count =
-      $('#mmFavoritesCount') ||
-      $('.mm-favorites-count', button);
+      $(
+        '#mmFavoritesCount',
+        button
+      ) ||
+      $(
+        '.mm-favorites-count',
+        button
+      ) ||
+      $('#mmFavoritesCount');
 
     if (count) {
       count.textContent =
@@ -678,25 +772,31 @@
       favorites.size > 0
     );
 
-    const label =
-      lang() === 'ky'
-        ? `Тандалгандар: ${favorites.size}`
-        : `Избранное: ${favorites.size}`;
-
     button.setAttribute(
       'aria-label',
-      label
+      isKy()
+        ? `Тандалгандар: ${favorites.size}`
+        : `Избранное: ${favorites.size}`
     );
 
     button.title =
-      lang() === 'ky'
+      isKy()
         ? 'Тандалгандар'
         : 'Избранное';
   }
 
-  function onFavoriteButtonClick(
+  function handleFavoriteButtonClick(
     event
   ) {
+    const button =
+      event.target.closest(
+        '#mmFavoritesBtn, .mm-favorites-open'
+      );
+
+    if (!button) {
+      return;
+    }
+
     event.preventDefault();
     event.stopPropagation();
 
@@ -725,7 +825,15 @@
     }
 
     const active =
-      favorites.has(id);
+      favorites.has(
+        String(id)
+      );
+
+    /*
+      IMPORTANT:
+      Do NOT touch .liked here.
+      mm-engagement.js owns it.
+    */
 
     button.classList.toggle(
       'is-liked',
@@ -746,81 +854,20 @@
   }
 
   function applyAllFavoriteVisuals() {
-    $$('#products [data-mm-action="like"]')
-      .forEach(
-        applyFavoriteVisual
-      );
-  }
-
-  function readRealLikeState(
-    button
-  ) {
-    /*
-      mm-engagement.js owns .liked.
-      Favorites NEVER changes .liked directly.
-    */
-
-    return button.classList.contains(
-      'liked'
+    $$(
+      '[data-mm-action="like"]'
+    ).forEach(
+      applyFavoriteVisual
     );
   }
-function syncFavoritesFromHomepageLikes() {
-  let changed = false;
 
-  $$('#products [data-mm-action="like"]')
-    .forEach((button) => {
-      const card =
-        getCardFromLike(button);
-
-      if (!card) {
-        return;
-      }
-
-      const liked =
-        readRealLikeState(button);
-
-      if (!liked) {
-        return;
-      }
-
-      const info =
-        saveCard(card);
-
-      if (!info) {
-        return;
-      }
-
-      const id =
-        String(info.id);
-
-      if (!favorites.has(id)) {
-        favorites.add(id);
-        changed = true;
-      }
-
-      items[id] = info;
-    });
-
-  if (changed) {
-    migrateDuplicates();
-
-    saveSet();
-    saveItems();
-
-    applyAllFavoriteVisuals();
-    syncButton();
-
-    if (
-      panel &&
-      panel.classList.contains('show')
-    ) {
-      renderPanel();
-    }
-  }
-}
   function syncFavoriteFromRealLike(
     button
   ) {
+    if (!button) {
+      return;
+    }
+
     const card =
       getCardFromLike(button);
 
@@ -829,55 +876,83 @@ function syncFavoritesFromHomepageLikes() {
     }
 
     const info =
-      saveCard(card);
+      cardInfo(card);
 
-        if (!info) {
+    if (!info) {
       return;
     }
+
+    const id =
+      String(info.id);
 
     const liked =
       readRealLikeState(button);
 
     if (liked) {
-      
+      favorites.add(id);
+      items[id] = info;
 
-      favorites.add(
-        String(info.id)
-      );
+      /*
+        Remove any older duplicate
+        record for the same product.
+      */
 
-      items[String(info.id)] =
-        info;
+      const signature =
+        productSignature(info);
+
+      Array.from(favorites)
+        .forEach((favoriteId) => {
+          const item =
+            items[String(favoriteId)];
+
+          if (
+            String(favoriteId) !== id &&
+            item &&
+            productSignature(item) ===
+              signature
+          ) {
+            favorites.delete(
+              String(favoriteId)
+            );
+
+            delete items[
+              String(favoriteId)
+            ];
+          }
+        });
+
     } else {
-      favorites.delete(
-        String(info.id)
-      );
+      favorites.delete(id);
+      delete items[id];
 
-      const identity =
-        productIdentity(info);
+      /*
+        Remove old duplicate records
+        for the same product.
+      */
 
-      Array.from(
-        favorites
-      ).forEach((id) => {
-        const item =
-          items[String(id)];
+      const signature =
+        productSignature(info);
 
-        if (
-          item &&
-          productIdentity(item) ===
-            identity
-        ) {
-          favorites.delete(
-            String(id)
-          );
+      Array.from(favorites)
+        .forEach((favoriteId) => {
+          const item =
+            items[String(favoriteId)];
 
-          delete items[
-            String(id)
-          ];
-        }
-      });
+          if (
+            item &&
+            productSignature(item) ===
+              signature
+          ) {
+            favorites.delete(
+              String(favoriteId)
+            );
+
+            delete items[
+              String(favoriteId)
+            ];
+          }
+        });
     }
-
-    migrateDuplicates();
 
     saveSet();
     saveItems();
@@ -892,7 +967,8 @@ function syncFavoritesFromHomepageLikes() {
       renderPanel();
     }
   }
-     function handleHomepageLikeClick(
+
+  function handleHomepageLikeClick(
     event
   ) {
     const button =
@@ -904,14 +980,114 @@ function syncFavoritesFromHomepageLikes() {
       return;
     }
 
+    /*
+      mm-engagement.js owns the real Like.
+      Do not preventDefault or stopPropagation.
+    */
+
     setTimeout(() => {
-      syncFavoriteFromRealLike(button);
+      syncFavoriteFromRealLike(
+        button
+      );
     }, 0);
 
     setTimeout(() => {
-      syncFavoriteFromRealLike(button);
+      syncFavoriteFromRealLike(
+        button
+      );
     }, 80);
   }
+
+  function bindHomepageLikeSync() {
+    if (bound) {
+      return;
+    }
+
+    bound = true;
+
+    document.addEventListener(
+      'click',
+      handleHomepageLikeClick,
+      true
+    );
+  }
+
+  /* =========================================================
+     REMOVE FAVORITE
+  ========================================================= */
+
+  function removeFavorite(id) {
+    const target =
+      String(id || '');
+
+    if (!target) {
+      return;
+    }
+
+    /*
+      Find the real homepage Like button
+      and toggle it OFF.
+    */
+
+    let foundButton =
+      null;
+
+    $$(
+      '[data-mm-action="like"]'
+    ).some(
+      (button) => {
+        const card =
+          getCardFromLike(button);
+
+        if (!card) {
+          return false;
+        }
+
+        const cardId =
+          getCardId(card);
+
+        if (
+          String(cardId) ===
+          target
+        ) {
+          foundButton =
+            button;
+
+          return true;
+        }
+
+        return false;
+      }
+    );
+
+    if (
+      foundButton &&
+      readRealLikeState(
+        foundButton
+      )
+    ) {
+      foundButton.click();
+    }
+
+    favorites.delete(
+      target
+    );
+
+    delete items[
+      target
+    ];
+
+    saveSet();
+    saveItems();
+
+    applyAllFavoriteVisuals();
+    syncButton();
+    renderPanel();
+  }
+
+    /* =========================================================
+     PRODUCT VIEWER
+  ========================================================= */
 
   function hookViewer() {
     const viewer =
@@ -924,7 +1100,8 @@ function syncFavoritesFromHomepageLikes() {
       return;
     }
 
-    viewerHooked = true;
+    viewerHooked =
+      true;
 
     viewer.addEventListener(
       'click',
@@ -937,6 +1114,14 @@ function syncFavoritesFromHomepageLikes() {
         if (!button) {
           return;
         }
+
+        /*
+          Product Viewer өзүнүн Like абалын
+          өзгөртөт.
+
+          Биз Favorites'ти ошол өзгөрүүдөн
+          кийин гана синхрондойбуз.
+        */
 
         setTimeout(() => {
           const card =
@@ -977,9 +1162,14 @@ function syncFavoritesFromHomepageLikes() {
             );
           }
         }, 100);
-      }
+      },
+      true
     );
   }
+
+  /* =========================================================
+     FAVORITES PANEL
+  ========================================================= */
 
   function ensurePanel() {
     if (
@@ -990,7 +1180,9 @@ function syncFavoritesFromHomepageLikes() {
     }
 
     panel =
-      document.createElement('aside');
+      document.createElement(
+        'aside'
+      );
 
     panel.className =
       'mm-favorites-panel';
@@ -1001,26 +1193,32 @@ function syncFavoritesFromHomepageLikes() {
     );
 
     panel.innerHTML = `
-      <div class="mm-favorites-backdrop"></div>
+      <div
+        class="mm-favorites-backdrop"
+      ></div>
 
       <div
         class="mm-favorites-drawer"
         role="dialog"
         aria-modal="true"
         aria-label="${
-          lang() === 'ky'
+          isKy()
             ? 'Тандалгандар'
             : 'Избранное'
         }"
       >
-        <div class="mm-favorites-head">
+
+        <div
+          class="mm-favorites-head"
+        >
 
           <div>
+
             <h2
               class="mm-favorites-title"
             >
               ${
-                lang() === 'ky'
+                isKy()
                   ? 'Тандалгандар'
                   : 'Избранное'
               }
@@ -1030,18 +1228,19 @@ function syncFavoritesFromHomepageLikes() {
               class="mm-favorites-subtitle"
             >
               ${
-                lang() === 'ky'
+                isKy()
                   ? 'Сиз тандаган товарлар'
                   : 'Ваши любимые товары'
               }
             </span>
+
           </div>
 
           <button
             type="button"
             class="mm-favorites-close"
             aria-label="${
-              lang() === 'ky'
+              isKy()
                 ? 'Жабуу'
                 : 'Закрыть'
             }"
@@ -1054,6 +1253,7 @@ function syncFavoritesFromHomepageLikes() {
         <div
           class="mm-favorites-list"
         ></div>
+
       </div>
     `;
 
@@ -1062,13 +1262,15 @@ function syncFavoritesFromHomepageLikes() {
     );
 
     const backdrop =
-      panel.querySelector(
-        '.mm-favorites-backdrop'
+      $(
+        '.mm-favorites-backdrop',
+        panel
       );
 
     const close =
-      panel.querySelector(
-        '.mm-favorites-close'
+      $(
+        '.mm-favorites-close',
+        panel
       );
 
     if (backdrop) {
@@ -1129,22 +1331,6 @@ function syncFavoritesFromHomepageLikes() {
     );
   }
 
-  function removeFavorite(id) {
-    const target =
-      String(id);
-
-    favorites.delete(
-      target
-    );
-
-    saveSet();
-    saveItems();
-
-    applyAllFavoriteVisuals();
-    syncButton();
-    renderPanel();
-  }
-
   function handlePanelClick(
     event
   ) {
@@ -1173,20 +1359,19 @@ function syncFavoritesFromHomepageLikes() {
       event.preventDefault();
       event.stopPropagation();
 
-      const item =
-        items[
-          String(
-            add.dataset.favAdd
-          )
-        ];
+      const id =
+        String(
+          add.dataset.favAdd ||
+          ''
+        );
 
-      addFavoriteToCart(
-        item
+      addToCartFromFavorite(
+        items[id]
       );
     }
   }
 
-  function addFavoriteToCart(
+  function addToCartFromFavorite(
     item
   ) {
     if (!item) {
@@ -1194,20 +1379,21 @@ function syncFavoritesFromHomepageLikes() {
     }
 
     const card =
-      cards().find(
+      productCards().find(
         (candidate) =>
           getCardId(candidate) ===
           String(item.id)
       );
 
     if (card) {
-      const add =
-        card.querySelector(
-          '.cart-add, .add-to-cart, [data-add-cart], .buy'
+      const addButton =
+        $(
+          '.cart-add, .add-to-cart, [data-add-cart], .buy',
+          card
         );
 
-      if (add) {
-        add.click();
+      if (addButton) {
+        addButton.click();
         return;
       }
     }
@@ -1232,18 +1418,22 @@ function syncFavoritesFromHomepageLikes() {
     }
 
     const list =
-      panel.querySelector(
-        '.mm-favorites-list'
+      $(
+        '.mm-favorites-list',
+        panel
       );
 
     if (!list) {
       return;
     }
 
+    /*
+      Show only Favorites that have
+      a valid stored item.
+    */
+
     const selected =
-      Array.from(
-        favorites
-      )
+      Array.from(favorites)
         .map(
           (id) =>
             items[String(id)]
@@ -1255,6 +1445,7 @@ function syncFavoritesFromHomepageLikes() {
         <div
           class="mm-favorites-empty"
         >
+
           <div
             class="mm-favorites-empty-icon"
           >
@@ -1263,7 +1454,7 @@ function syncFavoritesFromHomepageLikes() {
 
           <strong>
             ${
-              lang() === 'ky'
+              isKy()
                 ? 'Азырынча тандалган товар жок'
                 : 'Пока нет избранных товаров'
             }
@@ -1271,11 +1462,12 @@ function syncFavoritesFromHomepageLikes() {
 
           <span>
             ${
-              lang() === 'ky'
+              isKy()
                 ? 'Товардагы ❤️ белгисин басып, товарды ушул жерге кошуңуз.'
                 : 'Нажмите ❤️ на товаре, чтобы добавить его сюда.'
             }
           </span>
+
         </div>
       `;
 
@@ -1289,6 +1481,7 @@ function syncFavoritesFromHomepageLikes() {
             <article
               class="mm-fav-card"
             >
+
               <div
                 class="mm-fav-image"
               >
@@ -1296,12 +1489,14 @@ function syncFavoritesFromHomepageLikes() {
                   src="${esc(item.image)}"
                   alt="${esc(item.name)}"
                   loading="lazy"
+                  onerror="this.src='assets/products/placeholder.svg'"
                 >
               </div>
 
               <div
                 class="mm-fav-info"
               >
+
                 <div
                   class="mm-fav-name"
                 >
@@ -1323,12 +1518,13 @@ function syncFavoritesFromHomepageLikes() {
                 <div
                   class="mm-fav-actions"
                 >
+
                   <button
                     type="button"
                     data-fav-add="${esc(item.id)}"
                   >
                     ${
-                      lang() === 'ky'
+                      isKy()
                         ? 'Себетке'
                         : 'В корзину'
                     }
@@ -1339,39 +1535,70 @@ function syncFavoritesFromHomepageLikes() {
                     class="mm-fav-remove"
                     data-fav-remove="${esc(item.id)}"
                     aria-label="${
-                      lang() === 'ky'
+                      isKy()
                         ? 'Өчүрүү'
                         : 'Удалить'
                     }"
                   >
                     ♡
                   </button>
+
                 </div>
+
               </div>
+
             </article>
           `
         )
         .join('');
   }
 
+  /* =========================================================
+     RENDER / RELOAD SYNC
+  ========================================================= */
+
+  function syncAfterRender() {
+    setTimeout(() => {
+      syncFavoritesFromHomepageLikes();
+      hookViewer();
+      positionButton();
+    }, 0);
+
+    setTimeout(() => {
+      syncFavoritesFromHomepageLikes();
+      hookViewer();
+      positionButton();
+    }, 120);
+  }
+
+  /* =========================================================
+     INIT
+  ========================================================= */
+
   function init() {
-    favorites = loadSet();
-    items = loadItems();
-    migrateDuplicates();
-    ensureButton();
     ensurePanel();
 
-    document.addEventListener(
-      'click',
-      handleHomepageLikeClick,
-      true
-    );
+    ensureButton();
 
-    applyAllFavoriteVisuals();
+    bindHomepageLikeSync();
+
+    hookViewer();
+
+    cleanupStoredDuplicates();
+
     syncFavoritesFromHomepageLikes();
-    syncButton();
 
-    positionButton();
+    /*
+      app.js should dispatch:
+        mm:products-rendered
+
+      after rendering #products.
+    */
+
+    document.addEventListener(
+      'mm:products-rendered',
+      syncAfterRender
+    );
 
     window.addEventListener(
       'resize',
@@ -1381,29 +1608,16 @@ function syncFavoritesFromHomepageLikes() {
       }
     );
 
-    window.addEventListener(
-      'scroll',
-      positionButton,
-      {
-        passive: true
-      }
-    );
-
-    setInterval(() => {
-      if (
-        !ensureExistingButton()
-      ) {
-        ensureButton();
-      }
-
-      positionButton();
-
-      applyAllFavoriteVisuals();
-
+    setTimeout(() => {
+      syncFavoritesFromHomepageLikes();
       hookViewer();
-
-    }, 700);
+      positionButton();
+    }, 250);
   }
+
+  /* =========================================================
+     START
+  ========================================================= */
 
   if (
     document.readyState ===
