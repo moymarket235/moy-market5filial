@@ -113,7 +113,7 @@
     if(action==='like'){p.liked=!p.liked;p.likes=Math.max(0,p.likes+(p.liked?1:-1));}
     else if(action==='comment'){openComment(card);return;}
     else if(action==='share'){p.shares+=1; const url=location.href.split('#')[0]; const shareData={title:title(card),text:`${title(card)} — ${price(card)}`,url}; if(navigator.share) navigator.share(shareData).catch(()=>{}); else if(navigator.clipboard) navigator.clipboard.writeText(url).catch(()=>{});}
-    else if(action==='cart'){const btn=qs('.cart-add,.add-to-cart,[data-add-cart]',card); if(btn){btn.click();} else {document.dispatchEvent(new CustomEvent('mm:add-to-cart',{detail:{card}}));}}
+    else if(action==='cart'){const btn=qs('.cart-add,.add-to-cart,[data-add-cart],.buy',card); if(btn){btn.click();} else {document.dispatchEvent(new CustomEvent('mm:add-to-cart',{detail:{card}}));}}
     save(); updateCard(card);
   }
 
