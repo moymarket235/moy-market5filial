@@ -197,31 +197,7 @@
   }
   }
 
-  function rememberLikeAfterClick(card) {
-    const button = qs('[data-mm-action="like"]', card);
-    if (!button) return;
-
-    const liked = button.classList.contains('liked');
-    const stable = stableId(card);
-    const store = loadLikeStore();
-
-    store[stable] = {
-      liked,
-      likes: liked ? 1 : 0,
-      updatedAt: Date.now()
-    };
-
-    saveObject(LIKE_KEY, store);
-    syncEngagementLegacy(card, liked, liked ? 1 : 0);
-    syncFavoritesStorage(card, liked);
-
-    button.classList.toggle('liked', liked);
-    button.classList.toggle('is-liked', liked);
-    button.classList.toggle('mm-favorite-active', liked);
-    button.setAttribute('aria-pressed', liked ? 'true' : 'false');
-
-    const b = qs('b', button);
-    if (b) b.textContent = liked ? '1' : '0';
+  
   }
 
   function ensureBrokenAccountIsGone() {
@@ -325,31 +301,11 @@
         upgradeBar(bar);
       }
 
-      applyPersistentLike(card);
     });
-  }
-
-  function bindLikePersistence() {
-    if (document.documentElement.dataset.mmLikePersistenceBound === '1') return;
-    document.documentElement.dataset.mmLikePersistenceBound = '1';
-
-    document.addEventListener('click', event => {
-      const button = event.target.closest('#products [data-mm-action="like"]');
-      if (!button) return;
-
-      const card = button.closest(
-        '#products .product, #products .product-card, #products [data-product-card]'
-      );
-      if (!card) return;
-
-      setTimeout(() => rememberLikeAfterClick(card), 0);
-      setTimeout(() => rememberLikeAfterClick(card), 80);
-    }, true);
   }
 
   function boot() {
     ensureBrokenAccountIsGone();
-    bindLikePersistence();
     processProducts();
 
     setTimeout(() => {
