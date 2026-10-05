@@ -1079,5 +1079,4 @@
       ></div>
 
       <div
-        class="mm-favorites-drawer"
-        
+        class="mm-favorites-drawer" 
