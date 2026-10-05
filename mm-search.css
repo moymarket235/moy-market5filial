@@ -294,3 +294,26 @@
   .header-search .search-icon{
   display:none !important;
 }
+  .header-search{
+  width:auto !important;
+  min-width:0 !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+.header-search .search-icon,
+.header-search #searchInput,
+.header-search #clearSearch{
+  display:none !important;
+}
+
+.header-search .search-go{
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  width:68px !important;
+  height:68px !important;
+  margin:0 !important;
+}
