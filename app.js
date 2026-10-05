@@ -27,7 +27,6 @@ function renderSubcats(){
  box.querySelectorAll(".subcat").forEach(b=>b.onclick=()=>{activeSub=b.dataset.sub;box.querySelectorAll(".subcat").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderProducts()});
 }
 function renderProducts(){
-function renderProducts(){
   const q=$("#searchInput").value.trim().toLowerCase();
   const cat=categories.find(c=>c.id===activeCat);
   const subText=activeSub!=="all"&&cat?.subcategories?.[Number(activeSub)];
@@ -68,7 +67,7 @@ function renderProducts(){
       <div class="photo">
         <img
           src="${escAttr(p.image||"assets/products/placeholder.svg")}"
-          alt="${esc(field(p,"name","nameRu"))}"
+          alt="${esc(nameOf(p))}"
           loading="lazy"
           onerror="this.onerror=null;this.src='assets/products/placeholder.svg'"
         >
@@ -76,12 +75,12 @@ function renderProducts(){
 
       <div class="pbody">
         <div class="pname">
-          ${esc(field(p,"name","nameRu"))}
+          ${esc(nameOf(p))}
         </div>
 
         <div class="desc">
           ${esc(
-            field(p,"description","descriptionRu") ||
+            descOf(p) ||
             (lang==="ru"
               ? "Качественный товар"
               : "Сапаттуу товар")
