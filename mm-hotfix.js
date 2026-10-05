@@ -1,7 +1,8 @@
-/* MOY MARKET — FINAL FUNCTIONAL FIX v4.0 SAFE
+/* MOY MARKET — FINAL FUNCTIONAL FIX v4.1 SAFE
    - keeps the existing engagement logic
-   - removes the duplicate heart SVG so only one clean heart is visible
+   - renders one clean SVG heart
    - makes homepage Like persistent across refreshes
+   - restores homepage like/comment/share/view counters from engagement state
    - one tap = like, second tap = unlike
    - keeps Favorites synchronized with the homepage Like state
    - survives product re-rendering
@@ -10,7 +11,7 @@
 (() => {
   'use strict';
 
-  const ICON_VERSION = '4';
+  const ICON_VERSION = '4.1';
   const ACCOUNT_MODAL_ID = 'mmAccountModal';
   const LIKE_KEY = 'mmHomepageLikesV1';
   const ENGAGEMENT_KEY = 'mmEngagementV20';
@@ -173,7 +174,6 @@
     if (!button) return;
 
     const liked = migrateAndReadLike(card);
-    const count = liked ? 1 : 0;
 
     button.classList.toggle('liked', liked);
     button.classList.toggle('is-liked', liked);
@@ -181,9 +181,9 @@
     button.setAttribute('aria-pressed', liked ? 'true' : 'false');
 
     const b = qs('b', button);
-    if (b) b.textContent = String(count);
+    if (b) b.textContent = liked ? '1' : '0';
 
-    syncEngagementLegacy(card, liked, count);
+    syncEngagementLegacy(card, liked, liked ? 1 : 0);
     syncFavoritesStorage(card, liked);
   }
 
@@ -224,29 +224,40 @@
     }
   }
 
-  function buildBar() {
+  function buildBar(card) {
     const bar = document.createElement('div');
     bar.className = 'mm-card-actions';
     bar.dataset.mmHotfixIcons = ICON_VERSION;
 
+    const engagement = loadEngagementState();
+    const id = engagementLegacyId(card);
+    const p = engagement.products[id] || {
+      views: 0,
+      likes: 0,
+      liked: false,
+      shares: 0,
+      comments: []
+    };
+
     bar.innerHTML = `
-      <button class="mm-social-btn" type="button"
-              data-mm-action="like" aria-label="Лайк" aria-pressed="false">
-        <span class="mm-social-icon mm-heart">${icons.heart}</span>
+      <button class="mm-social-btn${p.liked ? ' liked' : ''}" type="button"
+              data-mm-action="like" aria-label="Лайк"
+              aria-pressed="${p.liked ? 'true' : 'false'}">
+        <span class="mm-social-icon mm-heart">${icons.heart}</span><b>${p.likes}</b>
       </button>
 
       <button class="mm-social-btn" type="button"
               data-mm-action="comment" aria-label="Комментарий">
-        <span class="mm-social-icon mm-comment-icon">${icons.comment}</span><b>0</b>
+        <span class="mm-social-icon mm-comment-icon">${icons.comment}</span><b>${p.comments.length}</b>
       </button>
 
       <button class="mm-social-btn" type="button"
               data-mm-action="share" aria-label="Поделиться">
-        <span class="mm-social-icon mm-share-icon">${icons.share}</span><b>0</b>
+        <span class="mm-social-icon mm-share-icon">${icons.share}</span><b>${p.shares}</b>
       </button>
 
       <span class="mm-social-view" data-mm-view="1" aria-label="Көрүүлөр">
-        <span class="mm-social-icon mm-eye-icon">${icons.eye}</span><b>0</b>
+        <span class="mm-social-icon mm-eye-icon">${icons.eye}</span><b>${p.views}</b>
       </span>
     `;
 
@@ -272,7 +283,7 @@
       <button class="mm-social-btn${liked ? ' liked' : ''}" type="button"
               data-mm-action="like" aria-label="Лайк"
               aria-pressed="${liked ? 'true' : 'false'}">
-        <span class="mm-social-icon mm-heart">${icons.heart}</span>
+        <span class="mm-social-icon mm-heart">${icons.heart}</span><b>${esc(oldLikeCount)}</b>
       </button>
 
       <button class="mm-social-btn" type="button"
@@ -298,7 +309,7 @@
       let bar = qs('.mm-card-actions', card);
 
       if (!bar) {
-        bar = buildBar();
+        bar = buildBar(card);
         card.appendChild(bar);
       } else {
         upgradeBar(bar);
@@ -331,16 +342,11 @@
     bindLikePersistence();
     processProducts();
 
-    // IMPORTANT: No MutationObserver on #products.
-    // The catalog is rendered by other site code; observing it here can
-    // create a DOM/render loop and freeze the catalog on "Жүктөлүүдө...".
-
     setTimeout(() => {
       ensureBrokenAccountIsGone();
       processProducts();
     }, 120);
 
-    // Safe periodic restore for async product loading. No DOM observer.
     if (document.documentElement.dataset.mmHotfixTimerBound !== '1') {
       document.documentElement.dataset.mmHotfixTimerBound = '1';
 
