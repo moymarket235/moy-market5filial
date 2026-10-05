@@ -56,11 +56,6 @@ function renderProducts(){
     );
   });
 
-  $("#resultCount").textContent=
-    list.length
-      ? `${list.length} ${list.length===1?tr("item"):tr("items")}`
-      : "";
-
   $("#empty").hidden=!!list.length;
 
   $("#products").innerHTML=list.map(p=>`
@@ -168,7 +163,7 @@ function renderCart(){
         >
 
         <div>
-          <b>${esc(field(p,"name","nameRu"))}</b>
+          <b>${esc(nameOf(p))}</b>
           <small>${money(Number(p.price)||0)}</small>
 
           <div class="qty">
