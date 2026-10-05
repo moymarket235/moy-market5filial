@@ -786,7 +786,7 @@
       readRealLikeState(button);
 
     if (liked) {
-      removeDuplicateFavoritesFor(info);
+      
 
       favorites.add(
         String(info.id)
@@ -824,7 +824,7 @@
       });
     }
 
-    cleanupDuplicateFavorites();
+    migrateDuplicates();
 
     saveSet();
     saveItems();
