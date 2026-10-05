@@ -22,7 +22,14 @@
   }[ch]));
 
   const icons = {
-    heart: '',
+    heart: `<svg viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+  2 5.42 4.42 3 7.5 3
+  c1.74 0 3.41.81 4.5 2.09
+  C13.09 3.81 14.76 3 16.5 3
+  C19.58 3 22 5.42 22 8.5
+  c0 3.78-3.4 6.86-8.55 11.53L12 21.35Z"/>
+</svg>`,
     comment: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 11.2c0 4.4-3.8 7.8-8.6 7.8a9.7 9.7 0 0 1-3.8-.75L4 19.9l.8-3.35A7.35 7.35 0 0 1 3 11.2c0-4.35 3.8-7.8 8.6-7.8s8.6 3.45 8.6 7.8Z"/></svg>`,
     share: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10.5 13.5"/><path d="m21 3-7.2 18-3.3-7.5L3 10.2 21 3Z"/></svg>`,
     eye: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.2 12s3.45-6 9.8-6 9.8 6 9.8 6-3.45 6-9.8 6-9.8-6-9.8-6Z"/><circle cx="12" cy="12" r="2.8"/></svg>`
@@ -225,7 +232,7 @@
     bar.innerHTML = `
       <button class="mm-social-btn" type="button"
               data-mm-action="like" aria-label="Лайк" aria-pressed="false">
-        <span class="mm-social-icon mm-heart"></span><b>0</b>
+        <span class="mm-social-icon mm-heart">${icons.heart}</span>
       </button>
 
       <button class="mm-social-btn" type="button"
@@ -265,7 +272,7 @@
       <button class="mm-social-btn${liked ? ' liked' : ''}" type="button"
               data-mm-action="like" aria-label="Лайк"
               aria-pressed="${liked ? 'true' : 'false'}">
-        <span class="mm-social-icon mm-heart"></span><b>${esc(oldLikeCount)}</b>
+        <span class="mm-social-icon mm-heart">${icons.heart}</span>
       </button>
 
       <button class="mm-social-btn" type="button"
