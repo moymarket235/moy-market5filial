@@ -313,7 +313,10 @@
   display:flex !important;
   align-items:center;
   justify-content:center;
-  width:68px !important;
-  height:68px !important;
+  width:40px !important;
+  height:40px !important;
   margin:0 !important;
+  padding:0 !important;
+  border-radius:12px !important;
+  font-size:22px !important;
 }
