@@ -170,21 +170,31 @@
   }
 
   function applyPersistentLike(card) {
-    const button = qs('[data-mm-action="like"]', card);
-    if (!button) return;
+  const button = qs('[data-mm-action="like"]', card);
+  if (!button) return;
 
-    const liked = migrateAndReadLike(card);
+  const engagement = loadEngagementState();
+  const id = engagementLegacyId(card);
 
-    button.classList.toggle('liked', liked);
-    button.classList.toggle('is-liked', liked);
-    button.classList.toggle('mm-favorite-active', liked);
-    button.setAttribute('aria-pressed', liked ? 'true' : 'false');
+  const p = engagement.products[id] || {
+    views: 0,
+    likes: 0,
+    liked: false,
+    shares: 0,
+    comments: []
+  };
 
-    const b = qs('b', button);
-    if (b) b.textContent = liked ? '1' : '0';
+  const liked = !!p.liked;
 
-    syncEngagementLegacy(card, liked, liked ? 1 : 0);
-    syncFavoritesStorage(card, liked);
+  button.classList.toggle('liked', liked);
+  button.classList.toggle('is-liked', liked);
+  button.classList.toggle('mm-favorite-active', liked);
+  button.setAttribute('aria-pressed', liked ? 'true' : 'false');
+
+  const b = qs('b', button);
+  if (b) {
+    b.textContent = String(Math.max(0, Number(p.likes) || 0));
+  }
   }
 
   function rememberLikeAfterClick(card) {
