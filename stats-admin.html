@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ky">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Мой Маркет — Статистика</title>
+<link rel="stylesheet" href="stats-admin.css?v=1.0">
+</head>
+<body>
+<div class="page">
+<section id="login" class="login">
+<img class="logo" src="assets/logo.webp" alt="Мой Маркет">
+<div class="kicker">МОЙ МАРКЕТ • PRIVATE</div>
+<h1>Статистика</h1>
+<p class="muted">Бул бөлүм кардарларга арналган эмес. Кирүү укугу бар аккаунттар гана статистиканы көрө алат.</p>
+<form id="loginForm">
+<label class="field"><span>Логин</span><input id="username" autocomplete="username" required></label>
+<label class="field"><span>Сырсөз</span><input id="password" type="password" autocomplete="current-password" required></label>
+<button class="primary" type="submit">Коопсуз кирүү →</button>
+</form>
+<div id="msg" class="msg"></div>
+</section>
+
+<section id="app" class="app">
+<aside class="sidebar">
+  <div class="brand"><img src="assets/logo.webp" alt="Мой Маркет"><b>Мой Маркет</b></div>
+  <div class="nav"><button class="active">📊 Статистика</button><button>🛍️ Товарлар</button><button>🛒 Заказдар</button></div>
+</aside>
+<main class="main">
+  <div class="top"><div><div class="kicker">MOY MARKET • PRIVATE</div><h1>📊 Статистика</h1><div class="muted" id="role"></div></div><div class="right"><select id="period" class="select"><option value="1">Бүгүн</option><option value="7" selected>7 күн</option><option value="30">30 күн</option></select><button id="refresh" class="secondary">↻ Жаңыртуу</button><button id="logout" class="secondary">Чыгуу</button></div></div>
+
+  <div class="grid">
+    <div class="card metric"><div class="label">👥 Бүгүн уникалдуу</div><div class="value" id="visitorsToday">0</div><div class="small">Бишкек убактысы</div></div>
+    <div class="card metric"><div class="label">👤 Тандалган период</div><div class="value" id="uniqueVisitors">0</div><div class="small">Уникалдуу кардарлар</div></div>
+    <div class="card metric"><div class="label">👁️ Товар көрүүлөрү</div><div class="value" id="productViews">0</div><div class="small">Көрүү аракеттери</div></div>
+    <div class="card metric"><div class="label">🛒 Себетке кошуу</div><div class="value" id="cartAdds">0</div><div class="small">Кошулган аракеттер</div></div>
+    <div class="card metric"><div class="label">❤️ Избранное</div><div class="value" id="favorites">0</div><div class="small">Избранное аракеттери</div></div>
+    <div class="card metric"><div class="label">🔎 Издөөлөр</div><div class="value" id="searches">0</div><div class="small">Изделген суроолор</div></div>
+    <div class="card metric"><div class="label">❤️ Лайктар</div><div class="value" id="likes">0</div><div class="small">Кайтарым реакциялар</div></div>
+    <div class="card metric"><div class="label">↗️ Бөлүшүүлөр</div><div class="value" id="shares">0</div><div class="small">Бөлүшүлгөн товарлар</div></div>
+  </div>
+
+  <div class="sectiongrid"><div class="card"><h3>Посетители по дням</h3><div id="trend" class="chart"></div></div><div class="card"><h3>Источники трафика</h3><div id="sources" class="bars"></div></div></div>
+  <div class="sectiongrid three"><div class="card"><h3>Популярные товары</h3><div id="products" class="list"></div></div><div class="card"><h3>Часто ищут</h3><div id="searchList" class="list"></div></div><div class="card"><h3>Устройства</h3><div id="devices" class="bars"></div></div></div>
+  <div class="sectiongrid"><div class="card"><h3>Язык сайта</h3><div id="languages" class="bars"></div></div><div id="usersCard" class="card" style="display:none"><h3>🔐 Статистика көрүүчүлөрү <span id="slotCount" style="float:right;color:#ff7a00">0/5</span></h3><div id="users" class="users"></div><div class="userform"><input id="newUser" placeholder="Логин"><input id="newPass" type="password" placeholder="Жаңы сырсөз"><button id="addUser" type="button">＋ Кошуу</button></div><div id="userMsg" class="note"></div><div class="note">Бул бөлүмдү admin гана көрөт. Максимум — 5 статистика көрүүчү аккаунт.</div></div></div>
+</main>
+</section>
+</div>
+<script>window.MM_STATS_API='https://YOUR-STATS-WORKER.workers.dev';</script>
+<script src="stats-admin.js?v=1.0"></script>
+</body>
+</html>
