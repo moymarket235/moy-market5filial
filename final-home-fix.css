@@ -98,7 +98,7 @@
   transform: none !important;
 }
 
-/* Liked: same geometry, solid red */
+/* LIKED: SAME HEART SHAPE, FILLED RED */
 #products .mm-card-actions
 > .mm-social-btn[data-mm-action="like"].liked
 > .mm-heart::before,
@@ -109,15 +109,23 @@
 > .mm-social-btn[data-mm-action="like"].mm-favorite-active
 > .mm-heart::before {
   content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+
   width: 20px !important;
   height: 20px !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z' fill='%23ff4d55'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: 20px 20px !important;
+
+  display: block !important;
+
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z' fill='%23ff4d55'/%3E%3C/svg%3E")
+    center/20px 20px
+    no-repeat !important;
+
   opacity: 1 !important;
   visibility: visible !important;
   transform: none !important;
 }
+
 
 /* IMPORTANT: leave comment/share/view completely untouched. */
