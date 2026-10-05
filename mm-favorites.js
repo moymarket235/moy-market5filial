@@ -764,7 +764,60 @@
       'liked'
     );
   }
+function syncFavoritesFromHomepageLikes() {
+  let changed = false;
 
+  $$('#products [data-mm-action="like"]')
+    .forEach((button) => {
+      const card =
+        getCardFromLike(button);
+
+      if (!card) {
+        return;
+      }
+
+      const liked =
+        readRealLikeState(button);
+
+      if (!liked) {
+        return;
+      }
+
+      const info =
+        saveCard(card);
+
+      if (!info) {
+        return;
+      }
+
+      const id =
+        String(info.id);
+
+      if (!favorites.has(id)) {
+        favorites.add(id);
+        changed = true;
+      }
+
+      items[id] = info;
+    });
+
+  if (changed) {
+    migrateDuplicates();
+
+    saveSet();
+    saveItems();
+
+    applyAllFavoriteVisuals();
+    syncButton();
+
+    if (
+      panel &&
+      panel.classList.contains('show')
+    ) {
+      renderPanel();
+    }
+  }
+}
   function syncFavoriteFromRealLike(
     button
   ) {
@@ -1313,7 +1366,7 @@
     );
 
     applyAllFavoriteVisuals();
-
+    syncFavoritesFromHomepageLikes();
     syncButton();
 
     positionButton();
