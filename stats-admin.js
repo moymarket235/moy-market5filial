@@ -21,8 +21,17 @@
   }
 
   function loginView(){ $('#login').style.display='block'; $('#app').style.display='none'; }
-  function appView(){ $('#login').style.display='none'; $('#app').style.display='flex'; }
-  function logout(){ token=''; sessionStorage.removeItem(TOKEN_KEY); loginView(); }
+  function appView(){
+  $('#login').style.display='none';
+  $('#app').style.display='flex';
+  startAutoRefresh();
+  }
+  function logout(){
+  stopAutoRefresh();
+  token='';
+  sessionStorage.removeItem(TOKEN_KEY);
+  loginView();
+  }
 
   async function login(){
     const username=$('#username').value.trim(), password=$('#password').value;
@@ -36,7 +45,34 @@
   }
 
   function metric(id, value){ const el=$(id); if(el) el.textContent=fmt(value); }
+  let autoRefreshTimer = null;
 
+function markUpdated(){
+  const el = $('#updatedAt');
+  if(el){
+    el.textContent = new Date().toLocaleTimeString('ky-KG',{
+      hour:'2-digit',
+      minute:'2-digit',
+      second:'2-digit'
+    });
+  }
+
+function startAutoRefresh(){
+  if(autoRefreshTimer) clearInterval(autoRefreshTimer);
+
+  autoRefreshTimer = setInterval(()=>{
+    if(token && document.visibilityState === 'visible'){
+      loadAll().catch(()=>{});
+    }
+  },60000);
+}
+
+function stopAutoRefresh(){
+  if(autoRefreshTimer){
+    clearInterval(autoRefreshTimer);
+    autoRefreshTimer = null;
+  }
+}
   function renderChart(rows){
     const wrap=$('#trend'); if(!wrap)return;
     const max=Math.max(1,...rows.map(x=>Number(x.visitors||0)));
@@ -90,8 +126,9 @@
     $('#role').textContent = token ? 'Коопсуз кирүү' : '';
     try{ await loadDashboard(); }catch(e){}
     try{ const me=await api('/api/me'); if(me.role==='admin'){ $('#usersCard').style.display='block'; await loadUsers(); } else $('#usersCard').style.display='none'; }catch(e){}
+    markUpdated();
   }
-
+  
   function boot(){
     $('#loginForm').addEventListener('submit',e=>{e.preventDefault();login();});
     $('#period').addEventListener('change',()=>loadDashboard().catch(()=>{}));
