@@ -93,3 +93,52 @@ input:focus-visible{
   outline:2px solid rgba(255,121,0,.75) !important;
   outline-offset:2px !important;
 }
+/* =========================================
+   5. PRODUCT CARD — ADD TO CART
+   ========================================= */
+
+#products .product .buy{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  min-height:42px !important;
+  margin:6px 0 0 !important;
+  padding:10px 12px !important;
+  border:0 !important;
+  border-radius:12px !important;
+  background:linear-gradient(135deg,#ff8a00,#ff6500) !important;
+  color:#fff !important;
+  font-size:13px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  cursor:pointer !important;
+  box-shadow:0 7px 18px rgba(255,120,0,.18) !important;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    filter .18s ease !important;
+}
+
+#products .product .buy:hover{
+  transform:translateY(-2px) !important;
+  filter:brightness(1.05) !important;
+  box-shadow:0 10px 24px rgba(255,120,0,.26) !important;
+}
+
+#products .product .buy:active{
+  transform:scale(.98) !important;
+}
+
+/* Mobile */
+@media(max-width:650px){
+
+  #products .product .buy{
+    min-height:38px !important;
+    margin-top:5px !important;
+    padding:9px 8px !important;
+    border-radius:10px !important;
+    font-size:11px !important;
+  }
+
+}
