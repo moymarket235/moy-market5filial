@@ -239,6 +239,40 @@
 
 </div>
 <div class="cart-toast" id="cartToast" aria-live="polite"></div>
+<div
+  class="mm-branches-overlay"
+  id="mmBranchesOverlay"
+  aria-hidden="true"
+>
+  <div class="mm-branches-modal">
+
+    <div class="mm-branches-head">
+      <div>
+        <h2 class="mm-branches-title">📍 Биздин филиалдар</h2>
+        <div class="mm-branches-sub">
+          Өзүңүзгө жакын филиалды тандаңыз
+        </div>
+      </div>
+
+      <button
+        class="mm-branches-close"
+        id="mmBranchesClose"
+        type="button"
+        aria-label="Жабуу"
+      >×</button>
+    </div>
+
+    <div
+      class="mm-branches-list"
+      id="mmBranchesList"
+    ></div>
+
+    <div class="mm-branches-foot">
+      🕘 Күн сайын 09:00–21:00
+    </div>
+
+  </div>
+</div>
 <div class="product-preview" id="productPreview" aria-hidden="true">
   <div class="preview-backdrop" id="previewBackdrop"></div>
   <button class="preview-close" id="previewClose" aria-label="Close">×</button>
@@ -301,6 +335,7 @@
 <script src="mm-visitors.js?v=1.0"></script>
 <script src="mm-favorites.js?v=24.1"></script>
 <script src="mm-search.js?v=2.0"></script>
+<script src="mm-branches.js?v=1.0"></script>
 <script>
 window.MM_STATS_API='https://moy-market-stats.moimarketjibekjolu.workers.dev';
 </script>
