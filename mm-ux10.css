@@ -142,3 +142,59 @@ input:focus-visible{
   }
 
 }
+/* =========================================
+   6. MOBILE FLOATING CONTROLS — SAFE POSITION
+   ========================================= */
+
+/* Favorite button: keep it above the mobile navigation */
+@media(max-width:650px){
+
+  .mm-favorites-open{
+    position:fixed !important;
+    left:auto !important;
+    right:10px !important;
+    top:auto !important;
+    bottom:150px !important;
+
+    width:44px !important;
+    height:44px !important;
+    min-width:44px !important;
+    min-height:44px !important;
+    z-index:1400 !important;
+  }
+
+  /* Smaller assistant */
+  .market-robot{
+    right:8px !important;
+    bottom:76px !important;
+    width:112px !important;
+    z-index:1300 !important;
+  }
+
+  .assistant-figure{
+    right:0 !important;
+    bottom:0 !important;
+    width:100px !important;
+    height:118px !important;
+  }
+
+  /* Green online light follows the smaller assistant */
+  .assistant-pulse{
+    right:10px !important;
+    bottom:9px !important;
+    width:9px !important;
+    height:9px !important;
+  }
+
+  /* Remove the extra floating label on small screens */
+  .assistant-caption{
+    display:none !important;
+  }
+
+  /* Chat panel stays usable */
+  .robot-panel{
+    right:6px !important;
+    bottom:112px !important;
+    width:min(350px,calc(100vw - 20px)) !important;
+  }
+}
