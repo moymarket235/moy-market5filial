@@ -43,7 +43,37 @@
       token=data.token; sessionStorage.setItem(TOKEN_KEY,token); appView(); await loadAll();
     }catch(e){msg(e.message==='UNAUTHORIZED'?'Кирүү уруксат берилген жок.':'Серверге туташуу мүмкүн эмес.',true);}
   }
+  function renderFunnel(kpi){
+  const wrap=$('#funnel');
+  if(!wrap)return;
 
+  const items=[
+    {icon:'👤',label:'Уникалдуу кардарлар',value:Number(kpi?.uniqueVisitors||0)},
+    {icon:'👁',label:'Товар көрүүлөрү',value:Number(kpi?.productViews||0)},
+    {icon:'🛒',label:'Себетке кошуу',value:Number(kpi?.cartAdds||0)},
+    {icon:'❤️',label:'Избранное',value:Number(kpi?.favorites||0)},
+    {icon:'↗️',label:'Бөлүшүүлөр',value:Number(kpi?.shares||0)}
+  ];
+
+  const max=Math.max(1,...items.map(x=>x.value));
+
+  wrap.innerHTML=items.map(x=>{
+    const width=Math.max(10,Math.round(x.value/max*100));
+
+    return `
+      <div class="funnel-row">
+        <div class="funnel-stage">
+          <span class="funnel-icon">${x.icon}</span>
+          <span class="funnel-label">${x.label}</span>
+          <b>${fmt(x.value)}</b>
+        </div>
+        <div class="funnel-track">
+          <i style="width:${width}%"></i>
+        </div>
+      </div>
+    `;
+  }).join('');
+  }
   function metric(id, value){ const el=$(id); if(el) el.textContent=fmt(value); }
   let autoRefreshTimer = null;
 
@@ -99,6 +129,7 @@ function stopAutoRefresh(){
     const d=await api(`/api/dashboard?days=${encodeURIComponent(days)}`);
     metric('#visitorsToday',d.kpi.visitorsToday); metric('#uniqueVisitors',d.kpi.uniqueVisitors); metric('#productViews',d.kpi.productViews); metric('#cartAdds',d.kpi.cartAdds); metric('#favorites',d.kpi.favorites); metric('#searches',d.kpi.searches); metric('#likes',d.kpi.likes); metric('#shares',d.kpi.shares);
     renderChart(d.trend); renderList('#products',d.products,'id'); renderList('#searchList',d.searches,'term','term'); renderBars('#devices',d.devices,'device'); renderBars('#languages',d.languages,'lang'); renderBars('#sources',d.sources,'source');
+    renderFunnel(d.kpi);
     const p=d.products?.[0];
     const s=d.searches?.[0];
     const src=d.sources?.[0];
