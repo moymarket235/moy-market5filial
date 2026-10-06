@@ -56,7 +56,7 @@ function markUpdated(){
       second:'2-digit'
     });
   }
-
+}
 function startAutoRefresh(){
   if(autoRefreshTimer) clearInterval(autoRefreshTimer);
 
