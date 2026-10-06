@@ -1,15 +1,32 @@
 /* =========================================
-   MOY MARKET — BRANCHES
+   MOY MARKET — BRANCHES PREMIUM ACTIONS
    ========================================= */
 
 (function(){
 
+  const PHONE = "996507668866";
+
   const branches = [
-    "Жибек-Жолу 235, Бишкек, Кыргызстан",
-    "Жибек-Жолу 227, Бишкек, Кыргызстан",
-    "Ауэзова 17, Бишкек, Кыргызстан",
-    "Бейшеналиева 20, Бишкек, Кыргызстан",
-    "Токтогул 259/10, Бишкек, Кыргызстан"
+    {
+      name: "Филиал 1",
+      address: "Жибек-Жолу 235, Бишкек, Кыргызстан"
+    },
+    {
+      name: "Филиал 2",
+      address: "Жибек-Жолу 227, Бишкек, Кыргызстан"
+    },
+    {
+      name: "Филиал 3",
+      address: "Ауэзова 17, Бишкек, Кыргызстан"
+    },
+    {
+      name: "Филиал 4",
+      address: "Бейшеналиева 20, Бишкек, Кыргызстан"
+    },
+    {
+      name: "Филиал 5",
+      address: "Токтогул 259/10, Бишкек, Кыргызстан"
+    }
   ];
 
   function openBranches(){
@@ -30,35 +47,68 @@
     document.body.style.overflow="";
   }
 
-  function mapUrl(address){
-    return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(address);
+  function routeUrl(address){
+    return "https://www.google.com/maps/dir/?api=1&destination="+
+      encodeURIComponent(address);
+  }
+
+  function whatsappUrl(address){
+    const text =
+      "Саламатсызбы! Мой Маркеттен заказ боюнча маалымат алгым келет.\n"+
+      "Филиал: "+address;
+
+    return "https://wa.me/"+PHONE+
+      "?text="+encodeURIComponent(text);
   }
 
   function renderBranches(){
     const wrap=document.getElementById("mmBranchesList");
     if(!wrap)return;
 
-    wrap.innerHTML=branches.map((address,index)=>`
+    wrap.innerHTML=branches.map(branch=>`
       <div class="mm-branch-card">
+
         <div class="mm-branch-icon">📍</div>
 
-        <div>
+        <div class="mm-branch-main">
           <div class="mm-branch-name">
-            Филиал ${index+1}
+            ${branch.name}
           </div>
+
           <div class="mm-branch-address">
-            ${address}
+            ${branch.address}
           </div>
         </div>
 
-        <a
-          class="mm-branch-map"
-          href="${mapUrl(address)}"
-          target="_blank"
-          rel="noopener"
-        >
-          🗺️ Карта
-        </a>
+        <div class="mm-branch-actions">
+
+          <a
+            class="mm-branch-action mm-branch-route"
+            href="${routeUrl(branch.address)}"
+            target="_blank"
+            rel="noopener"
+          >
+            🗺️ <span>Маршрут</span>
+          </a>
+
+          <a
+            class="mm-branch-action mm-branch-call"
+            href="tel:+${PHONE}"
+          >
+            📞 <span>Чалуу</span>
+          </a>
+
+          <a
+            class="mm-branch-action mm-branch-wa"
+            href="${whatsappUrl(branch.address)}"
+            target="_blank"
+            rel="noopener"
+          >
+            💬 <span>WhatsApp</span>
+          </a>
+
+        </div>
+
       </div>
     `).join("");
   }
@@ -67,21 +117,33 @@
 
     renderBranches();
 
-    document.querySelectorAll(".branches-pill,.location-pill").forEach(btn=>{
-  btn.addEventListener("click",openBranches);
-});
+    document
+      .querySelectorAll(".branches-pill,.location-pill")
+      .forEach(btn=>{
+        btn.addEventListener("click",openBranches);
+      });
 
-    const backdrop=document.getElementById("mmBranchesOverlay");
-    const closeBtn=document.getElementById("mmBranchesClose");
+    const backdrop=
+      document.getElementById("mmBranchesOverlay");
 
-    closeBtn?.addEventListener("click",closeBranches);
+    const closeBtn=
+      document.getElementById("mmBranchesClose");
+
+    closeBtn?.addEventListener(
+      "click",
+      closeBranches
+    );
 
     backdrop?.addEventListener("click",e=>{
-      if(e.target===backdrop) closeBranches();
+      if(e.target===backdrop){
+        closeBranches();
+      }
     });
 
     document.addEventListener("keydown",e=>{
-      if(e.key==="Escape") closeBranches();
+      if(e.key==="Escape"){
+        closeBranches();
+      }
     });
 
   });
