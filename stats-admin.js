@@ -123,12 +123,35 @@ function stopAutoRefresh(){
     const max=Math.max(1,...rows.map(x=>Number(x.count||0)));
     wrap.innerHTML=rows.length ? rows.map(x=>`<div class="barline"><span>${esc(x[key]||'—')}</span><div class="bar"><i style="width:${Math.round(Number(x.count||0)/max*100)}%"></i></div><b>${fmt(x.count)}</b></div>`).join('') : '<div class="empty">Азырынча маалымат жок</div>';
   }
+  function renderHourly(rows){
+  const wrap = $('#hourly');
+  if(!wrap)return;
 
+  const data = Array.from({length:24},(_,h)=>{
+    const x = rows.find(r => Number(r.hour) === h);
+    return {hour:h,count:Number(x?.count || 0)};
+  });
+
+  const max = Math.max(1,...data.map(x=>x.count));
+
+  wrap.innerHTML = data.map(x=>{
+    const height = Math.max(4,Math.round(x.count/max*150));
+    const label = String(x.hour).padStart(2,'0')+':00';
+
+    return `
+      <div class="barcol">
+        <i style="height:${height}px" title="${fmt(x.count)}"></i>
+        <span>${label}</span>
+      </div>
+    `;
+  }).join('');
+  }
   async function loadDashboard(){
     const days=$('#period').value || '7';
     const d=await api(`/api/dashboard?days=${encodeURIComponent(days)}`);
     metric('#visitorsToday',d.kpi.visitorsToday); metric('#uniqueVisitors',d.kpi.uniqueVisitors); metric('#productViews',d.kpi.productViews); metric('#cartAdds',d.kpi.cartAdds); metric('#favorites',d.kpi.favorites); metric('#searches',d.kpi.searches); metric('#likes',d.kpi.likes); metric('#shares',d.kpi.shares);
     renderChart(d.trend); renderList('#products',d.products,'id'); renderList('#searchList',d.searches,'term','term'); renderBars('#devices',d.devices,'device'); renderBars('#languages',d.languages,'lang'); renderBars('#sources',d.sources,'source');
+    renderHourly(d.hourly);
     renderFunnel(d.kpi);
     const p=d.products?.[0];
     const s=d.searches?.[0];
