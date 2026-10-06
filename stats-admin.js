@@ -99,8 +99,19 @@ function stopAutoRefresh(){
     const d=await api(`/api/dashboard?days=${encodeURIComponent(days)}`);
     metric('#visitorsToday',d.kpi.visitorsToday); metric('#uniqueVisitors',d.kpi.uniqueVisitors); metric('#productViews',d.kpi.productViews); metric('#cartAdds',d.kpi.cartAdds); metric('#favorites',d.kpi.favorites); metric('#searches',d.kpi.searches); metric('#likes',d.kpi.likes); metric('#shares',d.kpi.shares);
     renderChart(d.trend); renderList('#products',d.products,'id'); renderList('#searchList',d.searches,'term','term'); renderBars('#devices',d.devices,'device'); renderBars('#languages',d.languages,'lang'); renderBars('#sources',d.sources,'source');
-  }
+    const p=d.products?.[0];
+    const s=d.searches?.[0];
+    const src=d.sources?.[0];
 
+$('#topProduct').textContent=p?.name || 'Маалымат жок';
+$('#topProductCount').textContent=`${fmt(p?.count)} көрүү`;
+
+$('#topSearch').textContent=s?.term || 'Маалымат жок';
+$('#topSearchCount').textContent=`${fmt(s?.count)} издөө`;
+
+$('#topSource').textContent=src?.source || 'Маалымат жок';
+$('#topSourceCount').textContent=`${fmt(src?.count)} кирүү`;
+}
   async function loadUsers(){
     try{
       const d=await api('/api/users');
