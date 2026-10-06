@@ -67,9 +67,9 @@
 
     renderBranches();
 
-    document.querySelectorAll(".branches-pill").forEach(btn=>{
-      btn.addEventListener("click",openBranches);
-    });
+    document.querySelectorAll(".branches-pill,.location-pill").forEach(btn=>{
+  btn.addEventListener("click",openBranches);
+});
 
     const backdrop=document.getElementById("mmBranchesOverlay");
     const closeBtn=document.getElementById("mmBranchesClose");
