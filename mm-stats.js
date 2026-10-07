@@ -352,7 +352,26 @@
         }
       );
     });
+        /* 4.5. Заказ жөнөтүлдү */
 
+    window.addEventListener(
+      'mm:order_sent',
+      event => {
+
+        const d =
+          event.detail || {};
+
+        send('order_sent', {
+          orderId: String(d.orderId || ''),
+          orderTotal: Number(d.total || 0),
+          branchName: String(d.branchName || ''),
+          branchAddress: String(d.branchAddress || ''),
+          delivery: String(d.delivery || ''),
+          itemCount: Number(d.itemCount || 0)
+        });
+
+      }
+    );
     /* 5. KG / RU */
     const langButton =
       document.querySelector(
