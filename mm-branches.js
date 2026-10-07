@@ -161,8 +161,47 @@
      RENDER BRANCHES
      ========================================= */
 
-  function renderBranches(){
+ function populateCheckoutBranches(){
 
+  const select = document.getElementById("checkoutBranch");
+
+  if(!select) return;
+
+  select.innerHTML = `
+    <option value="">
+      ${lang === "ru"
+        ? "Выберите филиал"
+        : "Филиалды тандаңыз"}
+    </option>
+  `;
+
+  branches.forEach((branch,index)=>{
+
+    const phone =
+      branch.phones.find(
+        p => p && p.trim()
+      ) || "";
+
+    const option =
+      document.createElement("option");
+
+    option.value = String(index);
+
+    option.textContent =
+      `${branch.name} — ${branch.address}`;
+
+    option.dataset.address =
+      branch.address;
+
+    option.dataset.phone =
+      phone;
+
+    select.appendChild(option);
+
+  });
+
+ }
+   function renderBranches(){
     const wrap =
       document.getElementById("mmBranchesList");
 
@@ -225,6 +264,7 @@
   document.addEventListener("DOMContentLoaded", () => {
 
     renderBranches();
+    populateCheckoutBranches();
 
 
     /* OPEN BUTTONS */
