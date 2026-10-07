@@ -415,7 +415,18 @@ let msg =
     `━━━━━━━━━━━━━━━━━━\n` +
     `${totalLabel}: ${money(total)}\n` +
     `━━━━━━━━━━━━━━━━━━`;
-
+  window.dispatchEvent(
+  new CustomEvent("mm:order_sent", {
+    detail: {
+      orderId: orderMeta.orderId,
+      total: total,
+      branchName: branchName,
+      branchAddress: branchAddress,
+      delivery: deliveryName,
+      itemCount: itemNumber
+    }
+  })
+);
   location.href =
     `https://wa.me/${branchPhone}?text=${encodeURIComponent(msg)}`;
 
