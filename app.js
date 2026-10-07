@@ -241,8 +241,11 @@ function order(){
     return;
   }
 
-  const branchName =
+  const branchLabel =
     selectedBranch.textContent || "";
+
+  const branchName =
+    (branchLabel.split(" — ")[0] || branchLabel).trim();
 
   const branchAddress =
     selectedBranch.dataset.address || "";
@@ -250,52 +253,10 @@ function order(){
   const branchPhone =
     selectedBranch.dataset.phone || WA;
 
-  let total = 0;
-
-  let msg =
-    lang === "ru"
-      ? "Здравствуйте! Хочу оформить заказ в Мой Маркет:"
-      : "Салам! Мой Маркеттен заказ бергим келет:";
-
-  msg +=
-    "\n\n📍 Филиал: " +
-    branchName;
-
-  msg +=
-    "\n📌 Адрес филиала: " +
-    branchAddress;
-
-  cart.forEach(x => {
-
-    const p =
-      products.find(a => a.id === x.id);
-
-    if(!p) return;
-
-    const sub =
-      (Number(p.price) || 0) * x.qty;
-
-    total += sub;
-
-    msg +=
-      `\n\n• ${nameOf(p)}` +
-      `\n${tr("qty")}: ${x.qty}` +
-      `\n${tr("price")}: ${p.price} сом` +
-      `\n${tr("subtotal")}: ${sub} сом`;
-
-  });
-
   const delivery =
     document.querySelector(
       'input[name="deliveryChoice"]:checked'
     )?.value || "yandex";
-
-  msg +=
-    `\n\n🚚 Жеткирүү: ${
-      delivery === "yldam"
-        ? "Ылдам Экспресс"
-        : "Яндекс Go"
-    }`;
 
   const address =
     document
@@ -308,66 +269,128 @@ function order(){
       .getElementById("deliveryPhone")
       ?.value
       .trim() || "";
-  
+
   if(!address){
 
-  alert(
-    lang === "ru"
-      ? "Пожалуйста, укажите адрес доставки."
-      : "Сураныч, жеткирүү дарегин жазыңыз."
-  );
+    alert(
+      lang === "ru"
+        ? "Пожалуйста, укажите адрес доставки."
+        : "Сураныч, жеткирүү дарегин жазыңыз."
+    );
 
-  document.getElementById("deliveryAddress")?.focus();
+    document.getElementById("deliveryAddress")?.focus();
 
-  return;
-}
-
-if(!customerPhone){
-
-  alert(
-    lang === "ru"
-      ? "Пожалуйста, укажите номер телефона."
-      : "Сураныч, телефон номериңизди жазыңыз."
-  );
-
-  document.getElementById("deliveryPhone")?.focus();
-
-  return;
-}
-
-const phoneDigits =
-  customerPhone.replace(/\D/g,"");
-
-if(phoneDigits.length < 9){
-
-  alert(
-    lang === "ru"
-      ? "Пожалуйста, укажите корректный номер телефона."
-      : "Сураныч, туура телефон номерин жазыңыз."
-  );
-
-  document.getElementById("deliveryPhone")?.focus();
-
-  return;
-}
-
-  if(address){
-    msg +=
-      `\n📍 Жеткирүү дареги: ${address}`;
+    return;
   }
 
-  if(customerPhone){
-    msg +=
-      `\n📞 Кардардын телефону: ${customerPhone}`;
+  if(!customerPhone){
+
+    alert(
+      lang === "ru"
+        ? "Пожалуйста, укажите номер телефона."
+        : "Сураныч, телефон номериңизди жазыңыз."
+    );
+
+    document.getElementById("deliveryPhone")?.focus();
+
+    return;
   }
+
+  const phoneDigits =
+    customerPhone.replace(/\D/g,"");
+
+  if(phoneDigits.length < 9){
+
+    alert(
+      lang === "ru"
+        ? "Пожалуйста, укажите корректный номер телефона."
+        : "Сураныч, туура телефон номерин жазыңыз."
+    );
+
+    document.getElementById("deliveryPhone")?.focus();
+
+    return;
+  }
+
+  let total = 0;
+
+  const orderTitle =
+    lang === "ru"
+      ? "🛒 МОЙ МАРКЕТ — НОВЫЙ ЗАКАЗ"
+      : "🛒 МОЙ МАРКЕТ — ЖАҢЫ ЗАКАЗ";
+
+  const productsTitle =
+    lang === "ru"
+      ? "🛍️ ТОВАРЫ"
+      : "🛍️ ТОВАРЛАР";
+
+  const deliveryLabel =
+    lang === "ru"
+      ? "🚚 ДОСТАВКА"
+      : "🚚 ЖЕТКИРҮҮ";
+
+  const deliveryName =
+    delivery === "yldam"
+      ? "Ылдам Экспресс"
+      : "Яндекс Go";
+
+  const totalLabel =
+    lang === "ru"
+      ? "💰 ИТОГО"
+      : "💰 ЖАЛПЫ";
+
+  let msg =
+    `${orderTitle}\n` +
+    `━━━━━━━━━━━━━━━━━━\n` +
+    `📍 Филиал: ${branchName}\n` +
+    `📌 Дарек: ${branchAddress}\n` +
+    `━━━━━━━━━━━━━━━━━━\n` +
+    `${productsTitle}\n`;
+
+  let itemNumber = 0;
+
+  cart.forEach(x => {
+
+    const p =
+      products.find(a => a.id === x.id);
+
+    if(!p) return;
+
+    const unitPrice =
+      Number(p.price) || 0;
+
+    const qty =
+      Number(x.qty) || 1;
+
+    const subtotal =
+      unitPrice * qty;
+
+    total += subtotal;
+
+    itemNumber++;
+
+    msg +=
+      `\n${itemNumber}. ${nameOf(p)}\n` +
+      `   🔢 Саны: ${qty}\n` +
+      `   💵 Баасы: ${money(unitPrice)}\n` +
+      `   🧾 Суммасы: ${money(subtotal)}\n`;
+
+  });
 
   msg +=
-    `\n\n${tr("total")} ${total} сом`;
+    `\n━━━━━━━━━━━━━━━━━━\n` +
+    `${deliveryLabel}: ${deliveryName}\n` +
+    `🏠 Жеткирүү дареги: ${address}\n` +
+    `📞 Кардардын телефону: ${customerPhone}\n` +
+    `━━━━━━━━━━━━━━━━━━\n` +
+    `${totalLabel}: ${money(total)}\n` +
+    `━━━━━━━━━━━━━━━━━━`;
 
   location.href =
     `https://wa.me/${branchPhone}?text=${encodeURIComponent(msg)}`;
 
 }
+
 async function load(){products=FALLBACK_PRODUCTS;categories=FALLBACK_CATEGORIES;try{const b=location.href.substring(0,location.href.lastIndexOf("/")+1);const [p,c]=await Promise.all([fetch(b+"products.json?v=40",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_PRODUCTS).catch(()=>FALLBACK_PRODUCTS),fetch(b+"categories.json?v=40",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_CATEGORIES).catch(()=>FALLBACK_CATEGORIES)]);if(Array.isArray(p)&&p.length)products=p;if(Array.isArray(c)&&c.length)categories=c}catch(e){console.log("fallback",e)}applyText();renderCats();renderSubcats();renderProducts();renderCart()}
 $("#langSwitch").onclick=()=>{lang=lang==="ky"?"ru":"ky";localStorage.setItem("moyLang",lang);applyText();renderCats();renderSubcats();renderProducts();renderCart()};
 document.addEventListener("click",e=>{const photo=e.target.closest(".photo[data-product-id]");if(photo)openProductPreview(photo.dataset.productId);if(e.target.closest("#previewClose")||e.target.id==="previewBackdrop")closeProductPreview()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProductPreview()});
