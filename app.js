@@ -220,7 +220,112 @@ function renderCart(){
 }
 function openCart(){$("#cartDrawer").classList.add("open");$("#backdrop").classList.add("open")}
 function closeCart(){$("#cartDrawer").classList.remove("open");$("#backdrop").classList.remove("open")}
-function order(){if(!cart.length)return;let total=0,msg=lang==="ru"?"Здравствуйте! Хочу оформить заказ в Мой Маркет:":"Салам! Мой Маркеттен заказ бергим келет:";cart.forEach(x=>{const p=products.find(a=>a.id===x.id);if(!p)return;const sub=p.price*x.qty;total+=sub;msg+=`\n\n• ${nameOf(p)}\n${tr("qty")}: ${x.qty}\n${tr("price")}: ${p.price} сом\n${tr("subtotal")}: ${sub} сом\n🖼️ ${lang==="ru"?"Ссылка на фото":"Сүрөттүн шилтемеси"}: ${productImageUrl(p)}`});const d=document.querySelector('input[name="deliveryChoice"]:checked')?.value||"yandex";msg+=`\n\n🚚 ${lang==="ru"?"Доставка":"Жеткирүү"}: ${d==="yldam"?"Ылдам Экспресс":"Яндекс Go"}`;const a=$("#deliveryAddress").value.trim(),ph=$("#deliveryPhone").value.trim();if(a)msg+=`\n📍 ${lang==="ru"?"Адрес":"Дарек"}: ${a}`;if(ph)msg+=`\n📞 Телефон: ${ph}`;msg+=`\n\n${tr("total")} ${total} сом`;location.href=`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`}
+function order(){
+
+  if(!cart.length) return;
+
+  const branchSelect =
+    document.getElementById("checkoutBranch");
+
+  const selectedBranch =
+    branchSelect?.selectedOptions?.[0];
+
+  if(!selectedBranch || !selectedBranch.value){
+
+    alert(
+      lang === "ru"
+        ? "Пожалуйста, выберите филиал."
+        : "Сураныч, филиалды тандаңыз."
+    );
+
+    return;
+  }
+
+  const branchName =
+    selectedBranch.textContent || "";
+
+  const branchAddress =
+    selectedBranch.dataset.address || "";
+
+  const branchPhone =
+    selectedBranch.dataset.phone || WA;
+
+  let total = 0;
+
+  let msg =
+    lang === "ru"
+      ? "Здравствуйте! Хочу оформить заказ в Мой Маркет:"
+      : "Салам! Мой Маркеттен заказ бергим келет:";
+
+  msg +=
+    "\n\n📍 Филиал: " +
+    branchName;
+
+  msg +=
+    "\n📌 Адрес филиала: " +
+    branchAddress;
+
+  cart.forEach(x => {
+
+    const p =
+      products.find(a => a.id === x.id);
+
+    if(!p) return;
+
+    const sub =
+      (Number(p.price) || 0) * x.qty;
+
+    total += sub;
+
+    msg +=
+      `\n\n• ${nameOf(p)}` +
+      `\n${tr("qty")}: ${x.qty}` +
+      `\n${tr("price")}: ${p.price} сом` +
+      `\n${tr("subtotal")}: ${sub} сом`;
+
+  });
+
+  const delivery =
+    document.querySelector(
+      'input[name="deliveryChoice"]:checked'
+    )?.value || "yandex";
+
+  msg +=
+    `\n\n🚚 Жеткирүү: ${
+      delivery === "yldam"
+        ? "Ылдам Экспресс"
+        : "Яндекс Go"
+    }`;
+
+  const address =
+    document
+      .getElementById("deliveryAddress")
+      ?.value
+      .trim() || "";
+
+  const customerPhone =
+    document
+      .getElementById("deliveryPhone")
+      ?.value
+      .trim() || "";
+
+  if(address){
+    msg +=
+      `\n📍 Жеткирүү дареги: ${address}`;
+  }
+
+  if(customerPhone){
+    msg +=
+      `\n📞 Кардардын телефону: ${customerPhone}`;
+  }
+
+  msg +=
+    `\n\n${tr("total")} ${total} сом`;
+
+  location.href =
+    `https://wa.me/${branchPhone}?text=${encodeURIComponent(msg)}`;
+
+}
 async function load(){products=FALLBACK_PRODUCTS;categories=FALLBACK_CATEGORIES;try{const b=location.href.substring(0,location.href.lastIndexOf("/")+1);const [p,c]=await Promise.all([fetch(b+"products.json?v=40",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_PRODUCTS).catch(()=>FALLBACK_PRODUCTS),fetch(b+"categories.json?v=40",{cache:"no-store"}).then(r=>r.ok?r.json():FALLBACK_CATEGORIES).catch(()=>FALLBACK_CATEGORIES)]);if(Array.isArray(p)&&p.length)products=p;if(Array.isArray(c)&&c.length)categories=c}catch(e){console.log("fallback",e)}applyText();renderCats();renderSubcats();renderProducts();renderCart()}
 $("#langSwitch").onclick=()=>{lang=lang==="ky"?"ru":"ky";localStorage.setItem("moyLang",lang);applyText();renderCats();renderSubcats();renderProducts();renderCart()};
 document.addEventListener("click",e=>{const photo=e.target.closest(".photo[data-product-id]");if(photo)openProductPreview(photo.dataset.productId);if(e.target.closest("#previewClose")||e.target.id==="previewBackdrop")closeProductPreview()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProductPreview()});
