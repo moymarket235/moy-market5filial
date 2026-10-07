@@ -308,6 +308,48 @@ function order(){
       .getElementById("deliveryPhone")
       ?.value
       .trim() || "";
+  
+  if(!address){
+
+  alert(
+    lang === "ru"
+      ? "Пожалуйста, укажите адрес доставки."
+      : "Сураныч, жеткирүү дарегин жазыңыз."
+  );
+
+  document.getElementById("deliveryAddress")?.focus();
+
+  return;
+}
+
+if(!customerPhone){
+
+  alert(
+    lang === "ru"
+      ? "Пожалуйста, укажите номер телефона."
+      : "Сураныч, телефон номериңизди жазыңыз."
+  );
+
+  document.getElementById("deliveryPhone")?.focus();
+
+  return;
+}
+
+const phoneDigits =
+  customerPhone.replace(/\D/g,"");
+
+if(phoneDigits.length < 9){
+
+  alert(
+    lang === "ru"
+      ? "Пожалуйста, укажите корректный номер телефона."
+      : "Сураныч, туура телефон номерин жазыңыз."
+  );
+
+  document.getElementById("deliveryPhone")?.focus();
+
+  return;
+}
 
   if(address){
     msg +=
