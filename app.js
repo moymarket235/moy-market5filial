@@ -220,6 +220,25 @@ function renderCart(){
 }
 function openCart(){$("#cartDrawer").classList.add("open");$("#backdrop").classList.add("open")}
 function closeCart(){$("#cartDrawer").classList.remove("open");$("#backdrop").classList.remove("open")}
+function createOrderMeta(){
+
+  const now = new Date();
+
+  const pad =
+    n => String(n).padStart(2,"0");
+
+  const orderId =
+    `MM-${pad(now.getDate())}${pad(now.getMonth()+1)}-${pad(now.getHours())}${pad(now.getMinutes())}-${Math.floor(100+Math.random()*900)}`;
+
+  const dateText =
+    `${pad(now.getDate())}.${pad(now.getMonth()+1)}.${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+  return {
+    orderId,
+    dateText
+  };
+
+}
 function order(){
 
   if(!cart.length) return;
@@ -313,7 +332,8 @@ function order(){
   }
 
   let total = 0;
-
+  const orderMeta =
+  createOrderMeta();
   const orderTitle =
     lang === "ru"
       ? "🛒 МОЙ МАРКЕТ — НОВЫЙ ЗАКАЗ"
@@ -339,13 +359,23 @@ function order(){
       ? "💰 ИТОГО"
       : "💰 ЖАЛПЫ";
 
-  let msg =
-    `${orderTitle}\n` +
-    `━━━━━━━━━━━━━━━━━━\n` +
-    `📍 Филиал: ${branchName}\n` +
-    `📌 Дарек: ${branchAddress}\n` +
-    `━━━━━━━━━━━━━━━━━━\n` +
-    `${productsTitle}\n`;
+  const orderNumberLabel =
+  "Заказ №";
+
+const orderDateLabel =
+  lang === "ru"
+    ? "Дата и время"
+    : "Күнү жана убактысы";
+
+let msg =
+  `${orderTitle}\n` +
+  `🆔 ${orderNumberLabel}: ${orderMeta.orderId}\n` +
+  `🕘 ${orderDateLabel}: ${orderMeta.dateText}\n` +
+  `━━━━━━━━━━━━━━━━━━\n` +
+  `📍 Филиал: ${branchName}\n` +
+  `📌 Дарек: ${branchAddress}\n` +
+  `━━━━━━━━━━━━━━━━━━\n` +
+  `${productsTitle}\n`;
 
   let itemNumber = 0;
 
